@@ -1,0 +1,40 @@
+mặc dù chuyển từ #include "esp_event_loop.h" sang #include "esp_event.h"
+
+song để dùng esp_event_loop_init() thì cần add thư viện
+#include "esp_event_loop.h"
+
+FRAME of PACKING
+HEADER 
+|   ID  |   opcode  |   length   |  function_1    |     data    |   
+
+example : 
+| 01 | 01 | 02   | D1 |  : yêu cầu gửi các tín hiệu chức năng Digital từ D1 tới D2  từ server 
+
+|01|00|02|D1|00|D2|01|   : chuỗi dữ liệu giá trị chức năng digital 1 từ thiết bị
+
+
+|opcode |  ý nghĩa | 
+|  00   |   chuổi dữ liệu gửi từ client
+|  01   | yêu cầu đọc tín hiệu chức năng Digital x        
+|  02   | yêu cầu ghi tín hiệu chức năng digital x         
+
+|  03   | yêu cầu đọc các tín hiệu chức năng Digital từ Dx        
+|  04   | yêu cầu ghi các tín hiệu chức năng digital từ Dx   
+
+|  05   |yêu cầu đọc dữ liệu 8 bit 
+|  06   |yêu cầu ghi dữ liệu 8 bit    
+
+|  07   |yêu cầu đọc dữ liệu 16 bit 
+|  08   |yêu cầu ghi dữ liệu 16 bit 
+
+|  09   |yêu cầu đọc dữ liệu 32 bit 
+|  0A   |yêu cầu ghi dữ liệu 32 bit 
+
+|  0B   |yêu cầu đọc kí tự 
+|  0C   |yêu cầu ghi kí tự
+
+|  0D   |yêu cầu đọc chuỗi
+|  0E   |yêu cầu ghi chuỗi 
+
+|       |          
+| FF    | chuỗi dữ liệu đầu tiên xác nhận ID từ server  

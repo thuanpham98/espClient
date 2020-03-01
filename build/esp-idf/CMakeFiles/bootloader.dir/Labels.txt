@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/home/thuan/Desktop/esp32/build/esp-idf/CMakeFiles/bootloader
+/home/thuan/Desktop/esp32/build/esp-idf/CMakeFiles/bootloader.rule
+/home/thuan/Desktop/esp32/build/esp-idf/CMakeFiles/bootloader-complete.rule
+/home/thuan/Desktop/esp32/build/esp-idf/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/home/thuan/Desktop/esp32/build/esp-idf/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/home/thuan/Desktop/esp32/build/esp-idf/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/home/thuan/Desktop/esp32/build/esp-idf/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+/home/thuan/Desktop/esp32/build/esp-idf/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/home/thuan/Desktop/esp32/build/esp-idf/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/home/thuan/Desktop/esp32/build/esp-idf/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
