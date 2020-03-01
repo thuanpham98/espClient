@@ -1,0 +1,239 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/event_groups.h"
+#include "freertos/queue.h"
+
+#include "esp_system.h"
+#include "esp_wifi.h"
+#include "esp_event_loop.h"
+#include "esp_log.h"
+
+#include "lwip/err.h"
+#include "lwip/sockets.h"
+#include "lwip/sys.h"
+#include <lwip/netdb.h>
+
+
+#include "nvs_flash.h"
+
+#include "modte.h"
+
+////// define config from Kconfig///////
+#define S_WIFI_SSID      CONFIG_ESP_WIFI_SSID
+#define S_WIFI_PASS      CONFIG_ESP_WIFI_PASSWORD
+
+#define HOST_IP_ADDR               CONFIG_PC_HOST_IP_ADDR
+#define PORT                       CONFIG_PC_PORT
+int sock =-1;
+//////////////////////////////////////////////
+
+#define WIFI_CONNECTED_BIT BIT0
+
+static const char *TAG_WIFI = "WIFI_STATION";
+static const char *TAG_TCP = "THREAD_TCP_IP";
+
+/* FreeRTOS event group to signal when we are connected*/
+static EventGroupHandle_t s_wifi_event_group;
+///////////
+//// make a event for wifi ////
+static esp_err_t event_handler(void *ctx, system_event_t *event)
+{
+    switch(event->event_id) 
+    {	
+        case SYSTEM_EVENT_STA_START:
+            esp_wifi_connect();
+            break;
+    
+	    case SYSTEM_EVENT_STA_GOT_IP:
+            xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+            break;
+    
+	    case SYSTEM_EVENT_STA_DISCONNECTED:
+		    xEventGroupClearBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+            break;
+    
+	    default:
+            break;
+    }
+	return ESP_OK;
+}
+//////////////////////////
+
+////connect to wifi////
+void wifi_init_sta(void)
+{
+    int32_t sucess;
+    do
+    {
+        //////// config wifi and start connect//////
+        wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+        ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+        wifi_config_t wifi_config = 
+        {
+            .sta = {
+                .ssid = S_WIFI_SSID,
+                .password = S_WIFI_PASS
+            },
+        };
+        ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
+        ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
+        ESP_ERROR_CHECK(esp_wifi_start() );
+
+        ESP_LOGI(TAG_WIFI, "wifi_init_sta finished.");
+        /////////////////////
+
+        ////// wait flag connected///
+        EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
+                WIFI_CONNECTED_BIT,
+                pdFALSE,
+                pdTRUE,
+                portMAX_DELAY);
+        sucess =bits;
+    }
+    while((sucess & WIFI_CONNECTED_BIT)==0);
+    ESP_LOGI(TAG_WIFI, "connected to ap SSID:%s password:%s", S_WIFI_SSID, S_WIFI_PASS);
+
+    // print the local IP address
+	tcpip_adapter_ip_info_t ip_info;
+	ESP_ERROR_CHECK(tcpip_adapter_get_ip_info(TCPIP_ADAPTER_IF_STA, &ip_info));
+	printf("IP Address:  %s\n", ip4addr_ntoa(&ip_info.ip));
+	printf("Subnet mask: %s\n", ip4addr_ntoa(&ip_info.netmask));
+	printf("Gateway:     %s\n", ip4addr_ntoa(&ip_info.gw));
+	printf("\n");
+
+    vEventGroupDelete(s_wifi_event_group);
+}
+
+void TCP_close ()
+{
+    ESP_LOGE(TAG_TCP, "Shutting down socket..");
+    shutdown(sock, 0);
+    close(sock);
+}
+
+void TCP_open ()
+{
+     ///inittal///
+    char addr_str[128];
+    int err=-1;
+
+    struct sockaddr_in dest_addr;
+    dest_addr.sin_addr.s_addr = inet_addr(HOST_IP_ADDR);
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_port = htons(PORT);
+    inet_ntoa_r(dest_addr.sin_addr, addr_str, sizeof(addr_str) - 1);
+    //Chuyển đổi địa chỉ IP số thành biểu diễn ASCII rải rác thập phân. trả về ptr cho bộ đệm tĩnh; không tái phạm!
+    // creating a TCP 
+    while(sock < 0) 
+    {
+        sock = socket(AF_INET,SOCK_STREAM,0);
+    }
+    ESP_LOGI(TAG_TCP, "Socket created, connecting to %s:%d", HOST_IP_ADDR, PORT);
+
+    //connect tcp server 
+    while(err !=0)
+    {
+        err =connect(sock,&dest_addr,sizeof(dest_addr));
+    }
+    ESP_LOGI(TAG_TCP, "Successfully connected");
+}
+
+
+void send_data (void *pv_send)
+{
+    uint8_t Pay_load[6];
+    while(1)
+    {
+        int err = send(sock, (char*)Pay_load, strlen((char*)Pay_load), 0);
+        if (err < 0) 
+        {
+            ESP_LOGE(TAG_TCP, "Error occurred during sending: errno %d", errno);
+            break;
+        }
+        else ESP_LOGI(TAG_TCP,"send success \r\n");
+
+        vTaskDelay(1000/portTICK_PERIOD_MS);
+    }
+    TCP_close ();
+    TCP_open ();
+}
+
+void receive_data (void *pv_receive)
+{
+    uint8_t Pay_revc[256];
+    while(1)
+    {
+        int len = recv(sock, Pay_revc, sizeof(Pay_revc) - 1, 0);
+        // Error occurred during receiving
+        if (len < 0) 
+        {
+            ESP_LOGE(TAG_TCP, "recv failed: errno %d", errno);
+            break;
+        }
+        // Data received
+        else 
+        {
+            Pay_revc[len] = 0; // Null-terminate whatever we received and treat like a string
+            ESP_LOGI(TAG_TCP, "Received %d bytes",len);
+            ESP_LOGI(TAG_TCP, "%s\r\n", Pay_revc);
+        }
+    }
+    TCP_close ();
+    TCP_open ();
+
+}
+
+// void main_task(void *main_t)
+// {
+    
+// } 
+
+void app_main(void)
+{
+    ///////////// disable the default wifi logging
+	esp_log_level_set("wifi", ESP_LOG_NONE);
+    ///////////////
+
+    //////Initialize NVS , where store ssid and passwork of wifi////
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) 
+    {
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
+    /////////////////
+
+    ///////////////// initialize the tcp stack///////
+	tcpip_adapter_init();/// using get information of wifi 
+    /////////////////
+
+    ///////// make a event group to manage //////
+    s_wifi_event_group = xEventGroupCreate();
+    ////////////////
+
+    ///////////// initialize the wifi event handler
+	ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL) );
+    ////////////////
+
+    ///// config and connect wifi////
+    wifi_init_sta();
+    ///////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+
+    TCP_open();
+
+    int a =hello_te();
+    printf(a);
+ 
+    xTaskCreate(&send_data,"send_data",2048,NULL,3,NULL);
+    xTaskCreate(&receive_data,"receive_data",2048,NULL,3,NULL);
+    // xTaskCreate(&main_task,"main_task",4096,NULL,4,NULL);
+
+
+}

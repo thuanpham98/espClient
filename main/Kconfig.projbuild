@@ -1,0 +1,33 @@
+menu "Example configuration"
+
+	config WIFI_SSID
+		string "TNT_109B3"
+		default "AuCo_Tret1a"
+		help
+			Enter the SSID of the wifi network
+
+	config WIFI_PASSWORD
+		string "1231231231"
+		default "999999999"
+		help
+			Enter the password of the wifi network
+
+	config WEBSITE
+		string "Target website"
+		default "http://192.168.0.108:6969"
+		help
+			Enter the address of the target website
+
+	config RESOURCE
+		string "Website resource"
+		default "/creater"
+		help
+			Enter the resource URL
+
+	config ID_DEVICE
+		string "ID in email"
+		default "1234"
+		help
+			Enter the ID
+
+endmenu
