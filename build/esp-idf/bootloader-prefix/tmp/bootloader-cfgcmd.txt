@@ -1,1 +1,0 @@
-cmd='/usr/bin/cmake;-DSDKCONFIG=/home/thuan/Desktop/esp32/sdkconfig;-DIDF_PATH=/home/thuan/esp/esp-idf;-DSECURE_BOOT_SIGNING_KEY=/home/thuan/Desktop/esp32;-DEXTRA_COMPONENT_DIRS=/home/thuan/esp/esp-idf/components/bootloader;-GNinja;<SOURCE_DIR><SOURCE_SUBDIR>'

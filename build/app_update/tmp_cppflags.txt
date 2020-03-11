@@ -1,1 +1,1 @@
-d1220a4-dirty esp32 v3.3
+1 esp32 v4.2-dev-630-gf7d1ed5f3
