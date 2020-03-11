@@ -1,20 +1,11 @@
 sdspi_crc.o: /home/thuan/esp/esp-idf/components/driver/sdspi_crc.c \
- /home/thuan/esp/esp-idf/components/newlib/include/stdint.h \
- /home/thuan/esp/esp-idf/components/newlib/include/machine/_default_types.h \
- /home/thuan/esp/esp-idf/components/newlib/include/sys/features.h \
- /home/thuan/esp/esp-idf/components/newlib/include/sys/_intsup.h \
- /home/thuan/esp/esp-idf/components/esp32/include/rom/crc.h \
- /home/thuan/esp/esp-idf/components/driver/sdspi_crc.h
-
-/home/thuan/esp/esp-idf/components/newlib/include/stdint.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/machine/_default_types.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/sys/features.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/sys/_intsup.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/rom/crc.h:
+ /home/thuan/esp/esp-idf/components/driver/sdspi_crc.h \
+ /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/crc.h
 
 /home/thuan/esp/esp-idf/components/driver/sdspi_crc.h:
+
+/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+
+/home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/crc.h:
 /home/thuan/esp/esp-idf/components/driver/./sdspi_crc.c:

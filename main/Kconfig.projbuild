@@ -14,20 +14,26 @@ menu "Example configuration"
 
 	config WEBSITE
 		string "Target website"
-		default "http://192.168.0.108:6969"
+		default "http://192.168.1.10:6969"
 		help
 			Enter the address of the target website
 
 	config RESOURCE
 		string "Website resource"
-		default "/creater"
+		default "/creator"
 		help
 			Enter the resource URL
 
 	config ID_DEVICE
 		string "ID in email"
-		default "1234"
+		default "1583296319374"
 		help
 			Enter the ID
+
+	config URL
+		string "Creator Page"
+		default "http://192.168.1.10:6969/creator"
+		help
+			Enter the URL
 
 endmenu

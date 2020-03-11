@@ -3,99 +3,88 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/src.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/config.hpp \
  /home/thuan/esp/esp-idf/components/asio/port/include/esp_asio_config.h \
- /home/thuan/Desktop/esp32/build/include/sdkconfig.h \
+ /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/error.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/error.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/error_code.hpp \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/opt.h \
  /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/lwipopts.h \
- /home/thuan/esp/esp-idf/components/newlib/include/stdlib.h \
- /home/thuan/esp/esp-idf/components/newlib/include/machine/stdlib.h \
- /home/thuan/esp/esp-idf/components/newlib/include/alloca.h \
- /home/thuan/esp/esp-idf/components/newlib/include/sys/fcntl.h \
- /home/thuan/esp/esp-idf/components/newlib/include/sys/_default_fcntl.h \
- /home/thuan/esp/esp-idf/components/newlib/include/sys/stat.h \
  /home/thuan/esp/esp-idf/components/vfs/include/sys/ioctl.h \
- /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/select.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_task.h \
- /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h \
- /home/thuan/esp/esp-idf/components/freertos/include/freertos/xtensa_config.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/hal.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/core.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/xtensa-versions.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/core-matmap.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/tie.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/system.h \
- /home/thuan/esp/esp-idf/components/freertos/include/freertos/xtensa_context.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/corebits.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/xtruntime-frames.h \
- /home/thuan/esp/esp-idf/components/esp32/include/rom/ets_sys.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/soc.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_assert.h \
+ /home/thuan/esp/esp-idf/components/esp_common/include/esp_task.h \
+ /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h \
+ /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_config.h \
+ /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/hal.h \
+ /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/core.h \
+ /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtensa-versions.h \
+ /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/core-matmap.h \
+ /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/tie.h \
+ /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/system.h \
+ /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_context.h \
+ /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h \
+ /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h \
+ /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
+ /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/esp/esp-idf/components/newlib/include/assert.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_system.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_err.h \
- /home/thuan/esp/esp-idf/components/newlib/include/stdio.h \
- /home/thuan/esp/esp-idf/components/newlib/include/sys/stdio.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_sleep.h \
- /home/thuan/esp/esp-idf/components/driver/include/driver/gpio.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_types.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/gpio_reg.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/soc.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/gpio_struct.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/rtc_io_reg.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/io_mux_reg.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/gpio_sig_map.h \
- /home/thuan/esp/esp-idf/components/esp32/include/rom/gpio.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_attr.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/gpio_pins.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_intr_alloc.h \
- /home/thuan/esp/esp-idf/components/soc/include/soc/gpio_periph.h \
- /home/thuan/esp/esp-idf/components/driver/include/driver/touch_pad.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_intr.h \
- /home/thuan/esp/esp-idf/components/esp32/include/rom/ets_sys.h \
- /home/thuan/esp/esp-idf/components/freertos/include/freertos/xtensa_api.h \
- /home/thuan/esp/esp-idf/components/soc/esp32/include/soc/touch_channel.h \
+ /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
+ /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
+ /home/thuan/esp/esp-idf/components/esp_common/include/esp_bit_defs.h \
+ /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
+ /home/thuan/esp/esp-idf/components/lwip/include/apps/sntp/sntp.h \
  /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/netif/dhcp_state.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/debug.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/arch.h \
  /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/arch/cc.h \
- /home/thuan/esp/esp-idf/components/newlib/platform_include/errno.h \
- /home/thuan/esp/esp-idf/components/newlib/include/errno.h \
- /home/thuan/esp/esp-idf/components/newlib/include/sys/errno.h \
  /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/arch/sys_arch.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
- /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/projdefs.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/portable.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/deprecated_definitions.h \
- /home/thuan/esp/esp-idf/components/freertos/include/freertos/portmacro.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/xtruntime.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/specreg.h \
- /home/thuan/esp/esp-idf/components/esp32/include/xtensa/xtruntime-core-state.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_crosscore_int.h \
- /home/thuan/esp/esp-idf/components/esp32/include/esp_timer.h \
+ /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portmacro.h \
+ /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime.h \
+ /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/specreg.h \
+ /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-core-state.h \
+ /home/thuan/esp/esp-idf/components/esp_common/include/esp_private/crosscore_int.h \
+ /home/thuan/esp/esp-idf/components/esp_timer/include/esp_timer.h \
+ /home/thuan/esp/esp-idf/components/soc/include/soc/spinlock.h \
+ /home/thuan/esp/esp-idf/components/soc/include/soc/cpu.h \
+ /home/thuan/esp/esp-idf/components/xtensa/include/xt_instr_macros.h \
+ /home/thuan/esp/esp-idf/components/soc/include/hal/cpu_hal.h \
+ /home/thuan/esp/esp-idf/components/soc/include/hal/cpu_types.h \
+ /home/thuan/esp/esp-idf/components/soc/src/esp32/include/hal/cpu_ll.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/cpu_caps.h \
+ /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/extreg.h \
+ /home/thuan/esp/esp-idf/components/soc/include/soc/soc_memory_layout.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h \
+ /home/thuan/esp/esp-idf/components/esp_common/include/esp_assert.h \
+ /home/thuan/esp/esp-idf/components/soc/include/soc/compare_set.h \
  /home/thuan/esp/esp-idf/components/heap/include/esp_heap_caps.h \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
- /home/thuan/esp/esp-idf/components/soc/include/soc/soc_memory_layout.h \
- /home/thuan/esp/esp-idf/components/freertos/include/freertos/portbenchmark.h \
+ /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/task.h \
- /home/thuan/esp/esp-idf/components/newlib/include/limits.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/list.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/queue.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/semphr.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/queue.h \
  /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/arch/vfs_lwip.h \
- /home/thuan/esp/esp-idf/components/newlib/include/inttypes.h \
+ /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/poll.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/ip_addr.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/def.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/ip4_addr.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/ip6_addr.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/def.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/ip6_zone.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/netif.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/pbuf.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/stats.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/mem.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/memp.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/priv/memp_std.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/priv/memp_priv.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/priv/mem_priv.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/inet.h \
  /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/push_options.hpp \
@@ -106,15 +95,13 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/error_code.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/local_free_on_block_exit.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/socket_types.hpp \
- /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/poll.h \
- /home/thuan/esp/esp-idf/components/newlib/include/fcntl.h \
  /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/sys/socket.h \
+ /home/thuan/esp/esp-idf/components/newlib/platform_include/net/if.h \
+ /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/if_api.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/uio.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/un.h \
  /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/netinet/in.h \
  /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/arpa/inet.h \
- /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/../../../lwip/src/include/lwip/inet.h \
- /home/thuan/esp/esp-idf/components/newlib/platform_include/net/if.h \
  /home/thuan/esp/esp-idf/components/asio/port/include/esp_exception.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log_internal.h \
@@ -126,7 +113,6 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_type_requirements.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/async_result.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/type_traits.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/handler_type.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/scoped_ptr.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/service_registry.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/mutex.hpp \
@@ -140,9 +126,7 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/throw_exception.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/executor.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/atomic_count.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/executor_op.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/fenced_block.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/std_fenced_block.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/executor_function.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_alloc_helpers.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/recycling_allocator.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/thread_context.hpp \
@@ -152,15 +136,18 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/thread_info_base.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/associated_allocator.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/handler_alloc_hook.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/global.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/posix_global.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/system_executor.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/system_executor.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/executor_op.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/fenced_block.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/std_fenced_block.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_invoke_helpers.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/handler_invoke_hook.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/scheduler_operation.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_tracking.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/op_queue.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/global.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/posix_global.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/system_executor.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/system_executor.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/system_context.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/scheduler.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/conditionally_enabled_event.hpp \
@@ -170,9 +157,9 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/assert.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/null_event.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/reactor_fwd.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/thread_group.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/thread.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/posix_thread.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/thread_group.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/system_context.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/handler_alloc_hook.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/io_context.ipp \
@@ -189,6 +176,7 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/completion_handler.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_work.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/operation.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/non_const_lvalue.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/throw_error.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/concurrency_hint.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/limits.hpp \
@@ -216,8 +204,8 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/reactive_descriptor_service.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/buffer.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/array_fwd.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/is_buffer_sequence.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/string_view.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/is_buffer_sequence.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/buffer_sequence_adapter.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/descriptor_read_op.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/reactor_op.hpp \
@@ -251,13 +239,12 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/socket_holder.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/resolver_service_base.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/resolver_service_base.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/executor_work_guard.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/resolve_op.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/scheduler.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/scheduler_thread_info.hpp \
- /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/select_reactor.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/signal_blocker.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/posix_signal_blocker.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/select_reactor.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/service_registry.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/signal_set_service.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/signal_set_service.hpp \
@@ -270,6 +257,7 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/strand_executor_service.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/strand_executor_service.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/strand_executor_service.hpp \
+ /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/executor_work_guard.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/strand_service.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/strand_service.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/strand_service.hpp \
@@ -327,7 +315,7 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/asio/port/include/esp_asio_config.h:
 
-/home/thuan/Desktop/esp32/build/include/sdkconfig.h:
+/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/error.ipp:
 
@@ -341,101 +329,49 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/lwipopts.h:
 
-/home/thuan/esp/esp-idf/components/newlib/include/stdlib.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/machine/stdlib.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/alloca.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/sys/fcntl.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/sys/_default_fcntl.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/sys/stat.h:
-
 /home/thuan/esp/esp-idf/components/vfs/include/sys/ioctl.h:
 
-/home/thuan/esp/esp-idf/components/newlib/platform_include/sys/select.h:
+/home/thuan/esp/esp-idf/components/esp_common/include/esp_task.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/esp_task.h:
+/home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h:
 
-/home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h:
+/home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_config.h:
 
-/home/thuan/esp/esp-idf/components/freertos/include/freertos/xtensa_config.h:
+/home/thuan/esp/esp-idf/components/xtensa/include/xtensa/hal.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/hal.h:
+/home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/core.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/core.h:
+/home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtensa-versions.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/xtensa-versions.h:
+/home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/core-matmap.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/core-matmap.h:
+/home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/tie.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/tie.h:
+/home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/system.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/system.h:
+/home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_context.h:
 
-/home/thuan/esp/esp-idf/components/freertos/include/freertos/xtensa_context.h:
+/home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/corebits.h:
+/home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/xtruntime-frames.h:
+/home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/rom/ets_sys.h:
+/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
 
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/soc.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/esp_assert.h:
+/home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/esp/esp-idf/components/newlib/include/assert.h:
+/home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/esp_err.h:
+/home/thuan/esp/esp-idf/components/esp_common/include/esp_bit_defs.h:
 
-/home/thuan/esp/esp-idf/components/newlib/include/stdio.h:
+/home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 
-/home/thuan/esp/esp-idf/components/newlib/include/sys/stdio.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/esp_sleep.h:
-
-/home/thuan/esp/esp-idf/components/driver/include/driver/gpio.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/esp_types.h:
-
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/gpio_reg.h:
-
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/soc.h:
-
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/gpio_struct.h:
-
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/rtc_io_reg.h:
-
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/io_mux_reg.h:
-
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/gpio_sig_map.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/rom/gpio.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/esp_attr.h:
-
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/gpio_pins.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/esp_intr_alloc.h:
-
-/home/thuan/esp/esp-idf/components/soc/include/soc/gpio_periph.h:
-
-/home/thuan/esp/esp-idf/components/driver/include/driver/touch_pad.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/esp_intr.h:
-
-/home/thuan/esp/esp-idf/components/esp32/include/rom/ets_sys.h:
-
-/home/thuan/esp/esp-idf/components/freertos/include/freertos/xtensa_api.h:
-
-/home/thuan/esp/esp-idf/components/soc/esp32/include/soc/touch_channel.h:
+/home/thuan/esp/esp-idf/components/lwip/include/apps/sntp/sntp.h:
 
 /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/netif/dhcp_state.h:
 
@@ -445,17 +381,9 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/arch/cc.h:
 
-/home/thuan/esp/esp-idf/components/newlib/platform_include/errno.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/errno.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/sys/errno.h:
-
 /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/arch/sys_arch.h:
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h:
-
-/home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h:
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/projdefs.h:
 
@@ -463,31 +391,51 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/deprecated_definitions.h:
 
-/home/thuan/esp/esp-idf/components/freertos/include/freertos/portmacro.h:
+/home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portmacro.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/xtruntime.h:
+/home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/config/specreg.h:
+/home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/specreg.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/xtensa/xtruntime-core-state.h:
+/home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-core-state.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/esp_crosscore_int.h:
+/home/thuan/esp/esp-idf/components/esp_common/include/esp_private/crosscore_int.h:
 
-/home/thuan/esp/esp-idf/components/esp32/include/esp_timer.h:
+/home/thuan/esp/esp-idf/components/esp_timer/include/esp_timer.h:
+
+/home/thuan/esp/esp-idf/components/soc/include/soc/spinlock.h:
+
+/home/thuan/esp/esp-idf/components/soc/include/soc/cpu.h:
+
+/home/thuan/esp/esp-idf/components/xtensa/include/xt_instr_macros.h:
+
+/home/thuan/esp/esp-idf/components/soc/include/hal/cpu_hal.h:
+
+/home/thuan/esp/esp-idf/components/soc/include/hal/cpu_types.h:
+
+/home/thuan/esp/esp-idf/components/soc/src/esp32/include/hal/cpu_ll.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/cpu_caps.h:
+
+/home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/extreg.h:
+
+/home/thuan/esp/esp-idf/components/soc/include/soc/soc_memory_layout.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h:
+
+/home/thuan/esp/esp-idf/components/esp_common/include/esp_assert.h:
+
+/home/thuan/esp/esp-idf/components/soc/include/soc/compare_set.h:
 
 /home/thuan/esp/esp-idf/components/heap/include/esp_heap_caps.h:
 
 /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h:
 
-/home/thuan/esp/esp-idf/components/soc/include/soc/soc_memory_layout.h:
-
-/home/thuan/esp/esp-idf/components/freertos/include/freertos/portbenchmark.h:
+/home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h:
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/task.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/limits.h:
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/list.h:
 
@@ -499,7 +447,7 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/arch/vfs_lwip.h:
 
-/home/thuan/esp/esp-idf/components/newlib/include/inttypes.h:
+/home/thuan/esp/esp-idf/components/newlib/platform_include/sys/poll.h:
 
 /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/ip_addr.h:
 
@@ -511,7 +459,25 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/def.h:
 
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/ip6_zone.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/netif.h:
+
 /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/pbuf.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/stats.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/mem.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/memp.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/priv/memp_std.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/priv/memp_priv.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/priv/mem_priv.h:
 
 /home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/inet.h:
 
@@ -533,11 +499,11 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/socket_types.hpp:
 
-/home/thuan/esp/esp-idf/components/newlib/platform_include/sys/poll.h:
-
-/home/thuan/esp/esp-idf/components/newlib/include/fcntl.h:
-
 /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/sys/socket.h:
+
+/home/thuan/esp/esp-idf/components/newlib/platform_include/net/if.h:
+
+/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/lwip/if_api.h:
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/uio.h:
 
@@ -546,10 +512,6 @@ asio/asio/src/asio.o: \
 /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/netinet/in.h:
 
 /home/thuan/esp/esp-idf/components/lwip/port/esp32/include/arpa/inet.h:
-
-/home/thuan/esp/esp-idf/components/lwip/lwip/src/include/../../../lwip/src/include/lwip/inet.h:
-
-/home/thuan/esp/esp-idf/components/newlib/platform_include/net/if.h:
 
 /home/thuan/esp/esp-idf/components/asio/port/include/esp_exception.h:
 
@@ -572,8 +534,6 @@ asio/asio/src/asio.o: \
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/async_result.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/type_traits.hpp:
-
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/handler_type.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/scoped_ptr.hpp:
 
@@ -601,11 +561,7 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/atomic_count.hpp:
 
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/executor_op.hpp:
-
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/fenced_block.hpp:
-
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/std_fenced_block.hpp:
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/executor_function.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_alloc_helpers.hpp:
 
@@ -625,6 +581,20 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/handler_alloc_hook.hpp:
 
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/global.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/posix_global.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/system_executor.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/system_executor.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/executor_op.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/fenced_block.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/std_fenced_block.hpp:
+
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_invoke_helpers.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/handler_invoke_hook.hpp:
@@ -634,14 +604,6 @@ asio/asio/src/asio.o: \
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_tracking.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/op_queue.hpp:
-
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/global.hpp:
-
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/posix_global.hpp:
-
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/system_executor.hpp:
-
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/system_executor.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/system_context.hpp:
 
@@ -661,11 +623,11 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/reactor_fwd.hpp:
 
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/thread_group.hpp:
-
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/thread.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/posix_thread.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/thread_group.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/system_context.hpp:
 
@@ -698,6 +660,8 @@ asio/asio/src/asio.o: \
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/handler_work.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/operation.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/non_const_lvalue.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/throw_error.hpp:
 
@@ -753,9 +717,9 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/array_fwd.hpp:
 
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/is_buffer_sequence.hpp:
-
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/string_view.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/is_buffer_sequence.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/buffer_sequence_adapter.hpp:
 
@@ -823,19 +787,17 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/resolver_service_base.hpp:
 
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/executor_work_guard.hpp:
-
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/resolve_op.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/scheduler.ipp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/scheduler_thread_info.hpp:
 
-/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/select_reactor.ipp:
-
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/signal_blocker.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/posix_signal_blocker.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/select_reactor.ipp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/service_registry.ipp:
 
@@ -860,6 +822,8 @@ asio/asio/src/asio.o: \
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/strand_executor_service.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/strand_executor_service.hpp:
+
+/home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/executor_work_guard.hpp:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/impl/strand_service.ipp:
 
