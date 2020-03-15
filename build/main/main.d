@@ -134,7 +134,9 @@ main.o: /home/thuan/Desktop/espClient/main/main.c \
  /home/thuan/esp/esp-idf/components/unity/unity/src/unity.h \
  /home/thuan/esp/esp-idf/components/unity/unity/src/unity_internals.h \
  /home/thuan/esp/esp-idf/components/unity/include/unity_config.h \
- /home/thuan/esp/esp-idf/components/unity/include/unity_test_runner.h
+ /home/thuan/esp/esp-idf/components/unity/include/unity_test_runner.h \
+ /home/thuan/Desktop/espClient/components/include/message.pb-c.h \
+ /home/thuan/esp/esp-idf/components/protobuf-c/protobuf-c/protobuf-c/protobuf-c.h
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h:
 
@@ -407,4 +409,8 @@ main.o: /home/thuan/Desktop/espClient/main/main.c \
 /home/thuan/esp/esp-idf/components/unity/include/unity_config.h:
 
 /home/thuan/esp/esp-idf/components/unity/include/unity_test_runner.h:
+
+/home/thuan/Desktop/espClient/components/include/message.pb-c.h:
+
+/home/thuan/esp/esp-idf/components/protobuf-c/protobuf-c/protobuf-c/protobuf-c.h:
 /home/thuan/Desktop/espClient/main/./main.c:
