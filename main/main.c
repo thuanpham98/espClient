@@ -1,5 +1,7 @@
 // Coppy All Right: Phạm Minh Thuận
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -24,6 +26,9 @@
 #include <cJSON_Utils.h>
 
 #include "unity.h"
+
+#include "message.pb-c.h"
+
 
 #define EXAMPLE_ESP_WIFI_SSID      CONFIG_WIFI_SSID
 #define EXAMPLE_ESP_WIFI_PASS      CONFIG_WIFI_PASSWORD
@@ -152,106 +157,63 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
         return ESP_OK;
 }
 
+Sensor *protoc(char *message);
+
+
 /////------------make json to post------------------///
-char* Print_JSON(char* id,double data[10])
-{
-    cJSON* sudo =cJSON_CreateObject();
-    cJSON* form=cJSON_CreateObject();
-    cJSON_AddItemToObject(sudo, "ID",cJSON_CreateString(id));
-    cJSON_AddItemToObject(sudo, "form",form);
-
-    cJSON_AddNumberToObject(form,"sensor_1",data[0]);
-    cJSON_AddNumberToObject(form,"sensor_2",data[1]);
-    cJSON_AddNumberToObject(form,"sensor_3",data[2]);
-    cJSON_AddNumberToObject(form,"sensor_4",data[3]);
-
-    cJSON_AddNumberToObject(form,"sensor_5",data[4]);
-    cJSON_AddNumberToObject(form,"sensor_6",data[5]);
-    cJSON_AddNumberToObject(form,"sensor_7",data[6]);
-
-    cJSON_AddNumberToObject(form,"sensor_8",data[7]);
-    cJSON_AddNumberToObject(form,"sensor_9",data[8]);
-    cJSON_AddNumberToObject(form,"sensor_10",data[9]);
-    char *a=cJSON_Print(sudo);
-    cJSON_Delete(sudo);//if don't free, heap memory will be overload
-    return a;
-}
-//-------Post method----------//
-void postTask (void *pv)
-{
-    ESP_LOGI(TAG_HTTP," Init http Post");
-    
-    double data[10];
-    esp_http_client_config_t config = {
-        .url=URL,
-        .event_handler = _http_event_handle,
-    };
-    esp_http_client_handle_t client = esp_http_client_init(&config);
-    esp_http_client_set_method(client, HTTP_METHOD_POST);
-    esp_http_client_set_header(client, "Content-Type", "application/json");
-
-    while(1)
-    {
-        char* post_data = (char *) malloc(512);
-        post_data = Print_JSON(ID,data);
-        esp_http_client_set_post_field(client,post_data,strlen(post_data));
-
-        esp_err_t err = esp_http_client_perform(client);
-        if (err == ESP_OK) {
-            ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
-                    esp_http_client_get_status_code(client),
-                    esp_http_client_get_content_length(client));
-
-            data[0]++;data[1]++;data[2]++;data[3]++;data[4]++;data[5]++;data[6]++;data[7]++;data[8]++;data[9]++;
-            free(post_data);
-            ESP_LOGI(TAG_HTTP,"free heap size is :%d",esp_get_free_heap_size() );
-            ESP_LOGI(TAG_HTTP," post success");
-        } 
-        else 
-        {
-            ESP_LOGE(TAG_HTTP, "HTTP GET request failed: %s", esp_err_to_name(err));
-            esp_restart();
-            break;
-        }
-
-        vTaskDelay(50/portTICK_PERIOD_MS);
-    }
-    esp_http_client_close(client);
-    esp_http_client_cleanup(client);
-    esp_restart();
-    vTaskDelete(NULL);
-}
-
-//----------get method-------//
-// void getTask(void *pv)
+// char* Print_JSON(char* id,double data[10])
 // {
-//     ESP_LOGI(TAG_HTTP," Init http get");
-//     char* get_data = (char *) malloc(512);
+//     cJSON* sudo =cJSON_CreateObject();
+//     cJSON* form=cJSON_CreateObject();
+//     cJSON_AddItemToObject(sudo, "ID",cJSON_CreateString(id));
+//     cJSON_AddItemToObject(sudo, "form",form);
 
+//     cJSON_AddNumberToObject(form,"sensor_1",data[0]);
+//     cJSON_AddNumberToObject(form,"sensor_2",data[1]);
+//     cJSON_AddNumberToObject(form,"sensor_3",data[2]);
+//     cJSON_AddNumberToObject(form,"sensor_4",data[3]);
+
+//     cJSON_AddNumberToObject(form,"sensor_5",data[4]);
+//     cJSON_AddNumberToObject(form,"sensor_6",data[5]);
+//     cJSON_AddNumberToObject(form,"sensor_7",data[6]);
+
+//     cJSON_AddNumberToObject(form,"sensor_8",data[7]);
+//     cJSON_AddNumberToObject(form,"sensor_9",data[8]);
+//     cJSON_AddNumberToObject(form,"sensor_10",data[9]);
+//     char *a=cJSON_Print(sudo);
+//     cJSON_Delete(sudo);//if don't free, heap memory will be overload
+//     return a;
+// }
+//-------Post method----------//
+// void postTask (void *pv)
+// {
+//     ESP_LOGI(TAG_HTTP," Init http Post");
+    
+//     double data[10];
 //     esp_http_client_config_t config = {
 //         .url=URL,
 //         .event_handler = _http_event_handle,
 //     };
 //     esp_http_client_handle_t client = esp_http_client_init(&config);
-//     esp_http_client_set_method(client, HTTP_METHOD_GET);
-    
+//     esp_http_client_set_method(client, HTTP_METHOD_POST);
+//     esp_http_client_set_header(client, "Content-Type", "application/json");
 
 //     while(1)
 //     {
+//         char* post_data = (char *) malloc(512);
+//         post_data = Print_JSON(ID,data);
+//         esp_http_client_set_post_field(client,post_data,strlen(post_data));
+
 //         esp_err_t err = esp_http_client_perform(client);
 //         if (err == ESP_OK) {
 //             ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
 //                     esp_http_client_get_status_code(client),
 //                     esp_http_client_get_content_length(client));
 
-
-//             if(esp_http_client_get_content_length(client))
-//             {
-//                 get_data=temp;
-//             }
-//             else get_data=" ";
-
-//             ESP_LOGE(TAG_HTTP,"%s\r\n",get_data);
+//             data[0]--;data[1]+=5;data[2]++;data[3]++;data[4]++;data[5]++;data[6]++;data[7]++;data[8]++;data[9]++;
+//             free(post_data);
+//             ESP_LOGI(TAG_HTTP,"free heap size is :%d",esp_get_free_heap_size() );
+//             ESP_LOGI(TAG_HTTP," post success");
 //         } 
 //         else 
 //         {
@@ -260,15 +222,103 @@ void postTask (void *pv)
 //             break;
 //         }
 
-//         //esp_http_client_cleanup(client);
-//         vTaskDelay(10/portTICK_PERIOD_MS);
+//         vTaskDelay(1000/portTICK_PERIOD_MS);
 //     }
 //     esp_http_client_close(client);
 //     esp_http_client_cleanup(client);
 //     esp_restart();
 //     vTaskDelete(NULL);
-    
 // }
+
+
+//----------get method-------//
+void getTask(void *pv)
+{
+    ESP_LOGI(TAG_HTTP," Init http get");
+    char *get_data = (char *) malloc(512);
+
+    esp_http_client_config_t config = {
+        .url=URL,
+        .event_handler = _http_event_handle,
+    };
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+    esp_http_client_set_method(client, HTTP_METHOD_GET);
+    
+    //---for protoc-c---//
+    Sensor *s=(Sensor *) malloc(sizeof(Sensor));
+    sensor__init(s);
+
+    while(1)
+    {
+        esp_err_t err = esp_http_client_perform(client);
+        if (err == ESP_OK) {
+            ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
+                    esp_http_client_get_status_code(client),
+                    esp_http_client_get_content_length(client));
+
+
+            if(esp_http_client_get_content_length(client))
+            {
+                get_data=temp;
+                s=protoc(get_data);
+                ESP_LOGI(TAG,"%f",s->value);
+
+
+            }
+            else get_data=" ";
+ 
+            
+        } 
+        else 
+        {
+            ESP_LOGE(TAG_HTTP, "HTTP GET request failed: %s", esp_err_to_name(err));
+            esp_restart();
+            break;
+        }
+
+        //esp_http_client_cleanup(client);
+        vTaskDelay(10/portTICK_PERIOD_MS);
+    }
+    esp_http_client_close(client);
+    esp_http_client_cleanup(client);
+    esp_restart();
+    vTaskDelete(NULL);
+    
+}
+
+//----protoc -c ----//
+Sensor *protoc(char *message)
+{
+
+
+    char *frame= (char *) malloc(3*sizeof(char));
+    uint8_t buff[512];
+
+    uint8_t j=0,k=0;
+    for(uint8_t i = 0; i < (strlen(message)); i++)
+    {
+        if(*(message+i)==',')
+        {
+            continue;
+        }
+        *(frame + j)=*(message+i);
+        j++;
+
+        if((*(message+i+1)==',') ||(*(message+i+1)==NULL))
+        {
+            *(frame+j)=NULL; /// to end string
+            buff[k]=(uint8_t)atoi(frame);// convert tring to number (stdlib.h)
+            j=0;
+            k++;
+        }
+
+    }
+    free(frame);
+    return sensor__unpack(NULL,k,buff);
+    //sensors__free_unpacked(s2,NULL);
+    
+}
+//------------------//
 //--------set up----//
 void app_main(void)
 {
@@ -283,11 +333,11 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
-    ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
+    ESP_LOGI(TAG, "ESP_WIFI_MODE_STA \r \n");
     wifi_init_sta();
 
-        //------start FreeRtos---//
-    xTaskCreate(&postTask,"postTask",4096*2,NULL,3,NULL);
-    //xTaskCreate(&getTask,"getTask",4096*2,NULL,2,NULL);
-    
+    //------start FreeRtos---//
+    //xTaskCreate(&postTask,"postTask",4096*2,NULL,3,NULL);
+    xTaskCreate(&getTask,"getTask",4096*3,NULL,2,NULL);
+
 }

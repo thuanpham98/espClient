@@ -1,0 +1,31 @@
+{
+    "files.associations": {
+        "queue.h": "c",
+        "esp_event_loop.h": "c",
+        "netdb.h": "c",
+        "esp_transport_tcp.h": "c",
+        "esp_event.h": "c",
+        "esp_wifi.h": "c",
+        "esp_log.h": "c",
+        "315e6acba7d715333d0865a8dfc0cd0e7aef8a1f5f420eae3d39067ad78df17d": "c",
+        "message.pb-c.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "thread": "c",
+        "freertos.h": "c",
+        "time.h": "c",
+        "test_utils.h": "c",
+        "*.ipp": "cpp",
+        "atomic": "cpp",
+        "*.tcc": "cpp",
+        "vector": "cpp",
+        "optional": "cpp",
+        "random": "cpp",
+        "fstream": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp"
+    },
+    "cmake.configureOnOpen": false
+}
