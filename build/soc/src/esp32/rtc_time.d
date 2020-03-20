@@ -1,7 +1,7 @@
 src/esp32/rtc_time.o: \
  /home/thuan/esp/esp-idf/components/soc/src/esp32/rtc_time.c \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_assert.h \
@@ -27,7 +27,7 @@ src/esp32/rtc_time.o: \
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc.h:
 

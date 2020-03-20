@@ -28,7 +28,10 @@
 #include "unity.h"
 
 #include "message.pb-c.h"
+#include "stringtoarray.h"
 
+#include "driver/gpio.h"
+#include "driver/dac.h"
 
 #define EXAMPLE_ESP_WIFI_SSID      CONFIG_WIFI_SSID
 #define EXAMPLE_ESP_WIFI_PASS      CONFIG_WIFI_PASSWORD
@@ -36,8 +39,19 @@
 #define URL                        CONFIG_URL
 #define MAX_HTTP_RECV_BUFFER       512
 #define ID                         CONFIG_ID_DEVICE
+#define NUM                        CONFIG_NUMBER_DEVICE
 static const char *TAG_HTTP = "HTTP";
 char temp[512];
+
+
+
+#define GPIO_OUTPUT_PIN_SEL (    (1ULL<<GPIO_NUM_4)  | (1ULL<<GPIO_NUM_5)  | \
+                                (1ULL<<GPIO_NUM_13) | (1ULL<<GPIO_NUM_14) | (1ULL<<GPIO_NUM_15) | \
+                                (1ULL<<GPIO_NUM_18) | (1ULL<<GPIO_NUM_19) | (1ULL<<GPIO_NUM_21) | (1ULL<<GPIO_NUM_22) | \
+                                (1ULL<<GPIO_NUM_23) | (1ULL<<GPIO_NUM_27) | (1ULL<<GPIO_NUM_32) | (1ULL<<GPIO_NUM_33)   \
+                            )
+
+         
 
 static EventGroupHandle_t s_wifi_event_group;
 
@@ -243,13 +257,19 @@ void getTask(void *pv)
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_GET);
-    
-    //---for protoc-c---//
-    Sensor *s=(Sensor *) malloc(sizeof(Sensor));
-    sensor__init(s);
 
+
+
+    esp_http_client_set_header(client, "ID",ID);
+    
     while(1)
     {
+        /* for protoc-c */
+        Sensor *s=(Sensor *) malloc(sizeof(Sensor));
+        sensor__init(s);
+
+        //esp_http_client_write(client, ID, strlen);
+
         esp_err_t err = esp_http_client_perform(client);
         if (err == ESP_OK) {
             ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
@@ -260,14 +280,35 @@ void getTask(void *pv)
             if(esp_http_client_get_content_length(client))
             {
                 get_data=temp;
+                ESP_LOGI(TAG,"%s",get_data);
                 s=protoc(get_data);
-                ESP_LOGI(TAG,"%f",s->value);
 
+                if((strcmp(s->id,ID)==0) && (s->device==0))
+                {
+                    ESP_LOGI(TAG,"%s",temp);
+                    ESP_LOGI(TAG,"%s",s->id);
+                    
+                    uint32_t val= (uint32_t)s->value;
+                    uint32_t io= (uint32_t)s->io;
+                    ESP_LOGI(TAG,"%d",val);
+                    ESP_LOGI(TAG,"%d",io);
 
+                    if(io==25 || io ==26)
+                    {
+                        dac_output_voltage(io-25, val );
+                    }
+                    gpio_set_level(io, val);
+                    
+                }
+
+                for(int i=0; i <512;i++)
+                {
+                    temp[i]=0;
+                }
             }
             else get_data=" ";
- 
             
+ 
         } 
         else 
         {
@@ -276,8 +317,10 @@ void getTask(void *pv)
             break;
         }
 
+        sensor__free_unpacked(s,NULL);
+
         //esp_http_client_cleanup(client);
-        vTaskDelay(10/portTICK_PERIOD_MS);
+        vTaskDelay(5/portTICK_PERIOD_MS);
     }
     esp_http_client_close(client);
     esp_http_client_cleanup(client);
@@ -289,34 +332,10 @@ void getTask(void *pv)
 //----protoc -c ----//
 Sensor *protoc(char *message)
 {
+    uint8_t buffer[1024];
+    uint32_t k= Arr(message, buffer);
 
-
-    char *frame= (char *) malloc(3*sizeof(char));
-    uint8_t buff[512];
-
-    uint8_t j=0,k=0;
-    for(uint8_t i = 0; i < (strlen(message)); i++)
-    {
-        if(*(message+i)==',')
-        {
-            continue;
-        }
-        *(frame + j)=*(message+i);
-        j++;
-
-        if((*(message+i+1)==',') ||(*(message+i+1)==NULL))
-        {
-            *(frame+j)=NULL; /// to end string
-            buff[k]=(uint8_t)atoi(frame);// convert tring to number (stdlib.h)
-            j=0;
-            k++;
-        }
-
-    }
-    free(frame);
-    return sensor__unpack(NULL,k,buff);
-    //sensors__free_unpacked(s2,NULL);
-    
+    return sensor__unpack(NULL,k,buffer);    
 }
 //------------------//
 //--------set up----//
@@ -331,12 +350,26 @@ void app_main(void)
       ESP_ERROR_CHECK(nvs_flash_erase());
       ret = nvs_flash_init();
     }
-    ESP_ERROR_CHECK(ret);
+    ESP_ERROR_CHECK(ret); 
 
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA \r \n");
     wifi_init_sta();
 
-    //------start FreeRtos---//
+    /* init gpio for output digital on-off */
+
+    gpio_config_t output_conf;
+    output_conf.intr_type = GPIO_PIN_INTR_DISABLE;
+    output_conf.mode = GPIO_MODE_OUTPUT;
+    output_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
+    output_conf.pull_down_en = 0;
+    output_conf.pull_up_en = 0;
+    gpio_config(&output_conf);
+
+
+    dac_output_enable(DAC_CHANNEL_1);
+    dac_output_enable(DAC_CHANNEL_2);
+
+    /* start FreeRtos */
     //xTaskCreate(&postTask,"postTask",4096*2,NULL,3,NULL);
     xTaskCreate(&getTask,"getTask",4096*3,NULL,2,NULL);
 

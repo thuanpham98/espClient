@@ -6,7 +6,7 @@
 #define PROTOBUF_C__NO_DEPRECATED
 #endif
 
-#include "message.pb-c.h"
+#include "include/message.pb-c.h"
 void   sensor__init
                      (Sensor         *message)
 {
@@ -96,12 +96,36 @@ void   sensors__free_unpacked
 static const ProtobufCFieldDescriptor sensor__field_descriptors[4] =
 {
   {
-    "name",
+    "ID",
     1,
     PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
-    offsetof(Sensor, name),
+    offsetof(Sensor, id),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "device",
+    2,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_UINT32,
+    offsetof(Sensor, has_device),
+    offsetof(Sensor, device),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "io",
+    3,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_UINT32,
+    offsetof(Sensor, has_io),
+    offsetof(Sensor, io),
     NULL,
     NULL,
     0,             /* flags */
@@ -109,7 +133,7 @@ static const ProtobufCFieldDescriptor sensor__field_descriptors[4] =
   },
   {
     "value",
-    2,
+    4,
     PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_FLOAT,
     offsetof(Sensor, has_value),
@@ -119,36 +143,12 @@ static const ProtobufCFieldDescriptor sensor__field_descriptors[4] =
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
-  {
-    "unit",
-    3,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_STRING,
-    0,   /* quantifier_offset */
-    offsetof(Sensor, unit),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
-    "status",
-    4,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_BOOL,
-    offsetof(Sensor, has_status),
-    offsetof(Sensor, status),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
 };
 static const unsigned sensor__field_indices_by_name[] = {
-  0,   /* field[0] = name */
-  3,   /* field[3] = status */
-  2,   /* field[2] = unit */
-  1,   /* field[1] = value */
+  0,   /* field[0] = ID */
+  1,   /* field[1] = device */
+  2,   /* field[2] = io */
+  3,   /* field[3] = value */
 };
 static const ProtobufCIntRange sensor__number_ranges[1 + 1] =
 {
@@ -170,23 +170,11 @@ const ProtobufCMessageDescriptor sensor__descriptor =
   (ProtobufCMessageInit) sensor__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor sensors__field_descriptors[2] =
+static const ProtobufCFieldDescriptor sensors__field_descriptors[1] =
 {
   {
-    "ID",
-    1,
-    PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_STRING,
-    0,   /* quantifier_offset */
-    offsetof(Sensors, id),
-    NULL,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
-  {
     "sensors",
-    2,
+    1,
     PROTOBUF_C_LABEL_REPEATED,
     PROTOBUF_C_TYPE_MESSAGE,
     offsetof(Sensors, n_sensors),
@@ -198,13 +186,12 @@ static const ProtobufCFieldDescriptor sensors__field_descriptors[2] =
   },
 };
 static const unsigned sensors__field_indices_by_name[] = {
-  0,   /* field[0] = ID */
-  1,   /* field[1] = sensors */
+  0,   /* field[0] = sensors */
 };
 static const ProtobufCIntRange sensors__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 2 }
+  { 0, 1 }
 };
 const ProtobufCMessageDescriptor sensors__descriptor =
 {
@@ -214,7 +201,7 @@ const ProtobufCMessageDescriptor sensors__descriptor =
   "Sensors",
   "",
   sizeof(Sensors),
-  2,
+  1,
   sensors__field_descriptors,
   sensors__field_indices_by_name,
   1,  sensors__number_ranges,

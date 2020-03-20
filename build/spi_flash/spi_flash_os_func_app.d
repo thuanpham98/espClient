@@ -1,7 +1,7 @@
 spi_flash_os_func_app.o: \
  /home/thuan/esp/esp-idf/components/spi_flash/spi_flash_os_func_app.c \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/spi_flash/include/esp_spi_flash.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
@@ -17,7 +17,7 @@ spi_flash_os_func_app.o: \
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/spi_flash/include/esp_spi_flash.h:
 

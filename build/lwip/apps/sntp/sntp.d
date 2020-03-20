@@ -3,7 +3,7 @@ apps/sntp/sntp.o: \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/time.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/time.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log_internal.h \
  /home/thuan/esp/esp-idf/components/lwip/include/apps/sntp/sntp.h \
@@ -24,7 +24,7 @@ apps/sntp/sntp.o: \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_context.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
@@ -83,7 +83,7 @@ apps/sntp/sntp.o: \
 
 /home/thuan/esp/esp-idf/components/log/include/esp_log.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 
@@ -125,7 +125,7 @@ apps/sntp/sntp.o: \
 
 /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 

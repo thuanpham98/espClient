@@ -1,7 +1,7 @@
 mbedtls/library/pkwrite.o: \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/library/pkwrite.c \
  /home/thuan/esp/esp-idf/components/mbedtls/port/include/mbedtls/esp_config.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/config.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/check_config.h \
  /home/thuan/esp/esp-idf/components/mbedtls/port/include/esp_mem.h \
@@ -21,6 +21,8 @@ mbedtls/library/pkwrite.o: \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/x509.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/platform_util.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/rsa.h \
+ /home/thuan/esp/esp-idf/components/mbedtls/port/include/mbedtls/bignum.h \
+ /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/bignum.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/ecp.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/ecdsa.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/pem.h \
@@ -30,7 +32,7 @@ mbedtls/library/pkwrite.o: \
 
 /home/thuan/esp/esp-idf/components/mbedtls/port/include/mbedtls/esp_config.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/config.h:
 
@@ -69,6 +71,10 @@ mbedtls/library/pkwrite.o: \
 /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/platform_util.h:
 
 /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/rsa.h:
+
+/home/thuan/esp/esp-idf/components/mbedtls/port/include/mbedtls/bignum.h:
+
+/home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/bignum.h:
 
 /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/ecp.h:
 

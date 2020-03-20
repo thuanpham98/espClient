@@ -1,5 +1,5 @@
 spi_common.o: /home/thuan/esp/esp-idf/components/driver/spi_common.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/driver/include/driver/spi_master.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
@@ -44,7 +44,7 @@ spi_common.o: /home/thuan/esp/esp-idf/components/driver/spi_common.c \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/driver/include/driver/spi_common.h \
  /home/thuan/esp/esp-idf/components/soc/include/soc/lldesc.h \
@@ -80,7 +80,7 @@ spi_common.o: /home/thuan/esp/esp-idf/components/driver/spi_common.c \
  /home/thuan/esp/esp-idf/components/soc/src/esp32/include/hal/spi_ll.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/hal_defs.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/driver/include/driver/spi_master.h:
 
@@ -170,7 +170,7 @@ spi_common.o: /home/thuan/esp/esp-idf/components/driver/spi_common.c \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 

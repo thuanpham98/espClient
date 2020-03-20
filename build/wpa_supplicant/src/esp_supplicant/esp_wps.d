@@ -2,7 +2,7 @@ src/esp_supplicant/esp_wps.o: \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/esp_supplicant/esp_wps.c \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/utils/includes.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/port/include/supplicant_opt.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/rsn_supp/wpa.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/utils/common.h \
@@ -82,7 +82,7 @@ src/esp_supplicant/esp_wps.o: \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/task.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/list.h \
@@ -147,7 +147,7 @@ src/esp_supplicant/esp_wps.o: \
 
 /home/thuan/esp/esp-idf/components/wpa_supplicant/port/include/supplicant_opt.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 
@@ -307,7 +307,7 @@ src/esp_supplicant/esp_wps.o: \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 

@@ -1,7 +1,7 @@
 bootloader_start.o: \
  /home/thuan/esp/esp-idf/components/bootloader/subproject/main/bootloader_start.c \
  /home/thuan/esp/esp-idf/components/log/include/esp_log.h \
- /home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h \
+ /home/thuan/espClient/build/bootloader/../include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log_internal.h \
  /home/thuan/esp/esp-idf/components/bootloader_support/include_bootloader/bootloader_init.h \
@@ -23,7 +23,7 @@ bootloader_start.o: \
 
 /home/thuan/esp/esp-idf/components/log/include/esp_log.h:
 
-/home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h:
+/home/thuan/espClient/build/bootloader/../include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 

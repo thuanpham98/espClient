@@ -1,7 +1,7 @@
 src/hal/ledc_hal.o: \
  /home/thuan/esp/esp-idf/components/soc/src/hal/ledc_hal.c \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/ledc_hal.h \
  /home/thuan/esp/esp-idf/components/soc/src/esp32/include/hal/ledc_ll.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/ledc_types.h \
@@ -17,7 +17,7 @@ src/hal/ledc_hal.o: \
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/soc/include/hal/ledc_hal.h:
 

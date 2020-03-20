@@ -12,23 +12,18 @@ menu "Example configuration"
 		help
 			Enter the password of the wifi network
 
-	config WEBSITE
-		string "Target website"
-		default "http://192.168.1.10:6969"
-		help
-			Enter the address of the target website
-
-	config RESOURCE
-		string "Website resource"
-		default "/creator"
-		help
-			Enter the resource URL
 
 	config ID_DEVICE
 		string "ID in email"
 		default "1583296319374"
 		help
 			Enter the ID
+
+	config NUMBER_DEVICE
+	int "NUMBER OPEN DEVICE"
+	default 0
+	help
+		Enter the NUMBER DEVIDE
 
 	config URL
 		string "Creator Page"

@@ -1,6 +1,6 @@
 src/cpu_util.o: /home/thuan/esp/esp-idf/components/soc/src/cpu_util.c \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/soc/include/soc/cpu.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h \
  /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/core.h \
@@ -39,7 +39,7 @@ src/cpu_util.o: /home/thuan/esp/esp-idf/components/soc/src/cpu_util.c \
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/soc/include/soc/cpu.h:
 

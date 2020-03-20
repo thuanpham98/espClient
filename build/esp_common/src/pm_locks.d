@@ -3,7 +3,7 @@ src/pm_locks.o: \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_pm.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/esp32/include/esp32/pm.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc.h \
@@ -20,7 +20,7 @@ src/pm_locks.o: \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_cntl_reg.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_cntl_struct.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/gpio_caps.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
@@ -67,7 +67,7 @@ src/pm_locks.o: \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 
@@ -101,7 +101,7 @@ src/pm_locks.o: \
 
 /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/gpio_caps.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 

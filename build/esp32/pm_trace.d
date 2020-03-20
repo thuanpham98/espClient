@@ -1,6 +1,6 @@
 pm_trace.o: /home/thuan/esp/esp-idf/components/esp32/pm_trace.c \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_private/pm_trace.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/driver/include/driver/gpio.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
@@ -32,7 +32,7 @@ pm_trace.o: /home/thuan/esp/esp-idf/components/esp32/pm_trace.c \
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_private/pm_trace.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/driver/include/driver/gpio.h:
 

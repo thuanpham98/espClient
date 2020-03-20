@@ -3,7 +3,7 @@ sdio_slave.o: /home/thuan/esp/esp-idf/components/driver/sdio_slave.c \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_config.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/hal.h \
  /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/core.h \
@@ -44,7 +44,7 @@ sdio_slave.o: /home/thuan/esp/esp-idf/components/driver/sdio_slave.c \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/sdio_slave_types.h \
  /home/thuan/esp/esp-idf/components/soc/soc/include/soc/sdio_slave_periph.h \
@@ -88,7 +88,7 @@ sdio_slave.o: /home/thuan/esp/esp-idf/components/driver/sdio_slave.c \
 
 /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_config.h:
 
@@ -170,7 +170,7 @@ sdio_slave.o: /home/thuan/esp/esp-idf/components/driver/sdio_slave.c \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 

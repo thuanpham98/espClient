@@ -1,6 +1,6 @@
 clk.o: /home/thuan/esp/esp-idf/components/esp32/clk.c \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/time.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
@@ -68,7 +68,7 @@ clk.o: /home/thuan/esp/esp-idf/components/esp32/clk.c \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/time.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 

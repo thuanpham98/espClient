@@ -1,7 +1,7 @@
 mbedtls/library/md_wrap.o: \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/library/md_wrap.c \
  /home/thuan/esp/esp-idf/components/mbedtls/port/include/mbedtls/esp_config.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/config.h \
  /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/check_config.h \
  /home/thuan/esp/esp-idf/components/mbedtls/port/include/esp_mem.h \
@@ -21,7 +21,7 @@ mbedtls/library/md_wrap.o: \
 
 /home/thuan/esp/esp-idf/components/mbedtls/port/include/mbedtls/esp_config.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/config.h:
 

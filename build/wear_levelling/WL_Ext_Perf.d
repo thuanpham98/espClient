@@ -4,7 +4,7 @@ WL_Ext_Perf.o: \
  /home/thuan/esp/esp-idf/components/wear_levelling/private_include/WL_Flash.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/wear_levelling/private_include/Flash_Access.h \
  /home/thuan/esp/esp-idf/components/wear_levelling/private_include/WL_Config.h \
@@ -22,7 +22,7 @@ WL_Ext_Perf.o: \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 

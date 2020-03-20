@@ -21,7 +21,7 @@ src/compare_set.o: \
  /home/thuan/esp/esp-idf/components/soc/include/soc/soc_memory_layout.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_assert.h \
- /home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h \
+ /home/thuan/espClient/build/bootloader/../include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-core-state.h \
@@ -70,7 +70,7 @@ src/compare_set.o: \
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_assert.h:
 
-/home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h:
+/home/thuan/espClient/build/bootloader/../include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 

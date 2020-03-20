@@ -1,5 +1,5 @@
 ulp.o: /home/thuan/esp/esp-idf/components/ulp/ulp.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
@@ -27,7 +27,7 @@ ulp.o: /home/thuan/esp/esp-idf/components/ulp/ulp.c \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/sens_reg.h \
  /home/thuan/esp/esp-idf/components/ulp/ulp_private.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 

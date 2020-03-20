@@ -1,6 +1,6 @@
 src/brownout.o: \
  /home/thuan/esp/esp-idf/components/esp_common/src/brownout.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log_internal.h \
@@ -37,7 +37,7 @@ src/brownout.o: \
  /home/thuan/esp/esp-idf/components/soc/include/hal/brownout_hal.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/brownout_caps.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_private/system_internal.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/driver/include/driver/rtc_cntl.h \
@@ -65,7 +65,7 @@ src/brownout.o: \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/log/include/esp_log.h:
 
@@ -139,7 +139,7 @@ src/brownout.o: \
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_private/system_internal.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 

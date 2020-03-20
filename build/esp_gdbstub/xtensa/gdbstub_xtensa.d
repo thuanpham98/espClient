@@ -13,7 +13,7 @@ xtensa/gdbstub_xtensa.o: \
  /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/core-matmap.h \
  /home/thuan/esp/esp-idf/components/esp_gdbstub/esp32/gdbstub_target_config.h \
  /home/thuan/esp/esp-idf/components/esp_gdbstub/private_include/esp_gdbstub_common.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/soc/include/soc/cpu.h \
  /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/specreg.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xt_instr_macros.h \
@@ -57,7 +57,7 @@ xtensa/gdbstub_xtensa.o: \
 
 /home/thuan/esp/esp-idf/components/esp_gdbstub/private_include/esp_gdbstub_common.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/soc/include/soc/cpu.h:
 

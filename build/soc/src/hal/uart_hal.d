@@ -9,7 +9,7 @@ src/hal/uart_hal.o: \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_assert.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_bit_defs.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/uart_struct.h \
@@ -34,7 +34,7 @@ src/hal/uart_hal.o: \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 
