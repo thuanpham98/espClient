@@ -27,28 +27,28 @@ typedef struct _Sensors Sensors;
 struct  _Sensor
 {
   ProtobufCMessage base;
-  char *name;
+  char *id;
+  protobuf_c_boolean has_device;
+  uint32_t device;
+  protobuf_c_boolean has_io;
+  uint32_t io;
   protobuf_c_boolean has_value;
   float value;
-  char *unit;
-  protobuf_c_boolean has_status;
-  protobuf_c_boolean status;
 };
 #define SENSOR__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&sensor__descriptor) \
-    , NULL, 0,0, NULL, 0,0 }
+    , NULL, 0,0, 0,0, 0,0 }
 
 
 struct  _Sensors
 {
   ProtobufCMessage base;
-  char *id;
   size_t n_sensors;
   Sensor **sensors;
 };
 #define SENSORS__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&sensors__descriptor) \
-    , NULL, 0,NULL }
+    , 0,NULL }
 
 
 /* Sensor methods */

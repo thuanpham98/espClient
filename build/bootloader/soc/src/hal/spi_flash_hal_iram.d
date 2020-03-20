@@ -13,7 +13,7 @@ src/hal/spi_flash_hal_iram.o: \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/spi_struct.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/gpio_sig_map.h \
- /home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h \
+ /home/thuan/espClient/build/bootloader/../include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/spi_types.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/spi_flash_types.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_types.h \
@@ -52,7 +52,7 @@ src/hal/spi_flash_hal_iram.o: \
 
 /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/gpio_sig_map.h:
 
-/home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h:
+/home/thuan/espClient/build/bootloader/../include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/soc/include/hal/spi_types.h:
 

@@ -20,7 +20,7 @@ src/esp_image_format.o: \
  /home/thuan/esp/esp-idf/components/bootloader_support/include_bootloader/bootloader_config.h \
  /home/thuan/esp/esp-idf/components/bootloader_support/include/esp_flash_partitions.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_types.h \
- /home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h \
+ /home/thuan/espClient/build/bootloader/../include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_assert.h \
  /home/thuan/esp/esp-idf/components/bootloader_support/include/esp_image_format.h \
@@ -86,7 +86,7 @@ src/esp_image_format.o: \
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_types.h:
 
-/home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h:
+/home/thuan/espClient/build/bootloader/../include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h:
 

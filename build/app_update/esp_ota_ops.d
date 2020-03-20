@@ -1,7 +1,7 @@
 esp_ota_ops.o: \
  /home/thuan/esp/esp-idf/components/app_update/esp_ota_ops.c \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h \
@@ -44,7 +44,7 @@ esp_ota_ops.o: \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/task.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/list.h \
@@ -77,7 +77,7 @@ esp_ota_ops.o: \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 
@@ -163,7 +163,7 @@ esp_ota_ops.o: \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 

@@ -1,6 +1,6 @@
 debug_helpers.o: \
  /home/thuan/esp/esp-idf/components/xtensa/debug_helpers.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_types.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
@@ -27,7 +27,7 @@ debug_helpers.o: \
  /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/extreg.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_types.h:
 

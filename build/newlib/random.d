@@ -1,10 +1,10 @@
 random.o: /home/thuan/esp/esp-idf/components/newlib/random.c \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/random.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/errno.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_bit_defs.h \
@@ -17,13 +17,13 @@ random.o: /home/thuan/esp/esp-idf/components/newlib/random.c \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/errno.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 

@@ -3,7 +3,7 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/src.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/detail/config.hpp \
  /home/thuan/esp/esp-idf/components/asio/port/include/esp_asio_config.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/error.ipp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/error.hpp \
  /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/error_code.hpp \
@@ -24,7 +24,7 @@ asio/asio/src/asio.o: \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
@@ -315,7 +315,7 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/asio/port/include/esp_asio_config.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/asio/asio/asio/include/asio/impl/error.ipp:
 
@@ -357,7 +357,7 @@ asio/asio/src/asio.o: \
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 

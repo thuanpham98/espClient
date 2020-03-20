@@ -2,7 +2,7 @@ loopback/esp_netif_loopback.o: \
  /home/thuan/esp/esp-idf/components/esp_netif/loopback/esp_netif_loopback.c \
  /home/thuan/esp/esp-idf/components/esp_netif/lwip/esp_netif_lwip_internal.h \
  /home/thuan/esp/esp-idf/components/esp_netif/include/esp_netif.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_wifi/include/esp_wifi_types.h \
  /home/thuan/esp/esp-idf/components/esp_wifi/include/esp_private/esp_wifi_types_private.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
@@ -58,7 +58,7 @@ loopback/esp_netif_loopback.o: \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/driver/include/driver/spi_common.h \
  /home/thuan/esp/esp-idf/components/soc/include/soc/lldesc.h \
@@ -117,7 +117,7 @@ loopback/esp_netif_loopback.o: \
 
 /home/thuan/esp/esp-idf/components/esp_netif/include/esp_netif.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_wifi/include/esp_wifi_types.h:
 
@@ -229,7 +229,7 @@ loopback/esp_netif_loopback.o: \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 

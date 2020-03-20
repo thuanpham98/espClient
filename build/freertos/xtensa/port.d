@@ -8,7 +8,7 @@ xtensa/port.o: /home/thuan/esp/esp-idf/components/freertos/xtensa/port.c \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h \
  /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/system.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_config.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_context.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h \
@@ -46,7 +46,7 @@ xtensa/port.o: /home/thuan/esp/esp-idf/components/freertos/xtensa/port.c \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/task.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/list.h \
@@ -74,7 +74,7 @@ xtensa/port.o: /home/thuan/esp/esp-idf/components/freertos/xtensa/port.c \
 
 /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_config.h:
 
@@ -150,7 +150,7 @@ xtensa/port.o: /home/thuan/esp/esp-idf/components/freertos/xtensa/port.c \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 

@@ -2,7 +2,7 @@ src/tls/x509v3.o: \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/tls/x509v3.c \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/utils/includes.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/port/include/supplicant_opt.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/rsn_supp/wpa.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/utils/common.h \
@@ -43,7 +43,7 @@ src/tls/x509v3.o: \
 
 /home/thuan/esp/esp-idf/components/wpa_supplicant/port/include/supplicant_opt.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 

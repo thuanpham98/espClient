@@ -1,6 +1,6 @@
 esp_flash_spi_init.o: \
  /home/thuan/esp/esp-idf/components/spi_flash/esp_flash_spi_init.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/spi_flash/include/esp_flash.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
@@ -56,7 +56,7 @@ esp_flash_spi_init.o: \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/lldesc.h \
  /home/thuan/esp/esp-idf/components/spi_flash/include/esp_flash_internal.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/spi_flash/include/esp_flash.h:
 

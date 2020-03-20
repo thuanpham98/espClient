@@ -1,6 +1,6 @@
 src/flash_encrypt.o: \
  /home/thuan/esp/esp-idf/components/bootloader_support/src/flash_encrypt.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log_internal.h \
@@ -25,7 +25,7 @@ src/flash_encrypt.o: \
  /home/thuan/esp/esp-idf/components/bootloader_support/include/esp_app_format.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/secure_boot.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/log/include/esp_log.h:
 

@@ -1,6 +1,6 @@
 src/bootloader_random.o: \
  /home/thuan/esp/esp-idf/components/bootloader_support/src/bootloader_random.c \
- /home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h \
+ /home/thuan/espClient/build/bootloader/../include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/bootloader_support/include/bootloader_random.h \
  /home/thuan/esp/esp-idf/components/soc/include/soc/cpu.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h \
@@ -56,7 +56,7 @@ src/bootloader_random.o: \
  /home/thuan/esp/esp-idf/components/log/include/esp_log_internal.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/io_mux_reg.h
 
-/home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h:
+/home/thuan/espClient/build/bootloader/../include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/bootloader_support/include/bootloader_random.h:
 

@@ -1,6 +1,6 @@
 ulp_macro.o: /home/thuan/esp/esp-idf/components/ulp/ulp_macro.c \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
@@ -19,7 +19,7 @@ ulp_macro.o: /home/thuan/esp/esp-idf/components/ulp/ulp_macro.c \
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 

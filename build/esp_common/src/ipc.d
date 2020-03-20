@@ -1,6 +1,6 @@
 src/ipc.o: /home/thuan/esp/esp-idf/components/esp_common/src/ipc.c \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_ipc.h \
@@ -44,7 +44,7 @@ src/ipc.o: /home/thuan/esp/esp-idf/components/esp_common/src/ipc.c \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/task.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/list.h \
@@ -53,7 +53,7 @@ src/ipc.o: /home/thuan/esp/esp-idf/components/esp_common/src/ipc.c \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 
@@ -141,7 +141,7 @@ src/ipc.o: /home/thuan/esp/esp-idf/components/esp_common/src/ipc.c \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 

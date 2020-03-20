@@ -1,5 +1,5 @@
 spiram_psram.o: /home/thuan/esp/esp-idf/components/esp32/spiram_psram.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
@@ -73,7 +73,7 @@ spiram_psram.o: /home/thuan/esp/esp-idf/components/esp32/spiram_psram.c \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_io_struct.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_cntl_struct.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 

@@ -1,6 +1,6 @@
 src/esp32/emac_hal.o: \
  /home/thuan/esp/esp-idf/components/soc/src/esp32/emac_hal.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/soc/soc/include/soc/gpio_periph.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/io_mux_reg.h \
@@ -29,7 +29,7 @@ src/esp32/emac_hal.o: \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/emac_mac_struct.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/emac_ext_struct.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 

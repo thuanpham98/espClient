@@ -3,7 +3,7 @@ src/esp_timer_impl_lac.o: \
  /home/thuan/esp/esp-idf/components/esp_timer/private_include/esp_timer_impl.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/esp32/include/esp_intr_alloc.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_api.h \
@@ -17,7 +17,7 @@ src/esp_timer_impl_lac.o: \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtensa-versions.h \
  /home/thuan/esp/esp-idf/components/xtensa/esp32/include/xtensa/config/core-matmap.h \
  /home/thuan/esp/esp-idf/components/esp_timer/include/esp_timer.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_bit_defs.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
@@ -74,7 +74,7 @@ src/esp_timer_impl_lac.o: \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 
@@ -102,7 +102,7 @@ src/esp_timer_impl_lac.o: \
 
 /home/thuan/esp/esp-idf/components/esp_timer/include/esp_timer.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 

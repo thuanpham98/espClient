@@ -1,7 +1,7 @@
 src/esp32/rtc_clk.o: \
  /home/thuan/esp/esp-idf/components/soc/src/esp32/rtc_clk.c \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/rtc.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h \
@@ -61,7 +61,7 @@ src/esp32/rtc_clk.o: \
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/rtc.h:
 

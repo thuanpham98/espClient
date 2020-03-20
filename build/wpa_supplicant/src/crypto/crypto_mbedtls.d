@@ -1,9 +1,9 @@
 src/crypto/crypto_mbedtls.o: \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/crypto/crypto_mbedtls.c \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_bit_defs.h \
@@ -40,13 +40,13 @@ src/crypto/crypto_mbedtls.o: \
  /home/thuan/esp/esp-idf/components/mbedtls/port/include/esp32/aes.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/aes.h
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 

@@ -1,6 +1,6 @@
 src/core_dump_common.o: \
  /home/thuan/esp/esp-idf/components/espcoredump/src/core_dump_common.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/espcoredump/include_core_dump/esp_core_dump_priv.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
@@ -48,14 +48,14 @@ src/core_dump_common.o: \
  /home/thuan/esp/esp-idf/components/heap/include/multi_heap.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/portbenchmark.h \
  /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/espcoredump/include_core_dump/esp_core_dump_priv.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_debug_helpers.h \
  /home/thuan/esp/esp-idf/components/bootloader_support/include/esp_app_format.h \
  /home/thuan/esp/esp-idf/components/espcoredump/include_core_dump/core_dump_elf.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/espcoredump/include_core_dump/esp_core_dump_priv.h:
 
@@ -151,7 +151,7 @@ src/core_dump_common.o: \
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/mpu_wrappers.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 

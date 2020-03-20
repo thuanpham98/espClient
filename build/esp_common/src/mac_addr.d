@@ -1,7 +1,7 @@
 src/mac_addr.o: \
  /home/thuan/esp/esp-idf/components/esp_common/src/mac_addr.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
@@ -16,9 +16,9 @@ src/mac_addr.o: \
  /home/thuan/esp/esp-idf/components/efuse/esp32/include/esp_efuse_table.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/efuse.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 

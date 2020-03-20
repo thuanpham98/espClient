@@ -6,7 +6,7 @@ lwip/src/core/ipv6/ethip6.o: \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/sys/time.h \
  /home/thuan/esp/esp-idf/components/vfs/include/sys/ioctl.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_task.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_config.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/hal.h \
@@ -19,7 +19,7 @@ lwip/src/core/ipv6/ethip6.o: \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
@@ -103,7 +103,7 @@ lwip/src/core/ipv6/ethip6.o: \
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_task.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/FreeRTOSConfig.h:
 
@@ -129,7 +129,7 @@ lwip/src/core/ipv6/ethip6.o: \
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 

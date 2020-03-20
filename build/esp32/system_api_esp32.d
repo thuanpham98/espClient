@@ -1,9 +1,9 @@
 system_api_esp32.o: \
  /home/thuan/esp/esp-idf/components/esp32/system_api_esp32.c \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_bit_defs.h \
@@ -151,15 +151,16 @@ system_api_esp32.o: \
  /home/thuan/esp/esp-idf/components/soc/src/esp32/include/hal/timer_ll.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/timer_types.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/timer_group_caps.h \
- /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_api.h
+ /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_api.h \
+ /home/thuan/esp/esp-idf/components/esp32/include/esp32/cache_err_int.h
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 
@@ -456,4 +457,6 @@ system_api_esp32.o: \
 /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/timer_group_caps.h:
 
 /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_api.h:
+
+/home/thuan/esp/esp-idf/components/esp32/include/esp32/cache_err_int.h:
 /home/thuan/esp/esp-idf/components/esp32/./system_api_esp32.c:

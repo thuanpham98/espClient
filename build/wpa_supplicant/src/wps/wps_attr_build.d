@@ -2,7 +2,7 @@ src/wps/wps_attr_build.o: \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/wps/wps_attr_build.c \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/utils/includes.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/port/include/supplicant_opt.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/src/utils/common.h \
  /home/thuan/esp/esp-idf/components/wpa_supplicant/port/include/os.h \
@@ -41,7 +41,7 @@ src/wps/wps_attr_build.o: \
 
 /home/thuan/esp/esp-idf/components/wpa_supplicant/port/include/supplicant_opt.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 

@@ -4,7 +4,7 @@ src/nvs_storage.o: \
  /home/thuan/esp/esp-idf/components/nvs_flash/src/nvs.hpp \
  /home/thuan/esp/esp-idf/components/nvs_flash/include/nvs.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
@@ -26,7 +26,7 @@ src/nvs_storage.o: \
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h:
 

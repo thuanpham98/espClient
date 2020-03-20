@@ -1,7 +1,7 @@
 libsodium/src/libsodium/crypto_secretbox/crypto_secretbox_easy.o: \
  /home/thuan/esp/esp-idf/components/libsodium/libsodium/src/libsodium/crypto_secretbox/crypto_secretbox_easy.c \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/libsodium/libsodium/src/libsodium/include/sodium/crypto_core_hsalsa20.h \
  /home/thuan/esp/esp-idf/components/libsodium/libsodium/src/libsodium/include/sodium/export.h \
@@ -14,7 +14,7 @@ libsodium/src/libsodium/crypto_secretbox/crypto_secretbox_easy.o: \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 

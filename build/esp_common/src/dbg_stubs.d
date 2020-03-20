@@ -15,7 +15,7 @@ src/dbg_stubs.o: \
  /home/thuan/esp/esp-idf/components/soc/include/hal/cpu_hal.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_err.h \
  /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/cpu_types.h \
  /home/thuan/esp/esp-idf/components/soc/src/esp32/include/hal/cpu_ll.h \
@@ -55,7 +55,7 @@ src/dbg_stubs.o: \
 
 /home/thuan/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_compiler.h:
 

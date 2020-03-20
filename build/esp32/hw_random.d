@@ -1,6 +1,6 @@
 hw_random.o: /home/thuan/esp/esp-idf/components/esp32/hw_random.c \
  /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp32/include/esp32/clk.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/wdev_reg.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/soc.h \
@@ -24,7 +24,7 @@ hw_random.o: /home/thuan/esp/esp-idf/components/esp32/hw_random.c \
 
 /home/thuan/esp/esp-idf/components/xtensa/include/esp_attr.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp32/include/esp32/clk.h:
 

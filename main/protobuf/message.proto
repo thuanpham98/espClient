@@ -2,13 +2,12 @@ syntax = "proto3";
 
 
 message Sensor {
-    string name=1;
-    float value=2;
-    string unit=3;
-    bool status=4;
+    string ID=1;
+    uint32 device=2;
+    uint32 io =3;
+    float value=4;
 }
 
 message Sensors {
-    string ID=1;
-    repeated Sensor sensors=2;
+    repeated Sensor sensors=1;
 }

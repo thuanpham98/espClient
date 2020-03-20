@@ -2,7 +2,7 @@ wear_levelling.o: \
  /home/thuan/esp/esp-idf/components/wear_levelling/wear_levelling.cpp \
  /home/thuan/esp/esp-idf/components/wear_levelling/include/wear_levelling.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log_internal.h \
  /home/thuan/esp/esp-idf/components/spi_flash/include/esp_partition.h \
@@ -32,7 +32,7 @@ wear_levelling.o: \
 
 /home/thuan/esp/esp-idf/components/log/include/esp_log.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h:
 

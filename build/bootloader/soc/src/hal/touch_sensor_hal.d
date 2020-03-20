@@ -14,7 +14,7 @@ src/hal/touch_sensor_hal.o: \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/sens_struct.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_io_struct.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/touch_sensor_types.h \
- /home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h \
+ /home/thuan/espClient/build/bootloader/../include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/touch_sensor_hal.h
 
 /home/thuan/esp/esp-idf/components/soc/src/esp32/include/hal/touch_sensor_hal.h:
@@ -45,7 +45,7 @@ src/hal/touch_sensor_hal.o: \
 
 /home/thuan/esp/esp-idf/components/soc/include/hal/touch_sensor_types.h:
 
-/home/thuan/Desktop/espClient/build/bootloader/../include/sdkconfig.h:
+/home/thuan/espClient/build/bootloader/../include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/soc/include/hal/touch_sensor_hal.h:
 /home/thuan/esp/esp-idf/components/soc/src/hal/touch_sensor_hal.c:

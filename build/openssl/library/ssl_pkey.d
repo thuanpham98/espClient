@@ -9,7 +9,7 @@ library/ssl_pkey.o: \
  /home/thuan/esp/esp-idf/components/openssl/include/internal/ssl_methods.h \
  /home/thuan/esp/esp-idf/components/openssl/include/internal/ssl_dbg.h \
  /home/thuan/esp/esp-idf/components/openssl/include/platform/ssl_opt.h \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/openssl/include/platform/ssl_port.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_types.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log.h \
@@ -35,7 +35,7 @@ library/ssl_pkey.o: \
 
 /home/thuan/esp/esp-idf/components/openssl/include/platform/ssl_opt.h:
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/openssl/include/platform/ssl_port.h:
 

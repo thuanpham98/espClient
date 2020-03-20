@@ -1,6 +1,6 @@
 src/bootloader_random.o: \
  /home/thuan/esp/esp-idf/components/bootloader_support/src/bootloader_random.c \
- /home/thuan/Desktop/espClient/build/include/sdkconfig.h \
+ /home/thuan/espClient/build/include/sdkconfig.h \
  /home/thuan/esp/esp-idf/components/bootloader_support/include/bootloader_random.h \
  /home/thuan/esp/esp-idf/components/soc/include/soc/cpu.h \
  /home/thuan/esp/esp-idf/components/xtensa/include/xtensa/corebits.h \
@@ -57,11 +57,11 @@ src/bootloader_random.o: \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/ets_sys.h \
  /home/thuan/esp/esp-idf/components/log/include/esp_log_internal.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/io_mux_reg.h \
- /home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h \
+ /home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h \
  /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h \
  /home/thuan/esp/esp-idf/components/driver/include/driver/periph_ctrl.h
 
-/home/thuan/Desktop/espClient/build/include/sdkconfig.h:
+/home/thuan/espClient/build/include/sdkconfig.h:
 
 /home/thuan/esp/esp-idf/components/bootloader_support/include/bootloader_random.h:
 
@@ -175,7 +175,7 @@ src/bootloader_random.o: \
 
 /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/io_mux_reg.h:
 
-/home/thuan/esp/esp-idf/components/esp_common/include/esp_system.h:
+/home/thuan/esp/esp-idf/components/esp_system/include/esp_system.h:
 
 /home/thuan/esp/esp-idf/components/esp_common/include/esp_idf_version.h:
 
