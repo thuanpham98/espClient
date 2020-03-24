@@ -1,0 +1,5 @@
+.vscode/
+
+build/!settings.json
+
+esp-idf/
