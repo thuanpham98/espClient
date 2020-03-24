@@ -12,6 +12,17 @@ menu "Example configuration"
 		help
 			Enter the password of the wifi network
 
+	config MAXIMUM_RETRY
+		int "100"
+		default 100
+		help
+			Enter the max time retry
+
+	config MAX_HTTP_RECV_BUFFER
+		int "512"
+		default 512
+		help
+			Enter the max memory in byte for buffer receive
 
 	config ID_DEVICE
 		string "ID in email"
@@ -20,14 +31,14 @@ menu "Example configuration"
 			Enter the ID
 
 	config NUMBER_DEVICE
-	int "NUMBER OPEN DEVICE"
-	default 0
-	help
-		Enter the NUMBER DEVIDE
+		int "NUMBER OPEN DEVICE"
+		default 0
+		help
+			Enter the NUMBER DEVIDE
 
-	config URL
-		string "Creator Page"
-		default "http://192.168.1.10:6969/creator"
+	config URL_SERVER
+		string "Stored"
+		default "http://192.168.1.10:6969/storage"
 		help
 			Enter the URL
 
