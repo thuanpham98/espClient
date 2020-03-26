@@ -41,10 +41,10 @@
 #include "driver/ledc.h"
 
 /* no ideal for it */
-#define GPIO_OUTPUT_PIN_SEL ((1ULL << GPIO_NUM_4) | (1ULL << GPIO_NUM_5) |                                                   \
-                             (1ULL << GPIO_NUM_13) | (1ULL << GPIO_NUM_14) | (1ULL << GPIO_NUM_15) |                         \
-                             (1ULL << GPIO_NUM_18) | (1ULL << GPIO_NUM_19) | (1ULL << GPIO_NUM_21) | (1ULL << GPIO_NUM_22) | \
-                             (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_27) | (1ULL << GPIO_NUM_32) | (1ULL << GPIO_NUM_33))
+#define GPIO_OUTPUT_PIN_SEL ((1ULL << GPIO_NUM_0)  | (1ULL << GPIO_NUM_2)  | (1ULL << GPIO_NUM_4)  | (1ULL << GPIO_NUM_5) |  \
+                             (1ULL << GPIO_NUM_12) | (1ULL << GPIO_NUM_13) | (1ULL << GPIO_NUM_14) | (1ULL << GPIO_NUM_15)|  \
+                              (1ULL << GPIO_NUM_18)| (1ULL << GPIO_NUM_19) | \
+                             (1ULL << GPIO_NUM_21) | (1ULL << GPIO_NUM_22) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_27))
 ///////////////////////////////////////////////////////////////////////
 
 /* define from file Konfig */
@@ -247,10 +247,10 @@ void getTask(void *pv)
                     {
                         dac_output_voltage(io - 25, val);
                     }
-                    else if (io == 5)
-                    {
-                        ledc_set_duty_and_update(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, val, 0);
-                    }
+                    // else if (io == 32)
+                    // {
+                    //     ledc_set_duty_and_update(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, val, 0);
+                    // }
                     else
                     {
                         gpio_set_level(io, val);
@@ -312,6 +312,11 @@ void app_main(void)
     /* call function init wifi */
     wifi_init_sta();
 
+    // gpio_pad_select_gpio(0);gpio_pad_select_gpio(2);gpio_pad_select_gpio(4);gpio_pad_select_gpio(5);
+    // gpio_pad_select_gpio(12);gpio_pad_select_gpio(13);gpio_pad_select_gpio(14);gpio_pad_select_gpio(15);
+    // gpio_pad_select_gpio(18);gpio_pad_select_gpio(19);gpio_pad_select_gpio(32);gpio_pad_select_gpio(33);
+    // gpio_pad_select_gpio(21);gpio_pad_select_gpio(22);gpio_pad_select_gpio(23);gpio_pad_select_gpio(27);
+
     /* config gpio output */
     gpio_config_t output_conf;
     output_conf.intr_type = GPIO_PIN_INTR_DISABLE;
@@ -327,27 +332,27 @@ void app_main(void)
 
 
     /* config pwm */
-    ledc_timer_config_t t_config = {
+    // ledc_timer_config_t t_config = {
 
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
-        .duty_resolution = LEDC_TIMER_8_BIT,
-        .timer_num = 2,
-        .freq_hz = 10000,
-        .clk_cfg = LEDC_USE_APB_CLK,
-    };
+    //     .speed_mode = LEDC_HIGH_SPEED_MODE,
+    //     .duty_resolution = LEDC_TIMER_8_BIT,
+    //     .timer_num = 2,
+    //     .freq_hz = 10000,
+    //     .clk_cfg = LEDC_USE_APB_CLK,
+    // };
 
-    ledc_channel_config_t tc_config = {
-        .gpio_num = 5,
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
-        .channel = LEDC_CHANNEL_2,
-        .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = LEDC_TIMER_2,
-        .duty = 50,
-        .hpoint = 0,
-    };
-    ledc_timer_config(&t_config);
-    ledc_channel_config(&tc_config);
-    ledc_fade_func_install(0); /*!> if we don't have this function, can't update duty */
+    // ledc_channel_config_t tc_config = {
+    //     .gpio_num = 34,
+    //     .speed_mode = LEDC_HIGH_SPEED_MODE,
+    //     .channel = LEDC_CHANNEL_2,
+    //     .intr_type = LEDC_INTR_DISABLE,
+    //     .timer_sel = LEDC_TIMER_2,
+    //     .duty = 50,
+    //     .hpoint = 0,
+    // };
+    // ledc_timer_config(&t_config);
+    // ledc_channel_config(&tc_config);
+    // ledc_fade_func_install(0); /*!> if we don't have this function, can't update duty */
 
     /* start Freertos */
     xTaskCreate(&getTask, "getTask", 4096 * 3, NULL, 2, NULL);

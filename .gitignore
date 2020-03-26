@@ -1,5 +1,5 @@
-.vscode/
+.vscode/!settings.json
 
-build/!settings.json
+build/
 
 esp-idf/
