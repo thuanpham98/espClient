@@ -28,7 +28,8 @@
         "type_traits": "cpp",
         "system_error": "c",
         "cjson_utils.h": "c",
-        "event_groups.h": "c"
+        "event_groups.h": "c",
+        "dac.h": "c"
     },
     "cmake.configureOnOpen": false
 }

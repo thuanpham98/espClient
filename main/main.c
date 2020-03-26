@@ -312,15 +312,16 @@ void app_main(void)
     /* call function init wifi */
     wifi_init_sta();
 
-    // gpio_pad_select_gpio(0);gpio_pad_select_gpio(2);gpio_pad_select_gpio(4);gpio_pad_select_gpio(5);
-    // gpio_pad_select_gpio(12);gpio_pad_select_gpio(13);gpio_pad_select_gpio(14);gpio_pad_select_gpio(15);
-    // gpio_pad_select_gpio(18);gpio_pad_select_gpio(19);
-    // gpio_pad_select_gpio(21);gpio_pad_select_gpio(22);gpio_pad_select_gpio(23);gpio_pad_select_gpio(27);
-
-    gpio_pad_select_gpio(32);gpio_pad_select_gpio(33);
-    gpio_set_direction(32,GPIO_MODE_OUTPUT);
-    gpio_set_direction(33,GPIO_MODE_OUTPUT);
     /* config gpio output */
+    gpio_pad_select_gpio(16);
+    gpio_pad_select_gpio(17);
+    gpio_set_direction(16,GPIO_MODE_OUTPUT);
+    gpio_set_direction(17,GPIO_MODE_OUTPUT);
+    gpio_pad_select_gpio(32);
+    gpio_pad_select_gpio(33);
+    gpio_set_direction(32,GPIO_MODE_OUTPUT);
+    gpio_set_direction(33,GPIO_MODE_OUTPUT);/*!> io32 and io33 is special io, need to choose it  */
+
     gpio_config_t output_conf;
     output_conf.intr_type = GPIO_PIN_INTR_DISABLE;
     output_conf.mode = GPIO_MODE_OUTPUT;
@@ -335,27 +336,28 @@ void app_main(void)
 
 
     /* config pwm */
-    // ledc_timer_config_t t_config = {
+    ledc_timer_config_t t_config = {
 
-    //     .speed_mode = LEDC_HIGH_SPEED_MODE,
-    //     .duty_resolution = LEDC_TIMER_8_BIT,
-    //     .timer_num = 2,
-    //     .freq_hz = 10000,
-    //     .clk_cfg = LEDC_USE_APB_CLK,
-    // };
+        .speed_mode = LEDC_HIGH_SPEED_MODE,
+        .duty_resolution = LEDC_TIMER_8_BIT,
+        .timer_num = 2,
+        .freq_hz = 10000,
+        .clk_cfg = LEDC_USE_APB_CLK,
+    };
 
-    // ledc_channel_config_t tc_config = {
-    //     .gpio_num = 34,
-    //     .speed_mode = LEDC_HIGH_SPEED_MODE,
-    //     .channel = LEDC_CHANNEL_2,
-    //     .intr_type = LEDC_INTR_DISABLE,
-    //     .timer_sel = LEDC_TIMER_2,
-    //     .duty = 50,
-    //     .hpoint = 0,
-    // };
-    // ledc_timer_config(&t_config);
-    // ledc_channel_config(&tc_config);
-    // ledc_fade_func_install(0); /*!> if we don't have this function, can't update duty */
+    gpio_pad_select_gpio(34);
+    ledc_channel_config_t tc_config = {
+        .gpio_num = 34,
+        .speed_mode = LEDC_HIGH_SPEED_MODE,
+        .channel = LEDC_CHANNEL_2,
+        .intr_type = LEDC_INTR_DISABLE,
+        .timer_sel = LEDC_TIMER_2,
+        .duty = 50,
+        .hpoint = 0,
+    };
+    ledc_timer_config(&t_config);
+    ledc_channel_config(&tc_config);
+    ledc_fade_func_install(0); /*!> if we don't have this function, can't update duty */
 
     /* start Freertos */
     xTaskCreate(&getTask, "getTask", 4096 * 3, NULL, 2, NULL);
