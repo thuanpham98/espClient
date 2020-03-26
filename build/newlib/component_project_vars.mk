@@ -4,5 +4,5 @@ COMPONENT_LDFLAGS += -L$(BUILD_DIR_BASE)/newlib -lnewlib -lc -lm -u newlib_inclu
 COMPONENT_LINKER_DEPS += 
 COMPONENT_SUBMODULES += 
 COMPONENT_LIBRARIES += newlib
-COMPONENT_LDFRAGMENTS += $(IDF_PATH)/components/newlib/esp32-spiram-rom-functions-c.lf $(IDF_PATH)/components/newlib/newlib.lf
+COMPONENT_LDFRAGMENTS += $(IDF_PATH)/components/newlib/newlib.lf
 component-newlib-build: 
