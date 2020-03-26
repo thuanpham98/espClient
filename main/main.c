@@ -314,9 +314,12 @@ void app_main(void)
 
     // gpio_pad_select_gpio(0);gpio_pad_select_gpio(2);gpio_pad_select_gpio(4);gpio_pad_select_gpio(5);
     // gpio_pad_select_gpio(12);gpio_pad_select_gpio(13);gpio_pad_select_gpio(14);gpio_pad_select_gpio(15);
-    // gpio_pad_select_gpio(18);gpio_pad_select_gpio(19);gpio_pad_select_gpio(32);gpio_pad_select_gpio(33);
+    // gpio_pad_select_gpio(18);gpio_pad_select_gpio(19);
     // gpio_pad_select_gpio(21);gpio_pad_select_gpio(22);gpio_pad_select_gpio(23);gpio_pad_select_gpio(27);
 
+    gpio_pad_select_gpio(32);gpio_pad_select_gpio(33);
+    gpio_set_direction(32,GPIO_MODE_OUTPUT);
+    gpio_set_direction(33,GPIO_MODE_OUTPUT);
     /* config gpio output */
     gpio_config_t output_conf;
     output_conf.intr_type = GPIO_PIN_INTR_DISABLE;
