@@ -128,12 +128,18 @@ main.o: /home/thuan/espClient/main/main.c \
  /home/thuan/esp/esp-idf/components/tcp_transport/include/esp_transport.h \
  /home/thuan/esp/esp-idf/components/tcp_transport/include/esp_transport_tcp.h \
  /home/thuan/esp/esp-idf/components/tcp_transport/include/esp_transport.h \
- /home/thuan/espClient/components/include/message.pb-c.h \
- /home/thuan/esp/esp-idf/components/protobuf-c/protobuf-c/protobuf-c/protobuf-c.h \
- /home/thuan/espClient/components/include/stringtoarray.h \
- /home/thuan/esp/esp-idf/components/driver/include/driver/gpio.h \
+ /home/thuan/esp/esp-idf/components/json/cJSON/cJSON.h \
+ /home/thuan/esp/esp-idf/components/json/cJSON/cJSON_Utils.h \
+ /home/thuan/esp/esp-idf/components/json/cJSON/cJSON.h \
+ /home/thuan/esp/esp-idf/components/unity/unity/src/unity.h \
+ /home/thuan/esp/esp-idf/components/unity/unity/src/unity_internals.h \
+ /home/thuan/esp/esp-idf/components/unity/include/unity_config.h \
+ /home/thuan/esp/esp-idf/components/unity/include/unity_test_runner.h \
+ /home/thuan/esp/esp-idf/components/driver/include/driver/i2c.h \
  /home/thuan/esp/esp-idf/components/esp32/include/esp_intr_alloc.h \
  /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_api.h \
+ /home/thuan/esp/esp-idf/components/esp_ringbuf/include/freertos/ringbuf.h \
+ /home/thuan/esp/esp-idf/components/driver/include/driver/gpio.h \
  /home/thuan/esp/esp-idf/components/soc/soc/include/soc/gpio_periph.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/io_mux_reg.h \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/gpio_struct.h \
@@ -141,13 +147,8 @@ main.o: /home/thuan/espClient/main/main.c \
  /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/gpio_caps.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/gpio_types.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/gpio.h \
- /home/thuan/esp/esp-idf/components/driver/include/driver/dac.h \
- /home/thuan/esp/esp-idf/components/soc/include/hal/dac_types.h \
- /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/dac_caps.h \
- /home/thuan/esp/esp-idf/components/driver/include/driver/ledc.h \
- /home/thuan/esp/esp-idf/components/soc/include/hal/ledc_types.h \
- /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/ledc_caps.h \
- /home/thuan/esp/esp-idf/components/driver/include/driver/periph_ctrl.h
+ /home/thuan/esp/esp-idf/components/soc/include/hal/i2c_types.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/i2c_caps.h
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h:
 
@@ -407,17 +408,29 @@ main.o: /home/thuan/espClient/main/main.c \
 
 /home/thuan/esp/esp-idf/components/tcp_transport/include/esp_transport.h:
 
-/home/thuan/espClient/components/include/message.pb-c.h:
+/home/thuan/esp/esp-idf/components/json/cJSON/cJSON.h:
 
-/home/thuan/esp/esp-idf/components/protobuf-c/protobuf-c/protobuf-c/protobuf-c.h:
+/home/thuan/esp/esp-idf/components/json/cJSON/cJSON_Utils.h:
 
-/home/thuan/espClient/components/include/stringtoarray.h:
+/home/thuan/esp/esp-idf/components/json/cJSON/cJSON.h:
 
-/home/thuan/esp/esp-idf/components/driver/include/driver/gpio.h:
+/home/thuan/esp/esp-idf/components/unity/unity/src/unity.h:
+
+/home/thuan/esp/esp-idf/components/unity/unity/src/unity_internals.h:
+
+/home/thuan/esp/esp-idf/components/unity/include/unity_config.h:
+
+/home/thuan/esp/esp-idf/components/unity/include/unity_test_runner.h:
+
+/home/thuan/esp/esp-idf/components/driver/include/driver/i2c.h:
 
 /home/thuan/esp/esp-idf/components/esp32/include/esp_intr_alloc.h:
 
 /home/thuan/esp/esp-idf/components/freertos/xtensa/include/freertos/xtensa_api.h:
+
+/home/thuan/esp/esp-idf/components/esp_ringbuf/include/freertos/ringbuf.h:
+
+/home/thuan/esp/esp-idf/components/driver/include/driver/gpio.h:
 
 /home/thuan/esp/esp-idf/components/soc/soc/include/soc/gpio_periph.h:
 
@@ -433,17 +446,7 @@ main.o: /home/thuan/espClient/main/main.c \
 
 /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/gpio.h:
 
-/home/thuan/esp/esp-idf/components/driver/include/driver/dac.h:
+/home/thuan/esp/esp-idf/components/soc/include/hal/i2c_types.h:
 
-/home/thuan/esp/esp-idf/components/soc/include/hal/dac_types.h:
-
-/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/dac_caps.h:
-
-/home/thuan/esp/esp-idf/components/driver/include/driver/ledc.h:
-
-/home/thuan/esp/esp-idf/components/soc/include/hal/ledc_types.h:
-
-/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/ledc_caps.h:
-
-/home/thuan/esp/esp-idf/components/driver/include/driver/periph_ctrl.h:
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/i2c_caps.h:
 /home/thuan/espClient/main/./main.c:

@@ -1482,7 +1482,7 @@ END GROUP
  *fill*         0x000000003fff0f52        0x2 
  .rodata.__func__$4400
                 0x000000003fff0f54       0x20 /home/thuan/espClient/build/bootloader/bootloader_support/libbootloader_support.a(esp_image_format.o)
- .rodata.__func__$4722
+ .rodata.__func__$4725
                 0x000000003fff0f74       0x16 /home/thuan/espClient/build/bootloader/bootloader_support/libbootloader_support.a(esp_image_format.o)
  *fill*         0x000000003fff0f8a        0x2 
  .rodata.bootloader_fill_random.str1.4

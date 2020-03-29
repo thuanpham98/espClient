@@ -31,21 +31,15 @@
 #include "esp_transport.h"
 #include "esp_transport_tcp.h"
 
-/* library for protobuf-C */
-#include "message.pb-c.h"
-#include "stringtoarray.h"
+/* library for Json */
+#include <limits.h>
+#include <ctype.h>
+#include <cJSON.h>
+#include <cJSON_Utils.h>
+#include "unity.h"
 
 /* library for perihape */
-#include "driver/gpio.h"
-#include "driver/dac.h"
-#include "driver/ledc.h"
-
-/* no ideal for it */
-#define GPIO_OUTPUT_PIN_SEL ((1ULL << GPIO_NUM_0)  | (1ULL << GPIO_NUM_2)  | (1ULL << GPIO_NUM_4)  | (1ULL << GPIO_NUM_5) |  \
-                             (1ULL << GPIO_NUM_12) | (1ULL << GPIO_NUM_13) | (1ULL << GPIO_NUM_14) | (1ULL << GPIO_NUM_15)|  \
-                              (1ULL << GPIO_NUM_18)| (1ULL << GPIO_NUM_19) | \
-                             (1ULL << GPIO_NUM_21) | (1ULL << GPIO_NUM_22) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_27))
-///////////////////////////////////////////////////////////////////////
+#include "driver/i2c.h"
 
 /* define from file Konfig */
 #define ESP_WIFI_SSID               CONFIG_WIFI_SSID
@@ -55,6 +49,104 @@
 #define ESP_MAX_HTTP_RECV_BUFFER    CONFIG_MAX_HTTP_RECV_BUFFER
 #define ESP_ID                      CONFIG_ID_DEVICE
 #define ESP_NUM                     CONFIG_NUMBER_DEVICE
+
+/* define for I2C */
+static const char *TAG_I2C = "i2c";
+
+#define I2C_MASTER_SCL_IO 22               /*!< gpio number for I2C master clock */
+#define I2C_MASTER_SDA_IO 21               /*!< gpio number for I2C master data  */
+#define I2C_MASTER_FREQ_HZ 400000        /*!< I2C master clock frequency */
+#define I2C_MASTER_TX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
+#define I2C_MASTER_RX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
+
+#define ESP_SLAVE_ADDR 0x40   /*!< slave address for DHT21 sensor */
+
+#define WRITE_BIT I2C_MASTER_WRITE              /*!< I2C master write */
+#define READ_BIT I2C_MASTER_READ                /*!< I2C master read */
+#define ACK_CHECK_EN 0x1                        /*!< I2C master will check ack from slave*/
+#define ACK_CHECK_DIS 0x0                       /*!< I2C master will not check ack from slave */
+#define ACK_VAL 0x0                             /*!< I2C ack value */
+#define NACK_VAL 0x1                            /*!< I2C nack value */
+
+#define I2C_MASTER_NUM I2C_NUM_0
+#define HTU21D_CRC8_POLYNOMINAL      0x13100   //crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1
+
+uint8_t data_write[2];
+uint8_t data_read[3];
+
+/**
+ * @brief test code to read esp-i2c-slave
+ *        We need to fill the buffer of esp slave device, then master can read them out.
+ *
+ * _______________________________________________________________________________________
+ * | start | slave_addr + rd_bit +ack | read n-1 bytes + ack | read 1 byte + nack | stop |
+ * --------|--------------------------|----------------------|--------------------|------|
+ *
+ */
+static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size)
+{
+    if (size == 0) {
+        return ESP_OK;
+    }
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (ESP_SLAVE_ADDR << 1) | READ_BIT, ACK_CHECK_EN);
+    if (size > 1) {
+        i2c_master_read(cmd, data_rd, size - 1, ACK_VAL);
+    }
+    i2c_master_read_byte(cmd, data_rd + size - 1, NACK_VAL);
+    i2c_master_stop(cmd);
+    esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, 1000 / portTICK_RATE_MS);
+    i2c_cmd_link_delete(cmd);
+    return ret;
+}
+/**
+ * @brief Test code to write esp-i2c-slave
+ *        Master device write data to slave(both esp32),
+ *        the data will be stored in slave buffer.
+ *        We can read them out from slave buffer.
+ *
+ * ___________________________________________________________________
+ * | start | slave_addr + wr_bit + ack | write n bytes + ack  | stop |
+ * --------|---------------------------|----------------------|------|
+ *
+ */
+static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size)
+{
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    i2c_master_write_byte(cmd, (ESP_SLAVE_ADDR << 1) | WRITE_BIT, ACK_CHECK_EN);
+    i2c_master_write(cmd, data_wr, size, ACK_CHECK_EN);
+    i2c_master_stop(cmd);
+    esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, 1000 / portTICK_RATE_MS);
+    i2c_cmd_link_delete(cmd);
+    return ret;
+}
+/**
+ * @brief i2c master initialization
+ */
+static esp_err_t i2c_master_init(void)
+{
+    int i2c_master_port = I2C_MASTER_NUM;
+    i2c_config_t conf;
+    conf.mode = I2C_MODE_MASTER;
+    conf.sda_io_num = I2C_MASTER_SDA_IO;
+    conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
+    conf.scl_io_num = I2C_MASTER_SCL_IO;
+    conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
+    conf.master.clk_speed = I2C_MASTER_FREQ_HZ;
+    i2c_param_config(i2c_master_port, &conf);
+    return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
+}
+uint8_t checkCRC8(uint16_t data)
+{
+    for (uint8_t bit = 0; bit < 16; bit++)
+    {
+        if   (data & 0x8000) data = (data << 1) ^ HTU21D_CRC8_POLYNOMINAL;
+        else data <<= 1;
+    }
+    return data >>= 8;
+}
 
 /* define bit in eventgroup, which determine event wifi connected/disconnected */
 #define WIFI_CONNECTED_BIT BIT0
@@ -74,9 +166,9 @@ static int s_retry_num = 0;
 char temp[ESP_MAX_HTTP_RECV_BUFFER];
 
 /* Alloc function here to easy see */
-Sensor *protoc(char *message);
+char* Print_JSON(char* id,double data[10]);
 void wifi_init_sta(void);
-void getTask(void *pv);
+void postTask(void *pv);
 
 /* handling to event wifi */
 static void event_handler(void *arg, esp_event_base_t event_base,
@@ -199,99 +291,124 @@ void wifi_init_sta(void)
     vEventGroupDelete(s_wifi_event_group);
 }
 
-/* get method */
-void getTask(void *pv)
+/////------------make json to post------------------///
+char* Print_JSON(char* id,double data[10])
 {
-    ESP_LOGI(TAG_HTTP, " Init http get");
-    char *get_data = (char *)malloc(512);
+    cJSON* sudo =cJSON_CreateObject();
+    cJSON* form=cJSON_CreateObject();
+    cJSON_AddItemToObject(sudo, "ID",cJSON_CreateString(id));
+    cJSON_AddItemToObject(sudo, "form",form);
 
+    cJSON_AddNumberToObject(form,"sensor_1",data[0]);
+    cJSON_AddNumberToObject(form,"sensor_2",data[1]);
+    cJSON_AddNumberToObject(form,"sensor_3",data[2]);
+    cJSON_AddNumberToObject(form,"sensor_4",data[3]);
+
+    cJSON_AddNumberToObject(form,"sensor_5",data[4]);
+    cJSON_AddNumberToObject(form,"sensor_6",data[5]);
+    cJSON_AddNumberToObject(form,"sensor_7",data[6]);
+
+    cJSON_AddNumberToObject(form,"sensor_8",data[7]);
+    cJSON_AddNumberToObject(form,"sensor_9",data[8]);
+    cJSON_AddNumberToObject(form,"sensor_10",data[9]);
+    char *a=cJSON_Print(sudo);
+    cJSON_Delete(sudo);//if don't free, heap memory will be overload
+    return a;
+}
+//-------Post method----------//
+void postTask (void *pv)
+{
+    ESP_LOGI(TAG_HTTP," Init http Post");
+    
+    double data[10];
     esp_http_client_config_t config = {
-        .url = URL_SERVER,
+        .url=URL_SERVER,
         .event_handler = _http_event_handle,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
-    esp_http_client_set_method(client, HTTP_METHOD_GET);
+    esp_http_client_set_method(client, HTTP_METHOD_POST);
+    esp_http_client_set_header(client, "Content-Type", "application/json");
 
-    esp_http_client_set_header(client, "ID", ESP_ID);
-    ESP_LOGI(TAG_HTTP, " started");
-    while (1)
+    /* varialbe for i2c */
+    uint8_t checksum=0;
+    uint16_t rawHumidity=0;
+    uint16_t rawTemperature=0;
+    double Humidity=0.0;
+    double Temperature=0.0;
+
+    while(1)
     {
-        Sensor *s = (Sensor *)malloc(sizeof(Sensor));
-        sensor__init(s);
+        char* post_data = (char *) malloc(512);
+        /* USER code begin here */
+
+        /* temperature 14 bit */
+        data_write[0]=0xF3;
+        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+
+        rawTemperature=data_read[0] <<8;
+        rawTemperature|=data_read[1];
+        checksum=checkCRC8(rawTemperature);
+
+        if(checksum==data_read[2])
+        {
+            Temperature=(0.002681 * (double)rawTemperature - 46.85); 
+            data[0]=Temperature;
+        }
+        //------------------------------------------------------------//
+
+        /* humidity 12 bit */
+        data_write[0]=0xF5;
+        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+
+        rawHumidity=data_read[0] <<8;
+        rawHumidity|=data_read[1];
+        checksum=checkCRC8(rawHumidity);
+        if(checksum==data_read[2])
+        {
+            rawHumidity &=0xFFFD;
+            Humidity = (0.001907 * (double)rawHumidity - 6);
+            data[1]= Humidity;
+        }
+
+        data_write[0]=0xFE;
+        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+
+        /* USER code end here */
+
+        post_data = Print_JSON(ESP_ID,data);
+        esp_http_client_set_post_field(client,post_data,strlen(post_data));
 
         esp_err_t err = esp_http_client_perform(client);
-        if (err == ESP_OK)
-        {
+        if (err == ESP_OK) {
             ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
-                     esp_http_client_get_status_code(client),
-                     esp_http_client_get_content_length(client));
+                    esp_http_client_get_status_code(client),
+                    esp_http_client_get_content_length(client));
 
-            if (esp_http_client_get_content_length(client))
-            {
-                get_data = temp;
-                ESP_LOGI(TAG_HTTP, "%s", get_data);
-                s = protoc(get_data);
 
-                if ((strcmp(s->id, ESP_ID) == 0) && (s->device == ESP_NUM))
-                {
-                    /* USER code begin here */
-                    ESP_LOGI(TAG_HTTP, "%s", temp);
-                    ESP_LOGI(TAG_HTTP, "%s", s->id);
+            data[2]++;data[3]++;data[4]++;data[5]++;data[6]++;data[7]++;data[8]++;data[9]++;
+            free(post_data);
 
-                    uint32_t val = (uint32_t)s->value;
-                    uint32_t io = (uint32_t)s->io;
-                    ESP_LOGI(TAG_HTTP, "%d", val);
-                    ESP_LOGI(TAG_HTTP, "%d", io);
-
-                    if (io == 25 || io == 26)
-                    {
-                        dac_output_voltage(io - 25, val);
-                    }
-                    // else if (io == 32)
-                    // {
-                    //     ledc_set_duty_and_update(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, val, 0);
-                    // }
-                    else
-                    {
-                        gpio_set_level(io, val);
-                    }
-
-                    /* USER code end here */
-                }
-
-                /* ensure data is not overloading */
-                for (int i = 0; i < ESP_MAX_HTTP_RECV_BUFFER; i++)
-                {
-                    temp[i] = 0;
-                }
-            }
-            else
-                get_data = " ";
-        }
-        else
+            ESP_LOGI(TAG_HTTP,"free heap size is :%d",esp_get_free_heap_size() );
+            ESP_LOGI(TAG_HTTP," post success");
+        } 
+        else 
         {
             ESP_LOGE(TAG_HTTP, "HTTP GET request failed: %s", esp_err_to_name(err));
             esp_restart();
             break;
         }
 
-        sensor__free_unpacked(s, NULL);
-
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(100/portTICK_PERIOD_MS);
     }
     esp_http_client_close(client);
     esp_http_client_cleanup(client);
     esp_restart();
     vTaskDelete(NULL);
-}
-
-/* protoc-c */
-Sensor *protoc(char *message)
-{
-    uint8_t buffer[1024];
-    uint32_t k = Arr(message, buffer);
-
-    return sensor__unpack(NULL, k, buffer);
 }
 
 /* main */
@@ -312,53 +429,25 @@ void app_main(void)
     /* call function init wifi */
     wifi_init_sta();
 
-    /* config gpio output */
-    gpio_pad_select_gpio(16);
-    gpio_pad_select_gpio(17);
-    gpio_set_direction(16,GPIO_MODE_OUTPUT);
-    gpio_set_direction(17,GPIO_MODE_OUTPUT);
-    gpio_pad_select_gpio(32);
-    gpio_pad_select_gpio(33);
-    gpio_set_direction(32,GPIO_MODE_OUTPUT);
-    gpio_set_direction(33,GPIO_MODE_OUTPUT);/*!> io32 and io33 is special io, need to choose it  */
+    /* init i2C */
+    ESP_ERROR_CHECK(i2c_master_init());
 
-    gpio_config_t output_conf;
-    output_conf.intr_type = GPIO_PIN_INTR_DISABLE;
-    output_conf.mode = GPIO_MODE_OUTPUT;
-    output_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
-    output_conf.pull_down_en = 0;
-    output_conf.pull_up_en = 0;
-    gpio_config(&output_conf);
+    data_write[0]=0xFE; /*!> reset*/
+    i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+    vTaskDelay(100/portTICK_PERIOD_MS);
 
-    /* config DAC */
-    dac_output_enable(DAC_CHANNEL_1); /*!> if io 25 */
-    dac_output_enable(DAC_CHANNEL_2); /*!> io 26 */
+    data_write[0]=0xE7;/*!> resolution */
+    data_write[1]=0x02;
+    i2c_master_write_slave(I2C_MASTER_NUM, data_write, 2);
+    
+    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+    ESP_LOGI(TAG_I2C,"%x",data_read[0]);
+    vTaskDelay(100/portTICK_PERIOD_MS);
 
-
-    /* config pwm */
-    ledc_timer_config_t t_config = {
-
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
-        .duty_resolution = LEDC_TIMER_8_BIT,
-        .timer_num = 2,
-        .freq_hz = 10000,
-        .clk_cfg = LEDC_USE_APB_CLK,
-    };
-
-    gpio_pad_select_gpio(34);
-    ledc_channel_config_t tc_config = {
-        .gpio_num = 34,
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
-        .channel = LEDC_CHANNEL_2,
-        .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = LEDC_TIMER_2,
-        .duty = 50,
-        .hpoint = 0,
-    };
-    ledc_timer_config(&t_config);
-    ledc_channel_config(&tc_config);
-    ledc_fade_func_install(0); /*!> if we don't have this function, can't update duty */
-
-    /* start Freertos */
-    xTaskCreate(&getTask, "getTask", 4096 * 3, NULL, 2, NULL);
+    data_write[0]=0xFE; /*!> reset*/
+    i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+    vTaskDelay(100/portTICK_PERIOD_MS);
+  
+    /* start Freertos */ 
+    xTaskCreate(&postTask,"postTask",4096*4,NULL,3,NULL);
 }

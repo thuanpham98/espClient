@@ -38,3 +38,13 @@ example :
 
 |       |          
 | FF    | chuỗi dữ liệu đầu tiên xác nhận ID từ server  
+
+#include <stdio.h> 
+#include <stdlib.h>
+
+int x = -42;
+int length = snprintf( NULL, 0, "%d", x );
+char* str = malloc( length + 1 );
+snprintf( str, length + 1, "%d", x );
+...
+free(str);
