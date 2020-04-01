@@ -59,7 +59,7 @@ static const char *TAG_I2C = "i2c";
 #define I2C_MASTER_TX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_RX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
 
-#define ESP_SLAVE_ADDR 0x40   /*!< slave address for DHT21 sensor */
+//#define ESP_SLAVE_ADDR 0x42   /*!< slave address for DHT21 sensor */
 
 #define WRITE_BIT I2C_MASTER_WRITE              /*!< I2C master write */
 #define READ_BIT I2C_MASTER_READ                /*!< I2C master read */
@@ -71,8 +71,8 @@ static const char *TAG_I2C = "i2c";
 #define I2C_MASTER_NUM I2C_NUM_0
 #define HTU21D_CRC8_POLYNOMINAL      0x13100   //crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1
 
-uint8_t data_write[2];
-uint8_t data_read[3];
+uint8_t data_write[16]={0,10,13,49,53,56,51,50,57,54,52,53,55,53,50,57};
+uint8_t data_read[15];
 
 /**
  * @brief test code to read esp-i2c-slave
@@ -83,7 +83,7 @@ uint8_t data_read[3];
  * --------|--------------------------|----------------------|--------------------|------|
  *
  */
-static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size)
+static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size,uint8_t ESP_SLAVE_ADDR)
 {
     if (size == 0) {
         return ESP_OK;
@@ -111,7 +111,7 @@ static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, siz
  * --------|---------------------------|----------------------|------|
  *
  */
-static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size)
+static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size,uint8_t ESP_SLAVE_ADDR)
 {
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
@@ -316,100 +316,100 @@ char* Print_JSON(char* id,double data[10])
     return a;
 }
 //-------Post method----------//
-void postTask (void *pv)
-{
-    ESP_LOGI(TAG_HTTP," Init http Post");
+// void postTask (void *pv)
+// {
+//     ESP_LOGI(TAG_HTTP," Init http Post");
     
-    double data[10];
-    esp_http_client_config_t config = {
-        .url=URL_SERVER,
-        .event_handler = _http_event_handle,
-    };
-    esp_http_client_handle_t client = esp_http_client_init(&config);
-    esp_http_client_set_method(client, HTTP_METHOD_POST);
-    esp_http_client_set_header(client, "Content-Type", "application/json");
+//     double data[10];
+//     esp_http_client_config_t config = {
+//         .url=URL_SERVER,
+//         .event_handler = _http_event_handle,
+//     };
+//     esp_http_client_handle_t client = esp_http_client_init(&config);
+//     esp_http_client_set_method(client, HTTP_METHOD_POST);
+//     esp_http_client_set_header(client, "Content-Type", "application/json");
 
-    /* varialbe for i2c */
-    uint8_t checksum=0;
-    uint16_t rawHumidity=0;
-    uint16_t rawTemperature=0;
-    double Humidity=0.0;
-    double Temperature=0.0;
+//     /* varialbe for i2c */
+//     uint8_t checksum=0;
+//     uint16_t rawHumidity=0;
+//     uint16_t rawTemperature=0;
+//     double Humidity=0.0;
+//     double Temperature=0.0;
 
-    while(1)
-    {
-        char* post_data = (char *) malloc(512);
-        /* USER code begin here */
+//     while(1)
+//     {
+//         char* post_data = (char *) malloc(512);
+//         /* USER code begin here */
 
-        /* temperature 14 bit */
-        data_write[0]=0xF3;
-        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+//         /* temperature 14 bit */
+//         data_write[0]=0xF3;
+//         i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
+//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
 
-        rawTemperature=data_read[0] <<8;
-        rawTemperature|=data_read[1];
-        checksum=checkCRC8(rawTemperature);
+//         rawTemperature=data_read[0] <<8;
+//         rawTemperature|=data_read[1];
+//         checksum=checkCRC8(rawTemperature);
 
-        if(checksum==data_read[2])
-        {
-            Temperature=(0.002681 * (double)rawTemperature - 46.85); 
-            data[0]=Temperature;
-        }
-        //------------------------------------------------------------//
+//         if(checksum==data_read[2])
+//         {
+//             Temperature=(0.002681 * (double)rawTemperature - 46.85); 
+//             data[0]=Temperature;
+//         }
+//         //------------------------------------------------------------//
 
-        /* humidity 12 bit */
-        data_write[0]=0xF5;
-        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+//         /* humidity 12 bit */
+//         data_write[0]=0xF5;
+//         i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
+//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
 
-        rawHumidity=data_read[0] <<8;
-        rawHumidity|=data_read[1];
-        checksum=checkCRC8(rawHumidity);
-        if(checksum==data_read[2])
-        {
-            rawHumidity &=0xFFFD;
-            Humidity = (0.001907 * (double)rawHumidity - 6);
-            data[1]= Humidity;
-        }
+//         rawHumidity=data_read[0] <<8;
+//         rawHumidity|=data_read[1];
+//         checksum=checkCRC8(rawHumidity);
+//         if(checksum==data_read[2])
+//         {
+//             rawHumidity &=0xFFFD;
+//             Humidity = (0.001907 * (double)rawHumidity - 6);
+//             data[1]= Humidity;
+//         }
 
-        data_write[0]=0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+//         data_write[0]=0xFE;
+//         i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
 
-        /* USER code end here */
+//         /* USER code end here */
 
-        post_data = Print_JSON(ESP_ID,data);
-        esp_http_client_set_post_field(client,post_data,strlen(post_data));
+//         post_data = Print_JSON(ESP_ID,data);
+//         esp_http_client_set_post_field(client,post_data,strlen(post_data));
 
-        esp_err_t err = esp_http_client_perform(client);
-        if (err == ESP_OK) {
-            ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
-                    esp_http_client_get_status_code(client),
-                    esp_http_client_get_content_length(client));
+//         esp_err_t err = esp_http_client_perform(client);
+//         if (err == ESP_OK) {
+//             ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
+//                     esp_http_client_get_status_code(client),
+//                     esp_http_client_get_content_length(client));
 
 
-            data[2]++;data[3]++;data[4]++;data[5]++;data[6]++;data[7]++;data[8]++;data[9]++;
-            free(post_data);
+//             data[2]++;data[3]++;data[4]++;data[5]++;data[6]++;data[7]++;data[8]++;data[9]++;
+//             free(post_data);
 
-            ESP_LOGI(TAG_HTTP,"free heap size is :%d",esp_get_free_heap_size() );
-            ESP_LOGI(TAG_HTTP," post success");
-        } 
-        else 
-        {
-            ESP_LOGE(TAG_HTTP, "HTTP GET request failed: %s", esp_err_to_name(err));
-            esp_restart();
-            break;
-        }
+//             ESP_LOGI(TAG_HTTP,"free heap size is :%d",esp_get_free_heap_size() );
+//             ESP_LOGI(TAG_HTTP," post success");
+//         } 
+//         else 
+//         {
+//             ESP_LOGE(TAG_HTTP, "HTTP GET request failed: %s", esp_err_to_name(err));
+//             esp_restart();
+//             break;
+//         }
 
-        vTaskDelay(100/portTICK_PERIOD_MS);
-    }
-    esp_http_client_close(client);
-    esp_http_client_cleanup(client);
-    esp_restart();
-    vTaskDelete(NULL);
-}
+//         vTaskDelay(100/portTICK_PERIOD_MS);
+//     }
+//     esp_http_client_close(client);
+//     esp_http_client_cleanup(client);
+//     esp_restart();
+//     vTaskDelete(NULL);
+// }
 
 /* main */
 void app_main(void)
@@ -432,22 +432,61 @@ void app_main(void)
     /* init i2C */
     ESP_ERROR_CHECK(i2c_master_init());
 
-    data_write[0]=0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-    vTaskDelay(100/portTICK_PERIOD_MS);
+    while (1)
+    {
+        /* code */
+        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 16,0x42);
+        ESP_LOGE(TAG_I2C,"send onde");
 
-    data_write[0]=0xE7;/*!> resolution */
-    data_write[1]=0x02;
-    i2c_master_write_slave(I2C_MASTER_NUM, data_write, 2);
-    
-    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-    ESP_LOGI(TAG_I2C,"%x",data_read[0]);
-    vTaskDelay(100/portTICK_PERIOD_MS);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read ,15,0x42);
+        ESP_LOGE(TAG_I2C,"read onde");
+        ESP_LOGI(TAG_I2C,"%d",data_read[0]);
+        
+        vTaskDelay(100/portTICK_PERIOD_MS);
+        /* temperature 14 bit */
+        data_write[0]=0xF3;
+        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1,0x40);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1,0x40);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3,0x40);
 
-    data_write[0]=0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-    vTaskDelay(100/portTICK_PERIOD_MS);
+        uint16_t rawTemperature=data_read[0] <<8;
+        rawTemperature|=data_read[1];
+        uint8_t checksum=checkCRC8(rawTemperature);
+
+        if(checksum==data_read[2])
+        {
+            float Temperature=(0.002681 * (double)rawTemperature - 46.85); 
+            ESP_LOGI(TAG_I2C,"%f",Temperature);
+        }
+        vTaskDelay(100/portTICK_PERIOD_MS);
+        //------------------------------------------------------------//
+
+        /* humidity 12 bit */
+        data_write[0]=0xF5;
+        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1,0x40);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1,0x40);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3,0x40);
+
+        uint16_t rawHumidity=data_read[0] <<8;
+        rawHumidity|=data_read[1];
+        checksum=checkCRC8(rawHumidity);
+        if(checksum==data_read[2])
+        {
+            rawHumidity &=0xFFFD;
+            float Humidity = (0.001907 * (double)rawHumidity - 6);
+            ESP_LOGI(TAG_I2C,"%f",Humidity);
+            
+        }
+
+        data_write[0]=0xFE;
+        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1,0x40);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1,0x40);
+        vTaskDelay(100/portTICK_PERIOD_MS);
+    }
+
+
+
   
     /* start Freertos */ 
-    xTaskCreate(&postTask,"postTask",4096*4,NULL,3,NULL);
+    //xTaskCreate(&postTask,"postTask",4096*4,NULL,3,NULL);
 }
