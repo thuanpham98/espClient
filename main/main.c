@@ -268,6 +268,7 @@ void postTask (void *pv)
     while(1)
     {
         char* post_data = (char *) malloc(512);
+        
         /* USER code begin here */
 
         /* temperature 14 bit */
@@ -386,7 +387,7 @@ void app_main(void)
 
     data_write[0]=0xFE; /*!> reset*/
     i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-    vTaskDelay(100/portTICK_PERIOD_MS);
+    vTaskDelay(5/portTICK_PERIOD_MS);
 
     /* config parameter for ADC */
     adc1_config_width(ADC_WIDTH_BIT_12);

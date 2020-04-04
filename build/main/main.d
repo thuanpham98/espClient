@@ -148,7 +148,17 @@ main.o: /home/thuan/espClient/main/main.c \
  /home/thuan/esp/esp-idf/components/soc/include/hal/gpio_types.h \
  /home/thuan/esp/esp-idf/components/esp_rom/include/esp32/rom/gpio.h \
  /home/thuan/esp/esp-idf/components/soc/include/hal/i2c_types.h \
- /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/i2c_caps.h
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/i2c_caps.h \
+ /home/thuan/esp/esp-idf/components/driver/include/driver/adc.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/include/soc/adc_periph.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/syscon_struct.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/sens_reg.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/sens_struct.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_io_struct.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_cntl_struct.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/adc_channel.h \
+ /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/adc_caps.h \
+ /home/thuan/esp/esp-idf/components/soc/include/hal/adc_types.h
 
 /home/thuan/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h:
 
@@ -449,4 +459,24 @@ main.o: /home/thuan/espClient/main/main.c \
 /home/thuan/esp/esp-idf/components/soc/include/hal/i2c_types.h:
 
 /home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/i2c_caps.h:
+
+/home/thuan/esp/esp-idf/components/driver/include/driver/adc.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/include/soc/adc_periph.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/syscon_struct.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/sens_reg.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/sens_struct.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_io_struct.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/rtc_cntl_struct.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/adc_channel.h:
+
+/home/thuan/esp/esp-idf/components/soc/soc/esp32/include/soc/adc_caps.h:
+
+/home/thuan/esp/esp-idf/components/soc/include/hal/adc_types.h:
 /home/thuan/espClient/main/./main.c:
