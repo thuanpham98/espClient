@@ -40,12 +40,19 @@
 #include "driver/dac.h"
 #include "driver/ledc.h"
 
-/* no ideal for it */
+/* define gpio digital output*/
 #define GPIO_OUTPUT_PIN_SEL ((1ULL << GPIO_NUM_0)  | (1ULL << GPIO_NUM_2)  | (1ULL << GPIO_NUM_4)  | (1ULL << GPIO_NUM_5) |  \
                              (1ULL << GPIO_NUM_12) | (1ULL << GPIO_NUM_13) | (1ULL << GPIO_NUM_14) | (1ULL << GPIO_NUM_15)|  \
                               (1ULL << GPIO_NUM_18)| (1ULL << GPIO_NUM_19) | \
                              (1ULL << GPIO_NUM_21) | (1ULL << GPIO_NUM_22) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_27))
-///////////////////////////////////////////////////////////////////////
+
+/* define timer for ledc PWM */
+#define LEDC_HS_TIMER          LEDC_TIMER_0
+#define LEDC_HS_MODE           LEDC_HIGH_SPEED_MODE
+#define LEDC_HS_CH0_GPIO       (32)
+#define LEDC_HS_CH0_CHANNEL    LEDC_CHANNEL_0
+#define LEDC_HS_CH1_GPIO       (33)
+#define LEDC_HS_CH1_CHANNEL    LEDC_CHANNEL_1
 
 /* define from file Konfig */
 #define ESP_WIFI_SSID               CONFIG_WIFI_SSID
@@ -234,6 +241,7 @@ void getTask(void *pv)
 
                 if ((strcmp(s->id, ESP_ID) == 0) && (s->device == ESP_NUM))
                 {
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     /* USER code begin here */
                     ESP_LOGI(TAG_HTTP, "%s", temp);
                     ESP_LOGI(TAG_HTTP, "%s", s->id);
@@ -247,16 +255,26 @@ void getTask(void *pv)
                     {
                         dac_output_voltage(io - 25, val);
                     }
-                    // else if (io == 32)
-                    // {
-                    //     ledc_set_duty_and_update(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, val, 0);
-                    // }
+                    else if (io == LEDC_HS_CH0_GPIO || io == LEDC_HS_CH1_GPIO)
+                    {
+                        switch (io)
+                        {
+                        case LEDC_HS_CH0_GPIO:
+                            ledc_set_duty_and_update(LEDC_HS_MODE, LEDC_HS_CH0_CHANNEL, val, 0);
+                            break;
+                        
+                        case LEDC_HS_CH1_GPIO:
+                            ledc_set_duty_and_update(LEDC_HS_MODE, LEDC_HS_CH1_CHANNEL, val, 0);
+                            break;
+                        }
+                    }
                     else
                     {
                         gpio_set_level(io, val);
                     }
 
                     /* USER code end here */
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                  
                 }
 
                 /* ensure data is not overloading */
@@ -277,7 +295,7 @@ void getTask(void *pv)
 
         sensor__free_unpacked(s, NULL);
 
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
     esp_http_client_close(client);
     esp_http_client_cleanup(client);
@@ -315,12 +333,9 @@ void app_main(void)
     /* config gpio output */
     gpio_pad_select_gpio(16);
     gpio_pad_select_gpio(17);
+
     gpio_set_direction(16,GPIO_MODE_OUTPUT);
-    gpio_set_direction(17,GPIO_MODE_OUTPUT);
-    gpio_pad_select_gpio(32);
-    gpio_pad_select_gpio(33);
-    gpio_set_direction(32,GPIO_MODE_OUTPUT);
-    gpio_set_direction(33,GPIO_MODE_OUTPUT);/*!> io32 and io33 is special io, need to choose it  */
+    gpio_set_direction(17,GPIO_MODE_OUTPUT);/*!> io32 and io33 is special io, need to choose it  */
 
     gpio_config_t output_conf;
     output_conf.intr_type = GPIO_PIN_INTR_DISABLE;
@@ -336,29 +351,43 @@ void app_main(void)
 
 
     /* config pwm */
-    ledc_timer_config_t t_config = {
+    ledc_timer_config_t timer_0 = {
 
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
+        .speed_mode = LEDC_HS_MODE,
         .duty_resolution = LEDC_TIMER_8_BIT,
-        .timer_num = 2,
-        .freq_hz = 10000,
+        .timer_num = LEDC_HS_TIMER,
+        .freq_hz = 32000,
         .clk_cfg = LEDC_USE_APB_CLK,
     };
+    ledc_timer_config(&timer_0);
 
-    gpio_pad_select_gpio(34);
-    ledc_channel_config_t tc_config = {
-        .gpio_num = 34,
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
-        .channel = LEDC_CHANNEL_2,
+    gpio_pad_select_gpio(32);
+    gpio_pad_select_gpio(33);
+
+    ledc_channel_config_t ledc_hs_0 = {
+        .gpio_num = LEDC_HS_CH0_GPIO,
+        .speed_mode = LEDC_HS_MODE,
+        .channel = LEDC_HS_CH0_CHANNEL,
         .intr_type = LEDC_INTR_DISABLE,
-        .timer_sel = LEDC_TIMER_2,
-        .duty = 50,
+        .timer_sel = LEDC_HS_TIMER,
+        .duty = 0,
         .hpoint = 0,
     };
-    ledc_timer_config(&t_config);
-    ledc_channel_config(&tc_config);
+    ledc_channel_config(&ledc_hs_0);
+
+    ledc_channel_config_t ledc_hs_1 = {
+        .gpio_num = LEDC_HS_CH1_GPIO,
+        .speed_mode = LEDC_HS_MODE,
+        .channel = LEDC_HS_CH1_CHANNEL,
+        .intr_type = LEDC_INTR_DISABLE,
+        .timer_sel = LEDC_HS_TIMER,
+        .duty = 0,
+        .hpoint = 0,
+    };
+    ledc_channel_config(&ledc_hs_1);
+
     ledc_fade_func_install(0); /*!> if we don't have this function, can't update duty */
 
     /* start Freertos */
-    xTaskCreate(&getTask, "getTask", 4096 * 3, NULL, 2, NULL);
+    xTaskCreate(&getTask, "getTask", 4096 * 4, NULL, 2, NULL);
 }
