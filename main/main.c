@@ -270,12 +270,15 @@ void postTask (void *pv)
         char* post_data = (char *) malloc(512);
         
         /* USER code begin here */
-
+        ESP_LOGI(TAG_HTTP,"start i2c");
         /* temperature 14 bit */
         data_write[0]=0xF3;
         i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
+        ESP_LOGI(TAG_HTTP,"start i2c");
         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+        ESP_LOGI(TAG_HTTP,"start i2c");
         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+        ESP_LOGI(TAG_HTTP,"start i2c");
 
         rawTemperature=data_read[0] <<8;
         rawTemperature|=data_read[1];
@@ -286,14 +289,18 @@ void postTask (void *pv)
             Temperature=(0.002681 * (double)rawTemperature - 46.85); 
             data[0]=Temperature;
         }
+        data_write[0]=0xFE;
+        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
         //------------------------------------------------------------//
-
+        ESP_LOGI(TAG_HTTP,"start i2c");
+        
         /* humidity 12 bit */
         data_write[0]=0xF5;
         i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
-
+        ESP_LOGI(TAG_HTTP,"end i2c");
         rawHumidity=data_read[0] <<8;
         rawHumidity|=data_read[1];
         checksum=checkCRC8(rawHumidity);
@@ -307,7 +314,7 @@ void postTask (void *pv)
         data_write[0]=0xFE;
         i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-
+        ESP_LOGI(TAG_HTTP,"end i2c");
         //-------------------------------------------------------//
         /* read data from analog */
         data[2] = (double)adc1_get_raw(ADC1_CHANNEL_0)/4096*100;
@@ -318,21 +325,20 @@ void postTask (void *pv)
         data[7] = (double)adc1_get_raw(ADC1_CHANNEL_5)/4096*100;
         data[8] = (double)adc1_get_raw(ADC1_CHANNEL_6)/4096*100;
         data[9] = (double)adc1_get_raw(ADC1_CHANNEL_7)/4096*100;
-
+        ESP_LOGI(TAG_HTTP,"end adc");
         /* USER code end here */
 
         post_data = Print_JSON(ESP_ID,data);
+        ESP_LOGI(TAG_HTTP,"end json");
         esp_http_client_set_post_field(client,post_data,strlen(post_data));
-
+        ESP_LOGI(TAG_HTTP,"start send");
         esp_err_t err = esp_http_client_perform(client);
+        ESP_LOGI(TAG_HTTP,"end send");
+        free(post_data);
         if (err == ESP_OK) {
             ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
                     esp_http_client_get_status_code(client),
                     esp_http_client_get_content_length(client));
-
-
-            data[6]++;data[7]++;data[8]++;data[9]++;
-            free(post_data);
 
             ESP_LOGI(TAG_HTTP,"free heap size is :%d",esp_get_free_heap_size() );
             ESP_LOGI(TAG_HTTP," post success");
@@ -383,7 +389,7 @@ void app_main(void)
     
     i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
     ESP_LOGI(TAG_I2C,"%x",data_read[0]);
-    vTaskDelay(100/portTICK_PERIOD_MS);
+    vTaskDelay(50/portTICK_PERIOD_MS);
 
     data_write[0]=0xFE; /*!> reset*/
     i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
