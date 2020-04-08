@@ -211,8 +211,14 @@ void getTask(void *pv)
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_GET);
-
-    esp_http_client_set_header(client, "ID", ESP_ID);
+    char *a = (char* ) malloc(256*sizeof(char));
+    char *b = (char* ) malloc(10*sizeof(char));
+    
+    strcpy(a,ESP_ID);
+    itoa(321,b,10);
+   
+    strcat(a,b);
+    esp_http_client_set_header(client, "ID",a );
     ESP_LOGI(TAG_HTTP, " started");
     while (1)
     {
