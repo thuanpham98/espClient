@@ -235,6 +235,7 @@ char *Print_JSON(char *id, double data[20])
     cJSON *sudo = cJSON_CreateObject();
     cJSON *form = cJSON_CreateObject();
     cJSON_AddItemToObject(sudo, "ID", cJSON_CreateString(id));
+    cJSON_AddItemToObject(sudo, "dev", cJSON_CreateNumber(ESP_NUM));
     cJSON_AddItemToObject(sudo, "form", form);
 
     uint8_t temp_num = 20 * (ESP_NUM / 2) + 1;
