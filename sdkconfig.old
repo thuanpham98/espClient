@@ -1,3 +1,7 @@
+#
+# Automatically generated file. DO NOT EDIT.
+# Espressif IoT Development Framework (ESP-IDF) Project Configuration
+#
 CONFIG_IDF_TARGET="esp32"
 CONFIG_IDF_TARGET_ESP32=y
 CONFIG_IDF_FIRMWARE_CHIP_ID=0x0000
@@ -118,7 +122,7 @@ CONFIG_WIFI_SSID="Minh Uoc"
 CONFIG_WIFI_PASSWORD="03925358"
 CONFIG_MAXIMUM_RETRY=100
 CONFIG_MAX_HTTP_RECV_BUFFER=512
-CONFIG_ID_DEVICE="1583296457529"
+CONFIG_ID_DEVICE="1586102621368"
 CONFIG_NUMBER_DEVICE=1
 CONFIG_URL_SERVER="https://iotmakerserver.herokuapp.com/storage"
 # end of Example configuration

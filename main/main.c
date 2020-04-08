@@ -225,10 +225,9 @@ void getTask(void *pv)
     strcpy(a,ESP_ID);
     itoa(ESP_NUM,b,10);
     strcat(a,b);
-    
+
     esp_http_client_set_header(client, "ID",a );
 
-    esp_http_client_set_header(client, "ID", ESP_ID);
     ESP_LOGI(TAG_HTTP, " started");
     while (1)
     {
