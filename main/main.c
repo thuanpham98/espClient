@@ -43,30 +43,35 @@
 #include <driver/adc.h>
 
 /* define from file Konfig */
-#define ESP_WIFI_SSID               CONFIG_WIFI_SSID
-#define ESP_WIFI_PASS               CONFIG_WIFI_PASSWORD
-#define ESP_MAXIMUM_RETRY           CONFIG_MAXIMUM_RETRY
-#define URL_SERVER                  CONFIG_URL_SERVER
-#define ESP_MAX_HTTP_RECV_BUFFER    CONFIG_MAX_HTTP_RECV_BUFFER
-#define ESP_ID                      CONFIG_ID_DEVICE
-#define ESP_NUM                     CONFIG_NUMBER_DEVICE
+#define ESP_WIFI_SSID CONFIG_WIFI_SSID
+#define ESP_WIFI_PASS CONFIG_WIFI_PASSWORD
+#define ESP_MAXIMUM_RETRY CONFIG_MAXIMUM_RETRY
+#define URL_SERVER CONFIG_URL_SERVER
+#define ESP_MAX_HTTP_RECV_BUFFER CONFIG_MAX_HTTP_RECV_BUFFER
+#define ESP_ID CONFIG_ID_DEVICE
+#define ESP_NUM CONFIG_NUMBER_DEVICE
 
 /* define for I2C */
-#define I2C_MASTER_SCL_IO           22            
-#define I2C_MASTER_SDA_IO           21               
-#define I2C_MASTER_FREQ_HZ          400000       
-#define I2C_MASTER_TX_BUF_DISABLE   0                          
-#define I2C_MASTER_RX_BUF_DISABLE   0                        
-#define WRITE_BIT                   I2C_MASTER_WRITE             
-#define READ_BIT                    I2C_MASTER_READ                
-#define ACK_CHECK_EN                0x1                       
-#define ACK_CHECK_DIS               0x0                       
-#define ACK_VAL                     0x0                             
-#define NACK_VAL                    0x1                        
-#define I2C_MASTER_NUM              I2C_NUM_0
+#define I2C_MASTER_SCL_IO 22
+#define I2C_MASTER_SDA_IO 21
+#define I2C_MASTER_FREQ_HZ 400000
+#define I2C_MASTER_TX_BUF_DISABLE 0
+#define I2C_MASTER_RX_BUF_DISABLE 0
+#define WRITE_BIT I2C_MASTER_WRITE
+#define READ_BIT I2C_MASTER_READ
+#define ACK_CHECK_EN 0x1
+#define ACK_CHECK_DIS 0x0
+#define ACK_VAL 0x0
+#define NACK_VAL 0x1
+#define I2C_MASTER_NUM I2C_NUM_0
 
-#define ESP_SLAVE_ADDR              0x40   /*!< slave address for DHT21 sensor */
-#define HTU21D_CRC8_POLYNOMINAL     0x13100   /*!>crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1 */
+#define ESP_SLAVE_ADDR 0x40             /*!< slave address for DHT21 sensor */
+#define HTU21D_CRC8_POLYNOMINAL 0x13100 /*!>crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1 */
+
+/* define pin input digital */
+#define GPIO_INPUT_PIN_SEL ((1ULL << GPIO_NUM_4) | (1ULL << GPIO_NUM_5) | (1ULL << GPIO_NUM_12) | (1ULL << GPIO_NUM_14) |  \
+                            (1ULL << GPIO_NUM_2) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_15) | (1ULL << GPIO_NUM_19) | \
+                            (1ULL << GPIO_NUM_25) | (1ULL << GPIO_NUM_26))
 
 /* buffer read/write for i2c */
 uint8_t data_write[2];
@@ -89,14 +94,18 @@ static int s_retry_num = 0;
 
 /* variable temp to receive data from server */
 char temp[ESP_MAX_HTTP_RECV_BUFFER];
+double data[20];
 
 /* Alloc function here to easy see */
 uint8_t checkCRC8(uint16_t data);
 static esp_err_t i2c_master_init(void);
 static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size);
 static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size);
-char* Print_JSON(char* id,double data[10]);
+char *Print_JSON(char *id, double data[20]);
 void wifi_init_sta(void);
+void readDigital(void *pv);
+void readI2C(void *pv);
+void readADC(void *pv);
 void postTask(void *pv);
 
 /* handling to event wifi */
@@ -221,136 +230,291 @@ void wifi_init_sta(void)
 }
 
 /* make json to post */
-char* Print_JSON(char* id,double data[10])
+char *Print_JSON(char *id, double data[20])
 {
-    cJSON* sudo =cJSON_CreateObject();
-    cJSON* form=cJSON_CreateObject();
-    cJSON_AddItemToObject(sudo, "ID",cJSON_CreateString(id));
-    cJSON_AddItemToObject(sudo, "form",form);
+    cJSON *sudo = cJSON_CreateObject();
+    cJSON *form = cJSON_CreateObject();
+    cJSON_AddItemToObject(sudo, "ID", cJSON_CreateString(id));
+    cJSON_AddItemToObject(sudo, "form", form);
 
-    cJSON_AddNumberToObject(form,"sensor_1",data[0]);
-    cJSON_AddNumberToObject(form,"sensor_2",data[1]);
-    cJSON_AddNumberToObject(form,"sensor_3",data[2]);
-    cJSON_AddNumberToObject(form,"sensor_4",data[3]);
+    uint8_t temp_num = 20 * (ESP_NUM / 2) + 1;
+    char *strTemp = (char *)malloc(30 * sizeof(char));
+    char *strindex = (char *)malloc(3 * sizeof(char));
 
-    cJSON_AddNumberToObject(form,"sensor_5",data[4]);
-    cJSON_AddNumberToObject(form,"sensor_6",data[5]);
-    cJSON_AddNumberToObject(form,"sensor_7",data[6]);
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    ESP_LOGI(TAG_HTTP, "%s", strTemp);
+    cJSON_AddNumberToObject(form, strTemp, data[0]);
+    ESP_LOGI(TAG_HTTP, "%s", strTemp);
 
-    cJSON_AddNumberToObject(form,"sensor_8",data[7]);
-    cJSON_AddNumberToObject(form,"sensor_9",data[8]);
-    cJSON_AddNumberToObject(form,"sensor_10",data[9]);
-    char *a=cJSON_Print(sudo);
-    cJSON_Delete(sudo);//if don't free, heap memory will be overload
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[1]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[2]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[3]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[4]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[5]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[6]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[7]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[8]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[9]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[10]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[11]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[12]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[13]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[14]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[15]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[16]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[17]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[18]);
+
+    strcpy(strTemp, "sensor_");
+    itoa(temp_num, strindex, 10);
+    strcat(strTemp, strindex);
+    temp_num++;
+    cJSON_AddNumberToObject(form, strTemp, data[19]);
+    ESP_LOGI(TAG_HTTP, "end");
+
+    free(strindex);
+    free(strTemp);
+
+    char *a = cJSON_Print(sudo);
+    cJSON_Delete(sudo); //if don't free, heap memory will be overload
+
     return a;
 }
-/* Post method */
-void postTask (void *pv)
+
+/* read Digital */
+void readDigital(void *pv)
 {
-    ESP_LOGI(TAG_HTTP," Init http Post");
-    
-    double data[10];
+    while (1)
+    {
+        data[10] = gpio_get_level(4);
+        data[11] = gpio_get_level(5);
+        data[12] = gpio_get_level(12);
+        data[13] = gpio_get_level(14);
+        data[14] = gpio_get_level(15);
+        data[15] = gpio_get_level(19);
+        data[16] = gpio_get_level(2);
+        data[17] = gpio_get_level(23);
+        data[18] = gpio_get_level(25);
+        data[19] = gpio_get_level(26);
+        vTaskDelay(50 / portTICK_PERIOD_MS);
+    }
+
+    esp_restart();
+    vTaskDelete(NULL);
+}
+
+/* read i2c */
+void readI2C(void *pv)
+{
+    /* varialbe for i2c */
+    uint8_t checksum = 0;
+    uint16_t rawHumidity = 0;
+    uint16_t rawTemperature = 0;
+    double Humidity = 0.0;
+    double Temperature = 0.0;
+    while (1)
+    {
+        /* temperature 14 bit */
+        data_write[0] = 0xF3;
+        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+
+        rawTemperature = data_read[0] << 8;
+        rawTemperature |= data_read[1];
+        checksum = checkCRC8(rawTemperature);
+
+        if (checksum == data_read[2])
+        {
+            Temperature = (0.002681 * (double)rawTemperature - 46.85);
+            data[0] = Temperature;
+        }
+        data_write[0] = 0xFE;
+        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+        //------------------------------------------------------------//
+
+        /* humidity 12 bit */
+        data_write[0] = 0xF5;
+        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+        rawHumidity = data_read[0] << 8;
+        rawHumidity |= data_read[1];
+        checksum = checkCRC8(rawHumidity);
+        if (checksum == data_read[2])
+        {
+            rawHumidity &= 0xFFFD;
+            Humidity = (0.001907 * (double)rawHumidity - 6);
+            data[1] = Humidity;
+        }
+
+        data_write[0] = 0xFE;
+        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+
+        vTaskDelay(50 / portTICK_PERIOD_MS);
+    }
+    esp_restart();
+    vTaskDelete(NULL);
+}
+
+/* read ADC */
+void readADC(void *pv)
+{
+    //-------------------------------------------------------//
+    while (1)
+    {
+        /* read data from analog */
+        data[2] = (double)adc1_get_raw(ADC1_CHANNEL_0) / 4096 * 100;
+        data[3] = (double)adc1_get_raw(ADC1_CHANNEL_1) / 4096 * 100;
+        data[4] = (double)adc1_get_raw(ADC1_CHANNEL_2) / 4096 * 100;
+        data[5] = (double)adc1_get_raw(ADC1_CHANNEL_3) / 4096 * 100;
+        data[6] = (double)adc1_get_raw(ADC1_CHANNEL_4) / 4096 * 100;
+        data[7] = (double)adc1_get_raw(ADC1_CHANNEL_5) / 4096 * 100;
+        data[8] = (double)adc1_get_raw(ADC1_CHANNEL_6) / 4096 * 100;
+        data[9] = (double)adc1_get_raw(ADC1_CHANNEL_7) / 4096 * 100;
+
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+    }
+
+    esp_restart();
+    vTaskDelete(NULL);
+}
+
+/* Post method */
+void postTask(void *pv)
+{
+    ESP_LOGI(TAG_HTTP, " Init http Post");
+
     esp_http_client_config_t config = {
-        .url=URL_SERVER,
+        .url = URL_SERVER,
         .event_handler = _http_event_handle,
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_POST);
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
-    /* varialbe for i2c */
-    uint8_t checksum=0;
-    uint16_t rawHumidity=0;
-    uint16_t rawTemperature=0;
-    double Humidity=0.0;
-    double Temperature=0.0;
-
-    while(1)
+    while (1)
     {
-        char* post_data = (char *) malloc(512);
-        
+        char *post_data = (char *)malloc(1024);
+
         /* USER code begin here */
-        ESP_LOGI(TAG_HTTP,"start i2c");
-        /* temperature 14 bit */
-        data_write[0]=0xF3;
-        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
-        ESP_LOGI(TAG_HTTP,"start i2c");
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-        ESP_LOGI(TAG_HTTP,"start i2c");
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
-        ESP_LOGI(TAG_HTTP,"start i2c");
 
-        rawTemperature=data_read[0] <<8;
-        rawTemperature|=data_read[1];
-        checksum=checkCRC8(rawTemperature);
-
-        if(checksum==data_read[2])
-        {
-            Temperature=(0.002681 * (double)rawTemperature - 46.85); 
-            data[0]=Temperature;
-        }
-        data_write[0]=0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-        //------------------------------------------------------------//
-        ESP_LOGI(TAG_HTTP,"start i2c");
-        
-        /* humidity 12 bit */
-        data_write[0]=0xF5;
-        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
-        ESP_LOGI(TAG_HTTP,"end i2c");
-        rawHumidity=data_read[0] <<8;
-        rawHumidity|=data_read[1];
-        checksum=checkCRC8(rawHumidity);
-        if(checksum==data_read[2])
-        {
-            rawHumidity &=0xFFFD;
-            Humidity = (0.001907 * (double)rawHumidity - 6);
-            data[1]= Humidity;
-        }
-
-        data_write[0]=0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-        ESP_LOGI(TAG_HTTP,"end i2c");
-        //-------------------------------------------------------//
-        /* read data from analog */
-        data[2] = (double)adc1_get_raw(ADC1_CHANNEL_0)/4096*100;
-        data[3] = (double)adc1_get_raw(ADC1_CHANNEL_1)/4096*100;
-        data[4] = (double)adc1_get_raw(ADC1_CHANNEL_2)/4096*100;
-        data[5] = (double)adc1_get_raw(ADC1_CHANNEL_3)/4096*100;
-        data[6] = (double)adc1_get_raw(ADC1_CHANNEL_4)/4096*100;
-        data[7] = (double)adc1_get_raw(ADC1_CHANNEL_5)/4096*100;
-        data[8] = (double)adc1_get_raw(ADC1_CHANNEL_6)/4096*100;
-        data[9] = (double)adc1_get_raw(ADC1_CHANNEL_7)/4096*100;
-        ESP_LOGI(TAG_HTTP,"end adc");
         /* USER code end here */
-
-        post_data = Print_JSON(ESP_ID,data);
-        ESP_LOGI(TAG_HTTP,"end json");
-        esp_http_client_set_post_field(client,post_data,strlen(post_data));
-        ESP_LOGI(TAG_HTTP,"start send");
+        post_data = Print_JSON(ESP_ID, data);
+        esp_http_client_set_post_field(client, post_data, strlen(post_data));
         esp_err_t err = esp_http_client_perform(client);
-        ESP_LOGI(TAG_HTTP,"end send");
         free(post_data);
-        if (err == ESP_OK) {
+        if (err == ESP_OK)
+        {
             ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
-                    esp_http_client_get_status_code(client),
-                    esp_http_client_get_content_length(client));
+                     esp_http_client_get_status_code(client),
+                     esp_http_client_get_content_length(client));
 
-            ESP_LOGI(TAG_HTTP,"free heap size is :%d",esp_get_free_heap_size() );
-            ESP_LOGI(TAG_HTTP," post success");
-        } 
-        else 
+            ESP_LOGI(TAG_HTTP, "free heap size is :%d", esp_get_free_heap_size());
+            ESP_LOGI(TAG_HTTP, " post success");
+        }
+        else
         {
             ESP_LOGE(TAG_HTTP, "HTTP GET request failed: %s", esp_err_to_name(err));
             esp_restart();
             break;
         }
 
-        vTaskDelay(100/portTICK_PERIOD_MS);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
     esp_http_client_close(client);
     esp_http_client_cleanup(client);
@@ -379,35 +543,47 @@ void app_main(void)
     /* init i2C */
     ESP_ERROR_CHECK(i2c_master_init());
 
-    data_write[0]=0xFE; /*!> reset*/
+    data_write[0] = 0xFE; /*!> reset*/
     i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-    vTaskDelay(100/portTICK_PERIOD_MS);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
 
-    data_write[0]=0xE7;/*!> resolution */
-    data_write[1]=0x02;
+    data_write[0] = 0xE7; /*!> resolution */
+    data_write[1] = 0x02;
     i2c_master_write_slave(I2C_MASTER_NUM, data_write, 2);
-    
-    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-    ESP_LOGI(TAG_I2C,"%x",data_read[0]);
-    vTaskDelay(50/portTICK_PERIOD_MS);
 
-    data_write[0]=0xFE; /*!> reset*/
+    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+    ESP_LOGI(TAG_I2C, "%x", data_read[0]);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
+
+    data_write[0] = 0xFE; /*!> reset*/
     i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-    vTaskDelay(5/portTICK_PERIOD_MS);
+    vTaskDelay(5 / portTICK_PERIOD_MS);
 
     /* config parameter for ADC */
     adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(ADC1_CHANNEL_0,ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_1,ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_2,ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_3,ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_4,ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_5,ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_6,ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_7,ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_1, ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_2, ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_3, ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_4, ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11);
+    adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_11);
 
-    /* start Freertos */ 
-    xTaskCreate(&postTask,"postTask",4096*4,NULL,3,NULL);
+    /* config digital input */
+    gpio_config_t input_conf;
+    input_conf.intr_type = GPIO_PIN_INTR_DISABLE;
+    input_conf.mode = GPIO_MODE_INPUT;
+    input_conf.pin_bit_mask = GPIO_INPUT_PIN_SEL;
+    input_conf.pull_down_en = 0;
+    input_conf.pull_up_en = 0;
+    gpio_config(&input_conf);
+
+    /* start Freertos */
+    xTaskCreate(&readI2C, "readI2C", 4096 * 2, NULL, 3, NULL);
+    xTaskCreate(&readADC, "readADC", 4096 * 2, NULL, 3, NULL);
+    xTaskCreate(&readDigital, "readDigital", 4096 * 2, NULL, 3, NULL);
+    xTaskCreate(&postTask, "postTask", 4096 * 4, NULL, 3, NULL);
 }
 
 /* checksum CRC from sensor HTU21 */
@@ -415,8 +591,10 @@ uint8_t checkCRC8(uint16_t data)
 {
     for (uint8_t bit = 0; bit < 16; bit++)
     {
-        if   (data & 0x8000) data = (data << 1) ^ HTU21D_CRC8_POLYNOMINAL;
-        else data <<= 1;
+        if (data & 0x8000)
+            data = (data << 1) ^ HTU21D_CRC8_POLYNOMINAL;
+        else
+            data <<= 1;
     }
     return data >>= 8;
 }
@@ -439,13 +617,15 @@ static esp_err_t i2c_master_init(void)
 /* I2C master read data from slave */
 static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size)
 {
-    if (size == 0) {
+    if (size == 0)
+    {
         return ESP_OK;
     }
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (ESP_SLAVE_ADDR << 1) | READ_BIT, ACK_CHECK_EN);
-    if (size > 1) {
+    if (size > 1)
+    {
         i2c_master_read(cmd, data_rd, size - 1, ACK_VAL);
     }
     i2c_master_read_byte(cmd, data_rd + size - 1, NACK_VAL);
