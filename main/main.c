@@ -211,11 +211,11 @@ void getTask(void *pv)
     };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_method(client, HTTP_METHOD_GET);
-    char *a = (char* ) malloc(256*sizeof(char));
+    char *a = (char* ) malloc(15*sizeof(char));
     char *b = (char* ) malloc(10*sizeof(char));
     
     strcpy(a,ESP_ID);
-    itoa(321,b,10);
+    itoa(ESP_NUM,b,10);
    
     strcat(a,b);
     esp_http_client_set_header(client, "ID",a );
