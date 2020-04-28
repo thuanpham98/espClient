@@ -43,7 +43,7 @@
 #include "driver/adc.h"
 
 /* library I make */
-#include "components/include/"
+#include "components/include/converttime.h"
 
 /* define from file Konfig */
 #define ESP_WIFI_SSID CONFIG_WIFI_SSID
@@ -474,10 +474,7 @@ void readI2C_DS1307 (void *pv)
         itoa(bcdtodec(data_buffer[6] )+2000, year, 10);
         strcat(stringTime,year);
 
-        int current_year = (int)(bcdtodec(data_buffer[6]))+2000;
-        ESP_LOGI(TAG_I2C,"%d",current_year);
-
-        ESP_LOGI(TAG_I2C,"%lld",numTime);
+        numTime=date_to_timestamp(bcdtodec(data_buffer[0] & 0x7f),bcdtodec(data_buffer[1] ),bcdtodec(data_buffer[2] & 0x3f),bcdtodec(data_buffer[4] ),bcdtodec(data_buffer[5],data_buffer[6]+2000,7);
 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
