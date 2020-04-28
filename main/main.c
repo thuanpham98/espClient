@@ -54,8 +54,8 @@
 /* define for I2C */
 #define I2C_MASTER_SCL_IO_STANDARD_MODE 22
 #define I2C_MASTER_SDA_IO_STANDARD_MODE 21
-#define I2C_MASTER_SCL_IO_FAST_MODE 27
-#define I2C_MASTER_SDA_IO_FAST_MODE 26
+#define I2C_MASTER_SCL_IO_FAST_MODE 26
+#define I2C_MASTER_SDA_IO_FAST_MODE 25
 
 #define I2C_MASTER_FREQ_HZ_STANDARD_MODE 100000
 #define I2C_MASTER_FREQ_HZ_FAST_MODE 400000
@@ -85,7 +85,15 @@
 /* buffer read/write for i2c */
 uint8_t data_write[2];
 uint8_t data_read[3];
-uint8_t seccond,minute,hour,day,date,month,year;
+char    seccond[2],
+        minute[2],
+        hour[2],
+        day[10],
+        date[2],
+        month[2],
+        year[4],
+  stringTime[30];
+uint64_t  numTime;
 
 /* define bit in eventgroup, which determine event wifi connected/disconnected */
 #define WIFI_CONNECTED_BIT BIT0
@@ -108,14 +116,15 @@ double data[20];
 
 /* Alloc function here to easy see */
 uint8_t checkCRC8(uint16_t data);
-static esp_err_t i2c_master_init(void);
-static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size);
-static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size);
-char *Print_JSON(char *id, double data[20]);
+static esp_err_t i2c_master_standard_mode_init(void);
+static esp_err_t i2c_master_fast_mode_init(void);
+static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size,uint8_t address_slave);
+static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size,uint8_t address_slave);
+char *Print_JSON(char *id, double data[20],char *datetime,uint64_t timestamp);
 void wifi_init_sta(void);
 void readDigital(void *pv);
-void readI2C(void *pv);
-void readADC(void *pv);
+void readI2C_DS1307(void *pv);
+void readADC_HTU21(void *pv);
 void postTask(void *pv);
 
 /* handling to event wifi */
@@ -239,14 +248,26 @@ void wifi_init_sta(void)
     vEventGroupDelete(s_wifi_event_group);
 }
 
+/* using convert number in DS1307 */
+int bcdtodec(uint8_t num)
+{
+    return ((num>>4)*10 + (num&0x0f));
+}
+int dectobcd(uint8_t num)
+{
+    return ((num/10)<<4 | (num%10));
+}
+
 /* make json to post */
-char *Print_JSON(char *id, double data[20])
+char *Print_JSON(char *id, double data[20],char *datetime,uint64_t timestamp)
 {
     cJSON *sudo = cJSON_CreateObject();
     cJSON *form = cJSON_CreateObject();
     cJSON_AddItemToObject(sudo, "ID", cJSON_CreateString(id));
     cJSON_AddItemToObject(sudo, "dev", cJSON_CreateNumber(ESP_NUM));
+    cJSON_AddItemToObject(sudo, "timestamp", cJSON_CreateNumber(timestamp));
     cJSON_AddItemToObject(sudo, "form", form);
+    cJSON_AddItemToObject(sudo, "datetime", cJSON_CreateString(datetime));
 
     uint8_t temp_num = 20 * (ESP_NUM / 2) + 1;
     char *strTemp = (char *)malloc(30 * sizeof(char));
@@ -379,6 +400,7 @@ char *Print_JSON(char *id, double data[20])
     free(strTemp);
 
     char *a = cJSON_Print(sudo);
+    ESP_LOGI(TAG_I2C,"%s",a);
     cJSON_Delete(sudo); //if don't free, heap memory will be overload
 
     return a;
@@ -397,7 +419,7 @@ void readDigital(void *pv)
         data[15] = gpio_get_level(19);
         data[16] = gpio_get_level(2);
         data[17] = gpio_get_level(23);
-        data[18] = gpio_get_level(25);
+        //data[18] = gpio_get_level(25);
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 
@@ -406,26 +428,101 @@ void readDigital(void *pv)
 }
 void readI2C_DS1307 (void *pv)
 {
-    data_buffer[7];
+    uint8_t data_buffer[7];
+    char *theday[8]={    "none",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"};
+    uint64_t subtimestamp[6]={0,0,0,0,0,0};
     while(1)
     {
         data_buffer[0]=0x00;
-        i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer[0], 1,0x68);
-        i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer[7], 7,0x68);
+        i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, &data_buffer[0], 1,0x68);
+        i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer, 7,0x68);
 
-        seccond=bcdtodec(data_buffer[0] & 0x7f);
+        itoa(bcdtodec(data_buffer[2] & 0x3f), hour, 10);
+        strcpy(stringTime, hour);
+        strcat(stringTime, ":");
 
-        minute=bcdtodec(data_buffer[1]);
+        itoa(bcdtodec(data_buffer[1] ), minute, 10);
+        strcat(stringTime, minute);
+        strcat(stringTime, ":");
 
-        hour=bcdtodec(data_buffer[2] & 0x3f);
+        itoa(bcdtodec(data_buffer[0] & 0x7f), seccond, 10);
+        strcat(stringTime, seccond);
+        strcat(stringTime, "-");
+        
+        strcpy(day, theday[bcdtodec(data_buffer[3])]);
+        strcat(stringTime, day);
+        strcat(stringTime, "-");
 
-        day=bcdtodec(data_buffer[3]);
+        itoa(bcdtodec(data_buffer[4] ), date, 10);
+        strcat(stringTime, date);
+        strcat(stringTime, "/");
 
-        date=bcdtodec(data_buffer[4]);
-    
-        month=bcdtodec(data_buffer[5]);
+        itoa(bcdtodec(data_buffer[5] ), month, 10);
+        strcat(stringTime, month);
+        strcat(stringTime, "/");
 
-        year=bcdtodec(data_buffer[6]);
+        itoa(bcdtodec(data_buffer[6] )+2000, year, 10);
+        strcat(stringTime,year);
+
+        int current_year = (int)(bcdtodec(data_buffer[6]))+2000;
+        ESP_LOGI(TAG_I2C,"%d",current_year);
+        for(int i = 1970 ; i< current_year;i++)
+        {
+            if((i%400==0) || ((i%100!=0) && (i%4==0)))
+            {
+                subtimestamp[5]+=366*24*3600;
+            }
+            else subtimestamp[5]+=365*24*3600;
+
+        }
+        ESP_LOGI(TAG_I2C,"%lld",subtimestamp[5]);
+        for(int i =1 ; i < bcdtodec(data_buffer[5]);i++)
+        {
+            if((i==1)||(i==3)||(i==5)||(i==7)||(i==8)||(i==10)||(i==12))
+            {
+                subtimestamp[4] += 31*24*3600;
+            }
+            else if(i==2)
+            {
+                if((current_year %400==0) || ((current_year %4==0) && (current_year %100!=0)))
+                {
+                    subtimestamp[4]+=29*24*3600;
+                }
+                else subtimestamp[4]+=28*24*3600;
+                
+            }
+            else subtimestamp[4]+=30*24*3600;
+        }
+        for(int i = 1 ; i < bcdtodec(data_buffer[4]);i++)
+        {
+            subtimestamp[3]+=24*3600;
+        }
+        for(int i=0;i < bcdtodec(data_buffer[2]);i++)
+        {
+            subtimestamp[2]+=3600;
+        }
+        for(int i=0;i < bcdtodec(data_buffer[1]);i++)
+        {
+            subtimestamp[1] +=60;
+        }
+        for(int i=0;i < bcdtodec(data_buffer[0]);i++)
+        {
+            subtimestamp[0]+=1;
+        }
+
+        numTime= subtimestamp[0]+subtimestamp[1]+subtimestamp[2]+subtimestamp[3]+subtimestamp[4]+subtimestamp[5]-7*3600;
+        for(int j =0; j < 6;j++)
+        {
+            subtimestamp[j]=0;
+        }
+        ESP_LOGI(TAG_I2C,"%lld",numTime);
 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
@@ -532,7 +629,7 @@ void postTask(void *pv)
         /* USER code begin here */
 
         /* USER code end here */
-        post_data = Print_JSON(ESP_ID, data);
+        post_data = Print_JSON(ESP_ID, data,stringTime,numTime);
         esp_http_client_set_post_field(client, post_data, strlen(post_data));
         esp_err_t err = esp_http_client_perform(client);
         free(post_data);
@@ -619,11 +716,11 @@ void app_main(void)
     gpio_config(&input_conf);
 
     /* start Freertos */
-    xTaskCreate(&readI2C_DS1307, "readI2C_standard_mode", 4096 * 2, NULL, 4, NULL);
-    xTaskCreate(&readI2C_DHT21, "readI2C_fast_mode", 4096 * 2, NULL, 3, NULL);
+    xTaskCreate(&readI2C_DS1307, "readI2C_DS1307", 4096 * 2, NULL, 4, NULL);
+    xTaskCreate(&readI2C_DHT21, "readI2C_DHT21", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readADC, "readADC", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readDigital, "readDigital", 4096 * 2, NULL, 3, NULL);
-    xTaskCreate(&postTask, "postTask", 4096 * 4, NULL, 3, NULL);
+    xTaskCreate(&postTask, "postTask", 4096 * 4, NULL, 4, NULL);
 }
 
 /* checksum CRC from sensor HTU21 */
@@ -693,7 +790,7 @@ static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, si
 {
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (address_slave) << 1) | WRITE_BIT, ACK_CHECK_EN);
+    i2c_master_write_byte(cmd, (address_slave << 1) | WRITE_BIT, ACK_CHECK_EN);
     i2c_master_write(cmd, data_wr, size, ACK_CHECK_EN);
     i2c_master_stop(cmd);
     esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, 1000 / portTICK_RATE_MS);
