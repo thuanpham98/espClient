@@ -55,7 +55,7 @@ static const char *TAG_I2C = "i2c";
 
 #define I2C_MASTER_SCL_IO 22               /*!< gpio number for I2C master clock */
 #define I2C_MASTER_SDA_IO 21               /*!< gpio number for I2C master data  */
-#define I2C_MASTER_FREQ_HZ 400000        /*!< I2C master clock frequency */
+#define I2C_MASTER_FREQ_HZ 100000        /*!< I2C master clock frequency */
 #define I2C_MASTER_TX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_RX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
 
@@ -71,7 +71,7 @@ static const char *TAG_I2C = "i2c";
 #define I2C_MASTER_NUM I2C_NUM_0
 #define HTU21D_CRC8_POLYNOMINAL      0x13100   //crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1
 
-uint8_t data_write[20]={0,10,13,49,53,56,51,50,57,54,52,53,55,53,50,57,32,12,31,21};
+uint8_t data_write[20];
 uint8_t data_read[20];
 
 /**
@@ -411,89 +411,67 @@ char* Print_JSON(char* id,double data[10])
 //     vTaskDelete(NULL);
 // }
 
+int bcdtodec(uint8_t num)
+{
+    return ((num>>4)*10 + (num&0x0f));
+}
+int dectobcd(uint8_t num)
+{
+    return ((num/10)<<4 | (num%10));
+}
+
 /* main */
 void app_main(void)
 {
-    // /* disable the default wifi logging */
-    // esp_log_level_set("wifi", ESP_LOG_NONE);
-
-    // /* Initialize NVS, which store wifi ssid and password */
-    // esp_err_t ret = nvs_flash_init();
-    // if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    // {
-    //     ESP_ERROR_CHECK(nvs_flash_erase());
-    //     ret = nvs_flash_init();
-    // }
-    // ESP_ERROR_CHECK(ret);
-
-    // /* call function init wifi */
-    // wifi_init_sta();
+    
 
     // /* init i2C */
     ESP_ERROR_CHECK(i2c_master_init());
 
+    // data_write[0]=0x07;
+    // data_write[1]=0x10;
+    // i2c_master_write_slave(I2C_MASTER_NUM, data_write, 2,0x68);
+
+    // data_write[0]=0x00;
+    // data_write[1]=dectobcd(0);
+    // data_write[2]=dectobcd(46);
+    // data_write[3]=dectobcd(15);
+    // data_write[4]=dectobcd(3);
+    // data_write[5]=dectobcd(28);
+    // data_write[6]=dectobcd(5);
+    // data_write[7]=dectobcd(20);
+    // i2c_master_write_slave(I2C_MASTER_NUM, data_write, 8,0x68);
+
     while (1)
     {
-    //     /* code */
-    //     i2c_master_write_slave(I2C_MASTER_NUM, data_write, 16,0x42);
-    //     ESP_LOGE(TAG_I2C,"send onde");
 
-    //     i2c_master_read_slave(I2C_MASTER_NUM, data_read ,15,0x42);
-    //     ESP_LOGE(TAG_I2C,"read onde");
-    //     ESP_LOGI(TAG_I2C,"%d",data_read[0]);
-        
-    //     vTaskDelay(100/portTICK_PERIOD_MS);
-    //     /* temperature 14 bit */
-    //     data_write[0]=0xF3;
-    //     i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1,0x40);
-    //     i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1,0x40);
-    //     i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3,0x40);
+    data_write[0]=0x00;
+    i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1,0x68);
+    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 7,0x68);
 
-    //     uint16_t rawTemperature=data_read[0] <<8;
-    //     rawTemperature|=data_read[1];
-    //     uint8_t checksum=checkCRC8(rawTemperature);
+    data_read[0]=bcdtodec(data_read[0] & 0x7f);
+    ESP_LOGI(TAG_I2C,"%d",data_read[0]);
 
-    //     if(checksum==data_read[2])
-    //     {
-    //         float Temperature=(0.002681 * (double)rawTemperature - 46.85); 
-    //         ESP_LOGI(TAG_I2C,"%f",Temperature);
-    //     }
-    //     vTaskDelay(100/portTICK_PERIOD_MS);
-    //     //------------------------------------------------------------//
+    data_read[1]=bcdtodec(data_read[1]);
+    ESP_LOGI(TAG_I2C,"%d",data_read[1]);
 
-    //     /* humidity 12 bit */
-    //     data_write[0]=0xF5;
-    //     i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1,0x40);
-    //     i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1,0x40);
-    //     i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3,0x40);
+    data_read[2]=bcdtodec(data_read[2] & 0x3f);
+    ESP_LOGI(TAG_I2C,"%d",data_read[2]);
 
-    //     uint16_t rawHumidity=data_read[0] <<8;
-    //     rawHumidity|=data_read[1];
-    //     checksum=checkCRC8(rawHumidity);
-    //     if(checksum==data_read[2])
-    //     {
-    //         rawHumidity &=0xFFFD;
-    //         float Humidity = (0.001907 * (double)rawHumidity - 6);
-    //         ESP_LOGI(TAG_I2C,"%f",Humidity);
-            
-    //     }
+    data_read[3]=bcdtodec(data_read[3]);
+    ESP_LOGI(TAG_I2C,"%d",data_read[3]);
 
-    //     data_write[0]=0xFE;
-    //     i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1,0x40);
-    //     i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1,0x40);
-    //     vTaskDelay(100/portTICK_PERIOD_MS);
-        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 20,0x40);
-        ESP_LOGI(TAG_I2C,"ok");
-        // i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1,0x40);
-        // ESP_LOGI(TAG_I2C,"%d",data_read[0]);
-        vTaskDelay(10/portTICK_PERIOD_MS);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 20,0x40);
-        ESP_LOGI(TAG_I2C,"ok");
-        for(uint8_t i=0;i<20;i++)
-        {
-            ESP_LOGI(TAG_I2C,"%d",data_read[i]);   
-        }
-        vTaskDelay(10/portTICK_PERIOD_MS);
+    data_read[4]=bcdtodec(data_read[4]);
+    ESP_LOGI(TAG_I2C,"%d",data_read[4]);
+ 
+    data_read[5]=bcdtodec(data_read[5]);
+    ESP_LOGI(TAG_I2C,"%d",data_read[5]);
+
+    data_read[6]=bcdtodec(data_read[6]);
+    ESP_LOGI(TAG_I2C,"%d",data_read[6]+2000);
+    ESP_LOGI(TAG_I2C,"------------------------------");
+
+    vTaskDelay(1000/portTICK_PERIOD_MS);
     }
 
     /* start Freertos */ 
