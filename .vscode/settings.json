@@ -32,7 +32,10 @@
         "dac.h": "c",
         "ratio": "c",
         "initializer_list": "c",
-        "utility": "c"
+        "utility": "c",
+        "timestamp.h": "c",
+        "unity.h": "c",
+        "converttime.h": "c"
     },
     "cmake.configureOnOpen": false
 }

@@ -40,7 +40,10 @@
 
 /* library for perihape */
 #include "driver/i2c.h"
-#include <driver/adc.h>
+#include "driver/adc.h"
+
+/* library I make */
+#include "components/include/"
 
 /* define from file Konfig */
 #define ESP_WIFI_SSID CONFIG_WIFI_SSID
@@ -473,55 +476,7 @@ void readI2C_DS1307 (void *pv)
 
         int current_year = (int)(bcdtodec(data_buffer[6]))+2000;
         ESP_LOGI(TAG_I2C,"%d",current_year);
-        for(int i = 1970 ; i< current_year;i++)
-        {
-            if((i%400==0) || ((i%100!=0) && (i%4==0)))
-            {
-                subtimestamp[5]+=366*24*3600;
-            }
-            else subtimestamp[5]+=365*24*3600;
 
-        }
-        ESP_LOGI(TAG_I2C,"%lld",subtimestamp[5]);
-        for(int i =1 ; i < bcdtodec(data_buffer[5]);i++)
-        {
-            if((i==1)||(i==3)||(i==5)||(i==7)||(i==8)||(i==10)||(i==12))
-            {
-                subtimestamp[4] += 31*24*3600;
-            }
-            else if(i==2)
-            {
-                if((current_year %400==0) || ((current_year %4==0) && (current_year %100!=0)))
-                {
-                    subtimestamp[4]+=29*24*3600;
-                }
-                else subtimestamp[4]+=28*24*3600;
-                
-            }
-            else subtimestamp[4]+=30*24*3600;
-        }
-        for(int i = 1 ; i < bcdtodec(data_buffer[4]);i++)
-        {
-            subtimestamp[3]+=24*3600;
-        }
-        for(int i=0;i < bcdtodec(data_buffer[2]);i++)
-        {
-            subtimestamp[2]+=3600;
-        }
-        for(int i=0;i < bcdtodec(data_buffer[1]);i++)
-        {
-            subtimestamp[1] +=60;
-        }
-        for(int i=0;i < bcdtodec(data_buffer[0]);i++)
-        {
-            subtimestamp[0]+=1;
-        }
-
-        numTime= subtimestamp[0]+subtimestamp[1]+subtimestamp[2]+subtimestamp[3]+subtimestamp[4]+subtimestamp[5]-7*3600;
-        for(int j =0; j < 6;j++)
-        {
-            subtimestamp[j]=0;
-        }
         ESP_LOGI(TAG_I2C,"%lld",numTime);
 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
