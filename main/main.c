@@ -85,6 +85,7 @@
 /* buffer read/write for i2c */
 uint8_t data_write[2];
 uint8_t data_read[3];
+uint8_t seccond,minute,hour,day,date,month,year;
 
 /* define bit in eventgroup, which determine event wifi connected/disconnected */
 #define WIFI_CONNECTED_BIT BIT0
@@ -405,8 +406,27 @@ void readDigital(void *pv)
 }
 void readI2C_DS1307 (void *pv)
 {
+    data_buffer[7];
     while(1)
     {
+        data_buffer[0]=0x00;
+        i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer[0], 1,0x68);
+        i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer[7], 7,0x68);
+
+        seccond=bcdtodec(data_buffer[0] & 0x7f);
+
+        minute=bcdtodec(data_buffer[1]);
+
+        hour=bcdtodec(data_buffer[2] & 0x3f);
+
+        day=bcdtodec(data_buffer[3]);
+
+        date=bcdtodec(data_buffer[4]);
+    
+        month=bcdtodec(data_buffer[5]);
+
+        year=bcdtodec(data_buffer[6]);
+
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
@@ -426,9 +446,9 @@ void readI2C_DHT21(void *pv)
     {
         /* temperature 14 bit */
         data_write[0] = 0xF3;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1,DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3,DHT21_ADDR);
 
         rawTemperature = data_read[0] << 8;
         rawTemperature |= data_read[1];
@@ -440,15 +460,15 @@ void readI2C_DHT21(void *pv)
             data[0] = Temperature;
         }
         data_write[0] = 0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1,DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
         //------------------------------------------------------------//
 
         /* humidity 12 bit */
         data_write[0] = 0xF5;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1,DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3,DHT21_ADDR);
         rawHumidity = data_read[0] << 8;
         rawHumidity |= data_read[1];
         checksum = checkCRC8(rawHumidity);
@@ -460,8 +480,8 @@ void readI2C_DHT21(void *pv)
         }
 
         data_write[0] = 0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1,DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
 
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
@@ -563,19 +583,19 @@ void app_main(void)
     ESP_ERROR_CHECK(i2c_master_fast_mode_init());
 
     data_write[0] = 0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1,DHT21_ADDR);
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
     data_write[0] = 0xE7; /*!> resolution */
     data_write[1] = 0x02;
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 2);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 2,DHT21_ADDR);
 
-    i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
+    i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
     ESP_LOGI(TAG_I2C, "%x", data_read[0]);
     vTaskDelay(50 / portTICK_PERIOD_MS);
 
     data_write[0] = 0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1,DHT21_ADDR);
     vTaskDelay(5 / portTICK_PERIOD_MS);
 
     /* config parameter for ADC */
