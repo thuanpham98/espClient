@@ -1,5 +1,5 @@
 /** Coppy All Right: Phạm Minh Thuận (Vietnamese Person)
- * This is full code for controll on/off, controll PWM , controll DAC with http GET Method
+ * This is full code for send data to server, read I2c 2 mode in 2 channel, read digital, read analog 8channel  with http POST Method
  * Because only me build it, it is not the best perform
  * this is my thesis for graduate im summer 2020, and free open source
  * help me make it perfect on github https://github.com/thuanpham98/espClient.git
@@ -52,9 +52,14 @@
 #define ESP_NUM CONFIG_NUMBER_DEVICE
 
 /* define for I2C */
-#define I2C_MASTER_SCL_IO 22
-#define I2C_MASTER_SDA_IO 21
-#define I2C_MASTER_FREQ_HZ 400000
+#define I2C_MASTER_SCL_IO_STANDARD_MODE 22
+#define I2C_MASTER_SDA_IO_STANDARD_MODE 21
+#define I2C_MASTER_SCL_IO_FAST_MODE 27
+#define I2C_MASTER_SDA_IO_FAST_MODE 26
+
+#define I2C_MASTER_FREQ_HZ_STANDARD_MODE 100000
+#define I2C_MASTER_FREQ_HZ_FAST_MODE 400000
+
 #define I2C_MASTER_TX_BUF_DISABLE 0
 #define I2C_MASTER_RX_BUF_DISABLE 0
 #define WRITE_BIT I2C_MASTER_WRITE
@@ -63,9 +68,13 @@
 #define ACK_CHECK_DIS 0x0
 #define ACK_VAL 0x0
 #define NACK_VAL 0x1
-#define I2C_MASTER_NUM I2C_NUM_0
 
-#define ESP_SLAVE_ADDR 0x40             /*!< slave address for DHT21 sensor */
+#define I2C_MASTER_NUM_STANDARD_MODE I2C_NUM_0
+#define I2C_MASTER_NUM_FAST_MODE I2C_NUM_1
+
+#define DHT21_ADDR 0x40                 /*!< slave address for DHT21 sensor */
+#define DS1307_ADDR 0x68                /*!< slave address for RTC DS1307 */
+
 #define HTU21D_CRC8_POLYNOMINAL 0x13100 /*!>crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1 */
 
 /* define pin input digital */
@@ -388,16 +397,24 @@ void readDigital(void *pv)
         data[16] = gpio_get_level(2);
         data[17] = gpio_get_level(23);
         data[18] = gpio_get_level(25);
-        data[19] = gpio_get_level(26);
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 
     esp_restart();
     vTaskDelete(NULL);
 }
+void readI2C_DS1307 (void *pv)
+{
+    while(1)
+    {
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
 
+    esp_restart();
+    vTaskDelete(NULL);
+}
 /* read i2c */
-void readI2C(void *pv)
+void readI2C_DHT21(void *pv)
 {
     /* varialbe for i2c */
     uint8_t checksum = 0;
@@ -409,9 +426,9 @@ void readI2C(void *pv)
     {
         /* temperature 14 bit */
         data_write[0] = 0xF3;
-        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3);
 
         rawTemperature = data_read[0] << 8;
         rawTemperature |= data_read[1];
@@ -423,15 +440,15 @@ void readI2C(void *pv)
             data[0] = Temperature;
         }
         data_write[0] = 0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
         //------------------------------------------------------------//
 
         /* humidity 12 bit */
         data_write[0] = 0xF5;
-        i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3);
         rawHumidity = data_read[0] << 8;
         rawHumidity |= data_read[1];
         checksum = checkCRC8(rawHumidity);
@@ -443,8 +460,8 @@ void readI2C(void *pv)
         }
 
         data_write[0] = 0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-        i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
 
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
@@ -542,22 +559,23 @@ void app_main(void)
     wifi_init_sta();
 
     /* init i2C */
-    ESP_ERROR_CHECK(i2c_master_init());
+    ESP_ERROR_CHECK(i2c_master_standard_mode_init());
+    ESP_ERROR_CHECK(i2c_master_fast_mode_init());
 
     data_write[0] = 0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1);
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
     data_write[0] = 0xE7; /*!> resolution */
     data_write[1] = 0x02;
-    i2c_master_write_slave(I2C_MASTER_NUM, data_write, 2);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 2);
 
-    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
+    i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1);
     ESP_LOGI(TAG_I2C, "%x", data_read[0]);
     vTaskDelay(50 / portTICK_PERIOD_MS);
 
     data_write[0] = 0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1);
     vTaskDelay(5 / portTICK_PERIOD_MS);
 
     /* config parameter for ADC */
@@ -581,7 +599,8 @@ void app_main(void)
     gpio_config(&input_conf);
 
     /* start Freertos */
-    xTaskCreate(&readI2C, "readI2C", 4096 * 2, NULL, 3, NULL);
+    xTaskCreate(&readI2C_DS1307, "readI2C_standard_mode", 4096 * 2, NULL, 4, NULL);
+    xTaskCreate(&readI2C_DHT21, "readI2C_fast_mode", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readADC, "readADC", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readDigital, "readDigital", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&postTask, "postTask", 4096 * 4, NULL, 3, NULL);
@@ -601,22 +620,35 @@ uint8_t checkCRC8(uint16_t data)
 }
 
 /* I2C master Initial */
-static esp_err_t i2c_master_init(void)
+static esp_err_t i2c_master_standard_mode_init(void)
 {
-    int i2c_master_port = I2C_MASTER_NUM;
+    int i2c_master_port = I2C_MASTER_NUM_STANDARD_MODE;
     i2c_config_t conf;
     conf.mode = I2C_MODE_MASTER;
-    conf.sda_io_num = I2C_MASTER_SDA_IO;
+    conf.sda_io_num = I2C_MASTER_SDA_IO_STANDARD_MODE;
     conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.scl_io_num = I2C_MASTER_SCL_IO;
+    conf.scl_io_num = I2C_MASTER_SCL_IO_STANDARD_MODE;
     conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.master.clk_speed = I2C_MASTER_FREQ_HZ;
+    conf.master.clk_speed = I2C_MASTER_FREQ_HZ_STANDARD_MODE;
+    i2c_param_config(i2c_master_port, &conf);
+    return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
+}
+static esp_err_t i2c_master_fast_mode_init(void)
+{
+    int i2c_master_port = I2C_MASTER_NUM_FAST_MODE;
+    i2c_config_t conf;
+    conf.mode = I2C_MODE_MASTER;
+    conf.sda_io_num = I2C_MASTER_SDA_IO_FAST_MODE;
+    conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
+    conf.scl_io_num = I2C_MASTER_SCL_IO_FAST_MODE;
+    conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
+    conf.master.clk_speed = I2C_MASTER_FREQ_HZ_FAST_MODE;
     i2c_param_config(i2c_master_port, &conf);
     return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
 }
 
 /* I2C master read data from slave */
-static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size)
+static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size, uint8_t address_slave)
 {
     if (size == 0)
     {
@@ -624,7 +656,7 @@ static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, siz
     }
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (ESP_SLAVE_ADDR << 1) | READ_BIT, ACK_CHECK_EN);
+    i2c_master_write_byte(cmd, (address_slave << 1) | READ_BIT, ACK_CHECK_EN);
     if (size > 1)
     {
         i2c_master_read(cmd, data_rd, size - 1, ACK_VAL);
@@ -637,11 +669,11 @@ static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, siz
 }
 
 /* I2C master write data to slave */
-static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size)
+static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size, uint8_t address_slave)
 {
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (ESP_SLAVE_ADDR << 1) | WRITE_BIT, ACK_CHECK_EN);
+    i2c_master_write_byte(cmd, (address_slave) << 1) | WRITE_BIT, ACK_CHECK_EN);
     i2c_master_write(cmd, data_wr, size, ACK_CHECK_EN);
     i2c_master_stop(cmd);
     esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, 1000 / portTICK_RATE_MS);
