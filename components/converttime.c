@@ -2,7 +2,7 @@
 
 uint64_t date_to_timestamp(uint16_t s,uint16_t m,uint16_t h,uint16_t D,uint16_t M, uint16_t Y,uint16_t timezone)
 {
-    uint64_t subtimestamp[6];
+    uint64_t subtimestamp[6]={0,0,0,0,0,0};
 
     /* convert year */
     for(int i = 1970 ; i< Y;i++)
