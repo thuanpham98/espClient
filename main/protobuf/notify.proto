@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message Notify  {
+    string ID=1;
+    uint32 device=2;
+    string header=3;
+    string content=4;
+    string comment=5;
+}
+
+message Notifies {
+    repeated Notify notifies=1;
+}
