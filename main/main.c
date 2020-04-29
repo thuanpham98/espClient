@@ -1,5 +1,5 @@
 /** Coppy All Right: Phạm Minh Thuận (Vietnamese Person)
- * This is full code for send data to server, read I2c 2 mode in 2 channel, read digital, read analog 8channel  with http POST Method
+ * This is full code for send data to server, read I2c 2 mode in 2 channel, read digital, read analog 8channel, send notify to user  with http POST Method
  * Because only me build it, it is not the best perform
  * this is my thesis for graduate im summer 2020, and free open source
  * help me make it perfect on github https://github.com/thuanpham98/espClient.git
@@ -43,7 +43,10 @@
 #include "driver/adc.h"
 
 /* library I make */
-#include "components/include/converttime.h"
+#include "converttime.h"
+
+/* notify protobuf */
+#include "notify.pb-c.h"
 
 /* define from file Konfig */
 #define ESP_WIFI_SSID CONFIG_WIFI_SSID
@@ -97,6 +100,8 @@ char    seccond[2],
         year[4],
   stringTime[30];
 uint64_t  numTime;
+
+char *header[2]={"alram","not alarm"};
 
 /* define bit in eventgroup, which determine event wifi connected/disconnected */
 #define WIFI_CONNECTED_BIT BIT0
@@ -440,7 +445,6 @@ void readI2C_DS1307 (void *pv)
     "Thursday",
     "Friday",
     "Saturday"};
-    uint64_t subtimestamp[6]={0,0,0,0,0,0};
     while(1)
     {
         data_buffer[0]=0x00;
@@ -474,8 +478,8 @@ void readI2C_DS1307 (void *pv)
         itoa(bcdtodec(data_buffer[6] )+2000, year, 10);
         strcat(stringTime,year);
 
-        numTime=date_to_timestamp(bcdtodec(data_buffer[0] & 0x7f),bcdtodec(data_buffer[1] ),bcdtodec(data_buffer[2] & 0x3f),bcdtodec(data_buffer[4] ),bcdtodec(data_buffer[5],data_buffer[6]+2000,7);
-
+        numTime=date_to_timestamp(bcdtodec(data_buffer[0] & 0x7f),bcdtodec(data_buffer[1] ),bcdtodec(data_buffer[2] & 0x3f),bcdtodec(data_buffer[4]),bcdtodec(data_buffer[5]),(bcdtodec(data_buffer[6])+2000),7);
+        ESP_LOGI(TAG_I2C,"%lld",numTime);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
