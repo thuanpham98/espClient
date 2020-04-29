@@ -34,6 +34,7 @@
 /* library for protobuf-C */
 #include "message.pb-c.h"
 #include "stringtoarray.h"
+#include "notify.pb-c.h"
 
 /* library for perihape */
 #include "driver/gpio.h"
