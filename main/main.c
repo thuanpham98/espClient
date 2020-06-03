@@ -732,11 +732,11 @@ void app_main(void)
     /** Config for Perihap  */
 
     /* config gpio output */
-    gpio_pad_select_gpio(16);
-    gpio_pad_select_gpio(17);
+    // gpio_pad_select_gpio(16);
+    // gpio_pad_select_gpio(17);
 
-    gpio_set_direction(16, GPIO_MODE_OUTPUT);
-    gpio_set_direction(17, GPIO_MODE_OUTPUT); /*!> io32 and io33 is special io, need to choose it  */
+    // gpio_set_direction(16, GPIO_MODE_OUTPUT);
+    // gpio_set_direction(17, GPIO_MODE_OUTPUT); /*!> io16 and io17 is special io, need to choose it  */
 
     gpio_config_t output_conf;
     output_conf.intr_type = GPIO_PIN_INTR_DISABLE;
@@ -761,7 +761,7 @@ void app_main(void)
     };
     ledc_timer_config(&timer_0);
 
-    gpio_pad_select_gpio(32);
+    gpio_pad_select_gpio(32);/*!> for control PWM  */
     gpio_pad_select_gpio(33);
 
     ledc_channel_config_t ledc_hs_0 = {
