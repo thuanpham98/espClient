@@ -175,7 +175,11 @@ static void event_handler(void *arg, esp_event_base_t event_base,
             if (evt->password[n] == '.')
             {
                 j++;
-                continue;
+                if(j <= 2)
+                {
+                    continue;
+                }
+                
             }
             if (j == 0)
             {
@@ -188,7 +192,7 @@ static void event_handler(void *arg, esp_event_base_t event_base,
                 k++;
                 index_dev++;
             }
-            if (j == 2)
+            if (j >= 2)
             {
                 pass[i] = evt->password[n];
                 i++;
