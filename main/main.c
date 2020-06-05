@@ -49,8 +49,12 @@
 #include "driver/dac.h"
 #include "driver/ledc.h"
 
+/* new library */
+#include "main.h"
+
 /* define gpio digital output*/
 #define GPIO_OUTPUT_PIN_SEL ((1ULL << GPIO_NUM_0) | (1ULL << GPIO_NUM_2) | (1ULL << GPIO_NUM_4) | (1ULL << GPIO_NUM_5) |     \
+                             (1ULL << GPIO_NUM_9) | (1ULL << GPIO_NUM_10) |                                                  \
                              (1ULL << GPIO_NUM_12) | (1ULL << GPIO_NUM_13) | (1ULL << GPIO_NUM_14) | (1ULL << GPIO_NUM_15) | \
                              (1ULL << GPIO_NUM_18) | (1ULL << GPIO_NUM_19) |                                                 \
                              (1ULL << GPIO_NUM_21) | (1ULL << GPIO_NUM_22) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_27))
@@ -67,11 +71,11 @@
 #define URL_SERVER "https://iot-server-365.herokuapp.com/storage"
 
 /* Parameter of esp32 */
-char ID[13];
-uint32_t device;
+uint8_t temp_reg_digi[16] = {0, 2, 4, 5, 9, 10, 12, 13, 14, 15, 18, 19, 21, 22, 23, 27};
+uint16_t temp_reg_dac;
+uint16_t temp_reg_pwm;
 uint8_t wifiMode = 0;
-uint8_t user_wifi[33];
-uint8_t pass_wifi[65];
+esp_parameter_t my_esp = {0};
 
 /* define bit in eventgroup, which determine event wifi */
 static const int CONNECTED_BIT = BIT0;
@@ -101,6 +105,9 @@ static void wifi_init_smart(void);
 static void wifi_init_sta(void);
 static void erase_all_nvs(void);
 static void write_nvs(void);
+static void set_reg_digi(uint8_t num_pin, uint8_t level);
+static void set_reg_dac(uint8_t num_dac, uint8_t level);
+static void set_reg_pwm(uint8_t num_pwm, uint8_t level);
 Sensor *protoc(char *message);
 void getTask(void *pv);
 // static void smartconfig_example_task(void *parm);
@@ -175,11 +182,10 @@ static void event_handler(void *arg, esp_event_base_t event_base,
             if (evt->password[n] == '.')
             {
                 j++;
-                if(j <= 2)
+                if (j <= 2)
                 {
                     continue;
                 }
-                
             }
             if (j == 0)
             {
@@ -201,16 +207,16 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         }
         for (int x = 0; x < index_id; x++)
         {
-            ID[x] = *(x + temp_id);
+            my_esp.ID[x] = *(x + temp_id);
         }
         char *subDev = (char *)malloc(index_dev * sizeof(char));
         for (int x = 0; x < index_dev; x++)
         {
             *(x + subDev) = *(x + temp_dev);
         }
-        device = atoi(subDev);
-        ESP_LOGI(TAG_WIFI, "device is : %d", device);
-        ESP_LOGI(TAG_WIFI, "ID is : %s", ID);
+        my_esp.device = atoi(subDev);
+        ESP_LOGI(TAG_WIFI, "device is : %d", my_esp.device);
+        ESP_LOGI(TAG_WIFI, "ID is : %s", my_esp.ID);
 
         bzero(&wifi_config, sizeof(wifi_config_t));
         memcpy(wifi_config.sta.ssid, evt->ssid, sizeof(wifi_config.sta.ssid));
@@ -224,8 +230,8 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         memcpy(ssid, evt->ssid, sizeof(evt->ssid));
         memcpy(password, pass, sizeof(pass));
 
-        memcpy(user_wifi, evt->ssid, sizeof(evt->ssid));
-        memcpy(pass_wifi, pass, sizeof(pass));
+        memcpy(my_esp.user_wifi, evt->ssid, sizeof(evt->ssid));
+        memcpy(my_esp.pass_wifi, pass, sizeof(pass));
         ESP_LOGI(TAG_WIFI, "SSID:%s", ssid);
         ESP_LOGI(TAG_WIFI, "PASSWORD:%s", password);
 
@@ -343,8 +349,8 @@ static void wifi_init_sta(void)
 
     wifi_config_t wifi_config;
     bzero(&wifi_config, sizeof(wifi_config_t));
-    memcpy(wifi_config.sta.ssid, user_wifi, sizeof(wifi_config.sta.ssid));
-    memcpy(wifi_config.sta.password, pass_wifi, sizeof(wifi_config.sta.password));
+    memcpy(wifi_config.sta.ssid, my_esp.user_wifi, sizeof(wifi_config.sta.ssid));
+    memcpy(wifi_config.sta.password, my_esp.pass_wifi, sizeof(wifi_config.sta.password));
 
     // wifi_config_t wifi_config = {
     //     .sta = {
@@ -455,28 +461,40 @@ static void write_nvs(void)
     }
     ESP_LOGI(TAG_NVS, "NVS open OK\n");
 
-    err = nvs_set_str(my_handle, "USER", (char *)user_wifi);
+    /* set ssid of wifi */
+    err = nvs_set_str(my_handle, "USER", (char *)my_esp.user_wifi);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
         return;
     }
 
-    err = nvs_set_str(my_handle, "PASS", (char *)pass_wifi);
+    /* set sspass of wifi */
+    err = nvs_set_str(my_handle, "PASS", (char *)my_esp.pass_wifi);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
         return;
     }
 
-    err = nvs_set_str(my_handle, "ID", (char *)ID);
+    /* set ID of esp */
+    err = nvs_set_str(my_handle, "ID", (char *)my_esp.ID);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
         return;
     }
 
-    err = nvs_set_u32(my_handle, "DEV", device);
+    /* set number of dev */
+    err = nvs_set_u32(my_handle, "DEV", my_esp.device);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
+        return;
+    }
+
+    /* set reg_digi */
+    err = nvs_set_u16(my_handle, "REG_DIGI", my_esp.reg_digi);
     if (err != ESP_OK)
     {
         ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
@@ -489,6 +507,35 @@ static void write_nvs(void)
         ESP_LOGE(TAG_NVS, "Error in commit! (%04X)", err);
         return;
     }
+}
+
+static void set_reg_digi(uint8_t num_pin, uint8_t level)
+{
+    for (uint8_t i = 0; i < 16; i++)
+    {
+        if (num_pin == temp_reg_digi[i])
+        {
+            if (level)
+                my_esp.reg_digi = (my_esp.reg_digi) | (0x0001 << i);
+            else
+            {
+                my_esp.reg_digi = (my_esp.reg_digi) & (~(0x0001 << i));
+            }
+            break;
+        }
+    }
+    write_nvs();
+}
+
+static void set_reg_dac(uint8_t num_dac, uint8_t level)
+{
+    my_esp.reg_dac = (my_esp.reg_dac & (0xFF00 >> (num_dac * 8))) | ((0x0000 | level) << (num_dac * 8));
+    write_nvs();
+}
+static void set_reg_pwm(uint8_t num_pwm, uint8_t level)
+{
+    my_esp.reg_pwm = (my_esp.reg_pwm & (0xFF00 >> (num_pwm * 8))) | ((0x0000 | level) << (num_pwm * 8));
+    write_nvs();
 }
 
 /* get method */
@@ -507,8 +554,8 @@ void getTask(void *pv)
     char *a = (char *)malloc(15 * sizeof(char));
     char *b = (char *)malloc(10 * sizeof(char));
 
-    strcpy(a, ID);
-    itoa(device, b, 10);
+    strcpy(a, my_esp.ID);
+    itoa(my_esp.device, b, 10);
     strcat(a, b);
 
     esp_http_client_set_header(client, "ID", a);
@@ -533,7 +580,7 @@ void getTask(void *pv)
                 ESP_LOGI(TAG_HTTP, "%s", get_data);
                 s = protoc(get_data);
 
-                if ((strcmp(s->id, ID) == 0) && (s->device == device))
+                if ((strcmp(s->id, my_esp.ID) == 0) && (s->device == my_esp.device))
                 {
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     /* USER code begin here */
@@ -548,6 +595,7 @@ void getTask(void *pv)
                     if (io == 25 || io == 26)
                     {
                         dac_output_voltage(io - 25, val);
+                        set_reg_dac((uint8_t)(io - 25), (uint8_t)val);
                     }
                     else if (io == LEDC_HS_CH0_GPIO || io == LEDC_HS_CH1_GPIO)
                     {
@@ -561,10 +609,13 @@ void getTask(void *pv)
                             ledc_set_duty_and_update(LEDC_HS_MODE, LEDC_HS_CH1_CHANNEL, val, 0);
                             break;
                         }
+
+                        set_reg_pwm((uint8_t)(io - 32), (uint8_t)val);
                     }
                     else
                     {
                         gpio_set_level(io, val);
+                        set_reg_digi((uint8_t)io, (uint8_t)val);
                     }
 
                     /* USER code end here */
@@ -589,7 +640,7 @@ void getTask(void *pv)
 
         sensor__free_unpacked(s, NULL);
 
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(200 / portTICK_PERIOD_MS);
     }
     esp_http_client_close(client);
     esp_http_client_cleanup(client);
@@ -648,8 +699,8 @@ void app_main(void)
     }
     else
     {
-        memcpy(user_wifi, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", user_wifi);
+        memcpy(my_esp.user_wifi, value, string_size);
+        ESP_LOGE(TAG_NVS, "%s", my_esp.user_wifi);
     }
 
     /* Get SSPASS of Wifi */
@@ -672,8 +723,8 @@ void app_main(void)
     }
     else
     {
-        memcpy(pass_wifi, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", pass_wifi);
+        memcpy(my_esp.pass_wifi, value, string_size);
+        ESP_LOGE(TAG_NVS, "%s", my_esp.pass_wifi);
     }
 
     /* Get ID of Esp */
@@ -696,12 +747,12 @@ void app_main(void)
     }
     else
     {
-        memcpy(ID, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", ID);
+        memcpy(my_esp.ID, value, string_size);
+        ESP_LOGE(TAG_NVS, "%s", my_esp.ID);
     }
     free(value);
 
-    /* Get index of Esp */
+    /* Get dev numer of Esp */
     uint32_t value_dev;
     err = nvs_get_u32(my_handle, "DEV", &value_dev);
     if (err != ESP_OK)
@@ -715,10 +766,70 @@ void app_main(void)
     }
     else
     {
-        device = value_dev;
-        ESP_LOGE(TAG_NVS, "%d", device);
+        my_esp.device = value_dev;
+        ESP_LOGE(TAG_NVS, "%d", my_esp.device);
     }
-    // wifiMode =0;
+
+    /* Get state of esp32 Pin digit */
+    uint16_t value_digi;
+    uint8_t temp_status_digi = 0;
+    err = nvs_get_u16(my_handle, "REG_DIGI", &value_digi);
+    if (err != ESP_OK)
+    {
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
+        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
+        temp_status_digi = 0;
+    }
+    else
+    {
+        temp_status_digi = 1;
+        my_esp.reg_digi = value_digi;
+        ESP_LOGE(TAG_NVS, "%d", my_esp.reg_digi);
+    }
+
+    /* Get value of esp32 DAC */
+    uint16_t value_dac;
+    uint8_t temp_status_dac = 0;
+    err = nvs_get_u16(my_handle, "REG_DAC", &value_dac);
+    if (err != ESP_OK)
+    {
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
+        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
+        temp_status_dac = 0;
+    }
+    else
+    {
+        temp_status_dac = 1;
+        my_esp.reg_dac = value_dac;
+        ESP_LOGE(TAG_NVS, "%d", my_esp.reg_dac);
+    }
+
+    /* Get value of esp32 PWM */
+    uint16_t value_pwm;
+    uint8_t temp_status_pwm = 0;
+    err = nvs_get_u16(my_handle, "REG_DAC", &value_pwm);
+    if (err != ESP_OK)
+    {
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
+        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
+        temp_status_pwm = 0;
+    }
+    else
+    {
+        temp_status_pwm = 1;
+        my_esp.reg_pwm = value_pwm;
+        ESP_LOGE(TAG_NVS, "%d", my_esp.reg_pwm);
+    }
+
     /* choose mode connect wifi */
     if (wifiMode == 1)
     {
@@ -731,13 +842,7 @@ void app_main(void)
 
     /** Config for Perihap  */
 
-    /* config gpio output */
-    // gpio_pad_select_gpio(16);
-    // gpio_pad_select_gpio(17);
-
-    // gpio_set_direction(16, GPIO_MODE_OUTPUT);
-    // gpio_set_direction(17, GPIO_MODE_OUTPUT); /*!> io16 and io17 is special io, need to choose it  */
-
+    /* config GPIO output digital */
     gpio_config_t output_conf;
     output_conf.intr_type = GPIO_PIN_INTR_DISABLE;
     output_conf.mode = GPIO_MODE_OUTPUT;
@@ -746,11 +851,28 @@ void app_main(void)
     output_conf.pull_up_en = 0;
     gpio_config(&output_conf);
 
+    if (temp_status_digi)
+    {
+        for (uint8_t i = 0; i < 16; i++)
+        {
+            gpio_set_level(temp_reg_digi[i], ((my_esp.reg_digi >> i) & 0x0001));
+        }
+        ESP_LOGE(TAG_WIFI, "rewrote digital ok ");
+        ESP_LOGE(TAG_WIFI, "%d", value_digi);
+    }
+
     /* config DAC */
     dac_output_enable(DAC_CHANNEL_1); /*!> if io 25 */
     dac_output_enable(DAC_CHANNEL_2); /*!> io 26 */
+    if (temp_status_dac)
+    {
+        for (uint8_t i = 0; i < 2; i++)
+        {
+            dac_output_voltage(i, ((my_esp.reg_dac >> (i * 8)) & 0x00FF));
+        }
+    }
 
-    /* config pwm */
+    /* config PWM */
     ledc_timer_config_t timer_0 = {
 
         .speed_mode = LEDC_HS_MODE,
@@ -761,7 +883,7 @@ void app_main(void)
     };
     ledc_timer_config(&timer_0);
 
-    gpio_pad_select_gpio(32);/*!> for control PWM  */
+    gpio_pad_select_gpio(32); /*!> for control PWM  */
     gpio_pad_select_gpio(33);
 
     ledc_channel_config_t ledc_hs_0 = {
@@ -788,30 +910,16 @@ void app_main(void)
 
     ledc_fade_func_install(0); /*!> if we don't have this function, can't update duty */
 
-    /* start Freertos */
-    xTaskCreate(&getTask, "getTask", 4096 * 4, NULL, 2, NULL);
-}
+    if (temp_status_pwm)
+    {
+        for (uint8_t i = 0; i < 2; i++)
+        {
+            ledc_set_duty_and_update(LEDC_HS_MODE, i, (uint32_t)((my_esp.reg_pwm >> (i * 8)) & 0x00FF), 0);
+        }
+    }
 
-// static void smartconfig_example_task(void *parm)
-// {
-//     EventBits_t uxBits;
-//     ESP_ERROR_CHECK(esp_smartconfig_set_type(SC_TYPE_ESPTOUCH));
-//     smartconfig_start_config_t cfg = SMARTCONFIG_START_CONFIG_DEFAULT();
-//     ESP_ERROR_CHECK(esp_smartconfig_start(&cfg));
-//     while (1)
-//     {
-//         uxBits = xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT | ESPTOUCH_DONE_BIT, true, false, portMAX_DELAY);
-//         if (uxBits & CONNECTED_BIT)
-//         {
-//             ESP_LOGI(TAG, "WiFi Connected to ap");
-//         }
-//         if (uxBits & ESPTOUCH_DONE_BIT)
-//         {
-//             ESP_LOGI(TAG, "smartconfig over");
-//             esp_smartconfig_stop();
-//             ESP_LOGI(TAG, "Eveything is ok");
-//             vTaskDelete(NULL);
-//             ESP_LOGI(TAG, "OK r nha");
-//         }
-//     }
-// }
+    /* start Freertos */
+    uint64_t ca = GPIO_OUTPUT_PIN_SEL;
+    ESP_LOGI(TAG_WIFI, "%lld", ca);
+    xTaskCreate(&getTask, "getTask", 4096 * 8, NULL, 3, NULL);
+}
