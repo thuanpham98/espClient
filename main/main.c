@@ -501,6 +501,22 @@ static void write_nvs(void)
         return;
     }
 
+    /* set reg_dac */
+    err = nvs_set_u16(my_handle, "REG_DAC", my_esp.reg_dac);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
+        return;
+    }
+
+    /* set reg_digi */
+    err = nvs_set_u16(my_handle, "REG_PWM", my_esp.reg_pwm);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
+        return;
+    }
+
     err = nvs_commit(my_handle);
     if (err != ESP_OK)
     {
@@ -813,7 +829,7 @@ void app_main(void)
     /* Get value of esp32 PWM */
     uint16_t value_pwm;
     uint8_t temp_status_pwm = 0;
-    err = nvs_get_u16(my_handle, "REG_DAC", &value_pwm);
+    err = nvs_get_u16(my_handle, "REG_PWM", &value_pwm);
     if (err != ESP_OK)
     {
         if (err == ESP_ERR_NVS_NOT_FOUND)
