@@ -62,14 +62,8 @@
                             (1ULL << GPIO_NUM_2) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_15) | (1ULL << GPIO_NUM_19) | \
                             (1ULL << GPIO_NUM_25) | (1ULL << GPIO_NUM_26))
 
-// /* define from file Konfig */
-// #define ESP_WIFI_SSID CONFIG_WIFI_SSID
-// #define ESP_WIFI_PASS CONFIG_WIFI_PASSWORD
-// #define ESP_MAXIMUM_RETRY CONFIG_MAXIMUM_RETRY
-// #define URL_SERVER CONFIG_URL_SERVER
-// #define ESP_MAX_HTTP_RECV_BUFFER CONFIG_MAX_HTTP_RECV_BUFFER
-// #define ESP_ID CONFIG_ID_DEVICE
-// #define ESP_NUM CONFIG_NUMBER_DEVICE
+/* define number sensor */
+#define NUM_SEN 20
 
 /* URL to storage Data */
 #define URL_SERVER "https://iot-server-365.herokuapp.com/storage"
@@ -95,8 +89,8 @@
 #define I2C_MASTER_NUM_STANDARD_MODE I2C_NUM_0
 #define I2C_MASTER_NUM_FAST_MODE I2C_NUM_1
 
-#define DHT21_ADDR 0x40                 /*!< slave address for DHT21 sensor */
-#define DS1307_ADDR 0x68                /*!< slave address for RTC DS1307 */
+#define DHT21_ADDR 0x40  /*!< slave address for DHT21 sensor */
+#define DS1307_ADDR 0x68 /*!< slave address for RTC DS1307 */
 
 #define HTU21D_CRC8_POLYNOMINAL 0x13100 /*!>crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1 */
 
@@ -128,32 +122,32 @@ static int s_retry_num = 0;
 nvs_handle_t my_handle;
 
 /* variable temp to receive data from server */
-uint8_t num_sensor=20;
 char temp[512];
-double data[num_sensor];
+double data[NUM_SEN];
+uint8_t num_sensor = (uint8_t)(sizeof(data) / sizeof(data[0]));
 
 /* buffer read/write for i2c */
 uint8_t data_write[2];
 uint8_t data_read[3];
-char    seccond[2],
-        minute[2],
-        hour[2],
-        day[10],
-        date[2],
-        month[2],
-        year[4],
-  stringTime[30];
-uint64_t  numTime;
+char seccond[2],
+    minute[2],
+    hour[2],
+    day[10],
+    date[2],
+    month[2],
+    year[4],
+    stringTime[30];
+uint64_t numTime;
 
-char *header[2]={"alram","not alarm"};
+char *header[2] = {"alram", "not alarm"};
 
 /* Alloc function here to easy see */
 uint8_t checkCRC8(uint16_t data);
 static esp_err_t i2c_master_standard_mode_init(void);
 static esp_err_t i2c_master_fast_mode_init(void);
-static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size,uint8_t address_slave);
-static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size,uint8_t address_slave);
-char *Print_JSON(char *id, double data[20],char *datetime,uint64_t timestamp);
+static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size, uint8_t address_slave);
+static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size, uint8_t address_slave);
+char *Print_JSON(char *id, double data[20], uint8_t length, char *datetime, uint64_t timestamp);
 static void erase_all_nvs(void);
 static void write_nvs(void);
 static void wifi_init_smart(void);
@@ -235,11 +229,10 @@ static void event_handler(void *arg, esp_event_base_t event_base,
             if (evt->password[n] == '.')
             {
                 j++;
-                if(j <= 2)
+                if (j <= 2)
                 {
                     continue;
                 }
-                
             }
             if (j == 0)
             {
@@ -459,148 +452,36 @@ static void wifi_init_sta(void)
 }
 
 /* make json to post */
-char *Print_JSON(char *id, double data[20],char *datetime,uint64_t timestamp)
+char *Print_JSON(char *id, double data[20], uint8_t length, char *datetime, uint64_t timestamp)
 {
     cJSON *sudo = cJSON_CreateObject();
     cJSON *form = cJSON_CreateObject();
     cJSON_AddItemToObject(sudo, "ID", cJSON_CreateString(id));
     cJSON_AddItemToObject(sudo, "dev", cJSON_CreateNumber(device));
     cJSON_AddItemToObject(sudo, "timestamp", cJSON_CreateNumber(timestamp));
-    cJSON_AddItemToObject(sudo, "form", form);
     cJSON_AddItemToObject(sudo, "datetime", cJSON_CreateString(datetime));
+    cJSON_AddItemToObject(sudo, "form", form);
 
-    uint8_t temp_num = 20 * (ESP_NUM / 2) + 1;
+    // uint8_t temp_num = 20 * (device / 2) + 1;
     char *strTemp = (char *)malloc(30 * sizeof(char));
     char *strindex = (char *)malloc(3 * sizeof(char));
 
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    ESP_LOGI(TAG_HTTP, "%s", strTemp);
-    cJSON_AddNumberToObject(form, strTemp, data[0]);
-    ESP_LOGI(TAG_HTTP, "%s", strTemp);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[1]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[2]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[3]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[4]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[5]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[6]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[7]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[8]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[9]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[10]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[11]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[12]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[13]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[14]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[15]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[16]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[17]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[18]);
-
-    strcpy(strTemp, "sensor_");
-    itoa(temp_num, strindex, 10);
-    strcat(strTemp, strindex);
-    temp_num++;
-    cJSON_AddNumberToObject(form, strTemp, data[19]);
-    ESP_LOGI(TAG_HTTP, "end");
+    for (int i = 0; i < length; i++)
+    {
+        strcpy(strTemp, "sensor_");
+        itoa((i+1), strindex, 10);
+        strcat(strTemp, strindex);
+        i++;
+        ESP_LOGI(TAG_HTTP, "%s", strTemp);
+        cJSON_AddNumberToObject(form, strTemp, data[0]);
+        ESP_LOGI(TAG_HTTP, "%s", strTemp);
+    }
 
     free(strindex);
     free(strTemp);
 
     char *a = cJSON_Print(sudo);
-    ESP_LOGI(TAG_I2C,"%s",a);
+    ESP_LOGI(TAG_I2C, "%s", a);
     cJSON_Delete(sudo); //if don't free, heap memory will be overload
 
     return a;
@@ -626,52 +507,52 @@ void readDigital(void *pv)
     esp_restart();
     vTaskDelete(NULL);
 }
-void readI2C_DS1307 (void *pv)
+void readI2C_DS1307(void *pv)
 {
     uint8_t data_buffer[7];
-    char *theday[8]={    "none",
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"};
-    while(1)
+    char *theday[8] = {"none",
+                       "Sunday",
+                       "Monday",
+                       "Tuesday",
+                       "Wednesday",
+                       "Thursday",
+                       "Friday",
+                       "Saturday"};
+    while (1)
     {
-        data_buffer[0]=0x00;
-        i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, &data_buffer[0], 1,0x68);
-        i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer, 7,0x68);
+        data_buffer[0] = 0x00;
+        i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, &data_buffer[0], 1, 0x68);
+        i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer, 7, 0x68);
 
         itoa(bcdtodec(data_buffer[2] & 0x3f), hour, 10);
         strcpy(stringTime, hour);
         strcat(stringTime, ":");
 
-        itoa(bcdtodec(data_buffer[1] ), minute, 10);
+        itoa(bcdtodec(data_buffer[1]), minute, 10);
         strcat(stringTime, minute);
         strcat(stringTime, ":");
 
         itoa(bcdtodec(data_buffer[0] & 0x7f), seccond, 10);
         strcat(stringTime, seccond);
         strcat(stringTime, "-");
-        
+
         strcpy(day, theday[bcdtodec(data_buffer[3])]);
         strcat(stringTime, day);
         strcat(stringTime, "-");
 
-        itoa(bcdtodec(data_buffer[4] ), date, 10);
+        itoa(bcdtodec(data_buffer[4]), date, 10);
         strcat(stringTime, date);
         strcat(stringTime, "/");
 
-        itoa(bcdtodec(data_buffer[5] ), month, 10);
+        itoa(bcdtodec(data_buffer[5]), month, 10);
         strcat(stringTime, month);
         strcat(stringTime, "/");
 
-        itoa(bcdtodec(data_buffer[6] )+2000, year, 10);
-        strcat(stringTime,year);
+        itoa(bcdtodec(data_buffer[6]) + 2000, year, 10);
+        strcat(stringTime, year);
 
-        numTime=date_to_timestamp(bcdtodec(data_buffer[0] & 0x7f),bcdtodec(data_buffer[1] ),bcdtodec(data_buffer[2] & 0x3f),bcdtodec(data_buffer[4]),bcdtodec(data_buffer[5]),(bcdtodec(data_buffer[6])+2000),7);
-        ESP_LOGI(TAG_I2C,"%lld",numTime);
+        numTime = date_to_timestamp(bcdtodec(data_buffer[0] & 0x7f), bcdtodec(data_buffer[1]), bcdtodec(data_buffer[2] & 0x3f), bcdtodec(data_buffer[4]), bcdtodec(data_buffer[5]), (bcdtodec(data_buffer[6]) + 2000), 7);
+        ESP_LOGI(TAG_I2C, "%lld", numTime);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 
@@ -691,9 +572,9 @@ void readI2C_DHT21(void *pv)
     {
         /* temperature 14 bit */
         data_write[0] = 0xF3;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1,DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3,DHT21_ADDR);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1, DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3, DHT21_ADDR);
 
         rawTemperature = data_read[0] << 8;
         rawTemperature |= data_read[1];
@@ -705,15 +586,15 @@ void readI2C_DHT21(void *pv)
             data[0] = Temperature;
         }
         data_write[0] = 0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1,DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
         //------------------------------------------------------------//
 
         /* humidity 12 bit */
         data_write[0] = 0xF5;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1,DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3,DHT21_ADDR);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1, DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3, DHT21_ADDR);
         rawHumidity = data_read[0] << 8;
         rawHumidity |= data_read[1];
         checksum = checkCRC8(rawHumidity);
@@ -725,8 +606,8 @@ void readI2C_DHT21(void *pv)
         }
 
         data_write[0] = 0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1,DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
+        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
+        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
 
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
@@ -777,7 +658,7 @@ void postTask(void *pv)
         /* USER code begin here */
 
         /* USER code end here */
-        post_data = Print_JSON(ID, data,stringTime,numTime);
+        post_data = Print_JSON(ID, data,num_sensor, stringTime, numTime);
         esp_http_client_set_post_field(client, post_data, strlen(post_data));
         esp_err_t err = esp_http_client_perform(client);
         free(post_data);
@@ -936,19 +817,19 @@ void app_main(void)
     ESP_ERROR_CHECK(i2c_master_fast_mode_init());
 
     data_write[0] = 0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1,DHT21_ADDR);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
     data_write[0] = 0xE7; /*!> resolution */
     data_write[1] = 0x02;
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 2,DHT21_ADDR);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 2, DHT21_ADDR);
 
-    i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1,DHT21_ADDR);
+    i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
     ESP_LOGI(TAG_I2C, "%x", data_read[0]);
     vTaskDelay(50 / portTICK_PERIOD_MS);
 
     data_write[0] = 0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1,DHT21_ADDR);
+    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
     vTaskDelay(5 / portTICK_PERIOD_MS);
 
     /* config parameter for ADC */
@@ -1074,11 +955,11 @@ static void write_nvs(void)
 /* using convert number in DS1307 */
 int bcdtodec(uint8_t num)
 {
-    return ((num>>4)*10 + (num&0x0f));
+    return ((num >> 4) * 10 + (num & 0x0f));
 }
 int dectobcd(uint8_t num)
 {
-    return ((num/10)<<4 | (num%10));
+    return ((num / 10) << 4 | (num % 10));
 }
 
 /* checksum CRC from sensor HTU21 */
