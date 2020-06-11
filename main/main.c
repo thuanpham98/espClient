@@ -52,7 +52,7 @@
 #include "driver/gpio.h"
 
 /* library I make */
-#include "converttime.h"
+#include "sync_rtc.h"
 
 /* notify protobuf */
 #include "notify.pb-c.h"
@@ -125,6 +125,7 @@ nvs_handle_t my_handle;
 char temp[512];
 double data[NUM_SEN];
 uint8_t num_sensor = (uint8_t)(sizeof(data) / sizeof(data[0]));
+uint8_t type_sync_time;
 
 /* buffer read/write for i2c */
 uint8_t data_write[2];
@@ -153,7 +154,7 @@ static void write_nvs(void);
 static void wifi_init_smart(void);
 static void wifi_init_sta(void);
 void readDigital(void *pv);
-void readI2C_DS1307(void *pv);
+void readI2C_DS1307(uint8_t data_buffer[7]);
 void readADC_HTU21(void *pv);
 int bcdtodec(uint8_t num);
 int dectobcd(uint8_t num);
@@ -469,19 +470,15 @@ char *Print_JSON(char *id, double data[20], uint8_t length, char *datetime, uint
     for (int i = 0; i < length; i++)
     {
         strcpy(strTemp, "sensor_");
-        itoa((i+1), strindex, 10);
+        itoa((i + 1), strindex, 10);
         strcat(strTemp, strindex);
-        i++;
-        ESP_LOGI(TAG_HTTP, "%s", strTemp);
         cJSON_AddNumberToObject(form, strTemp, data[0]);
-        ESP_LOGI(TAG_HTTP, "%s", strTemp);
     }
 
     free(strindex);
     free(strTemp);
 
     char *a = cJSON_Print(sudo);
-    ESP_LOGI(TAG_I2C, "%s", a);
     cJSON_Delete(sudo); //if don't free, heap memory will be overload
 
     return a;
@@ -507,58 +504,13 @@ void readDigital(void *pv)
     esp_restart();
     vTaskDelete(NULL);
 }
-void readI2C_DS1307(void *pv)
+void readI2C_DS1307(uint8_t data_buffer[7])
 {
-    uint8_t data_buffer[7];
-    char *theday[8] = {"none",
-                       "Sunday",
-                       "Monday",
-                       "Tuesday",
-                       "Wednesday",
-                       "Thursday",
-                       "Friday",
-                       "Saturday"};
-    while (1)
-    {
-        data_buffer[0] = 0x00;
-        i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, &data_buffer[0], 1, 0x68);
-        i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer, 7, 0x68);
-
-        itoa(bcdtodec(data_buffer[2] & 0x3f), hour, 10);
-        strcpy(stringTime, hour);
-        strcat(stringTime, ":");
-
-        itoa(bcdtodec(data_buffer[1]), minute, 10);
-        strcat(stringTime, minute);
-        strcat(stringTime, ":");
-
-        itoa(bcdtodec(data_buffer[0] & 0x7f), seccond, 10);
-        strcat(stringTime, seccond);
-        strcat(stringTime, "-");
-
-        strcpy(day, theday[bcdtodec(data_buffer[3])]);
-        strcat(stringTime, day);
-        strcat(stringTime, "-");
-
-        itoa(bcdtodec(data_buffer[4]), date, 10);
-        strcat(stringTime, date);
-        strcat(stringTime, "/");
-
-        itoa(bcdtodec(data_buffer[5]), month, 10);
-        strcat(stringTime, month);
-        strcat(stringTime, "/");
-
-        itoa(bcdtodec(data_buffer[6]) + 2000, year, 10);
-        strcat(stringTime, year);
-
-        numTime = date_to_timestamp(bcdtodec(data_buffer[0] & 0x7f), bcdtodec(data_buffer[1]), bcdtodec(data_buffer[2] & 0x3f), bcdtodec(data_buffer[4]), bcdtodec(data_buffer[5]), (bcdtodec(data_buffer[6]) + 2000), 7);
-        ESP_LOGI(TAG_I2C, "%lld", numTime);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-
-    esp_restart();
-    vTaskDelete(NULL);
+    data_buffer[0] = 0x00;
+    i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, &data_buffer[0], 1, 0x68);
+    i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer, 7, 0x68);
 }
+
 /* read i2c */
 void readI2C_DHT21(void *pv)
 {
@@ -653,27 +605,33 @@ void postTask(void *pv)
 
     while (1)
     {
-        char *post_data = (char *)malloc(1024);
-
+        char *post_data = (char *)malloc(1024 * sizeof(char));
+        char *str_time = (char *)malloc(64 * sizeof(char));
+        get_time_str(str_time);
         /* USER code begin here */
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
         /* USER code end here */
-        post_data = Print_JSON(ID, data,num_sensor, stringTime, numTime);
+        post_data = Print_JSON(ID, data, num_sensor, str_time, get_timestamp());
+        ESP_LOGI(TAG_I2C, "%s", post_data);
         esp_http_client_set_post_field(client, post_data, strlen(post_data));
         esp_err_t err = esp_http_client_perform(client);
         free(post_data);
+        free(str_time);
         if (err == ESP_OK)
         {
-            ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
+            ESP_LOGI(TAG_HTTP, "HTTP POST Status = %d, content_length = %d",
                      esp_http_client_get_status_code(client),
                      esp_http_client_get_content_length(client));
 
             ESP_LOGI(TAG_HTTP, "free heap size is :%d", esp_get_free_heap_size());
             ESP_LOGI(TAG_HTTP, " post success");
+            
         }
         else
         {
-            ESP_LOGE(TAG_HTTP, "HTTP GET request failed: %s", esp_err_to_name(err));
+            ESP_LOGE(TAG_HTTP, "HTTP POST request failed: %s", esp_err_to_name(err));
             esp_restart();
             break;
         }
@@ -852,8 +810,22 @@ void app_main(void)
     input_conf.pull_up_en = 0;
     gpio_config(&input_conf);
 
+    /* config RTC */
+    type_sync_time = 1;
+    uint8_t data_time[7];
+    set_time_zone();
+    if (type_sync_time == 0)
+    {
+        sync_time(type_sync_time, data_time);
+    }
+    else
+    {
+        readI2C_DS1307(data_time);
+        sync_time(type_sync_time, data_time);
+    }
+
     /* start Freertos */
-    xTaskCreate(&readI2C_DS1307, "readI2C_DS1307", 4096 * 2, NULL, 4, NULL);
+    // xTaskCreate(&readI2C_DS1307, "readI2C_DS1307", 4096 * 2, NULL, 4, NULL);
     xTaskCreate(&readI2C_DHT21, "readI2C_DHT21", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readADC, "readADC", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readDigital, "readDigital", 4096 * 2, NULL, 3, NULL);
@@ -953,14 +925,14 @@ static void write_nvs(void)
 }
 
 /* using convert number in DS1307 */
-int bcdtodec(uint8_t num)
-{
-    return ((num >> 4) * 10 + (num & 0x0f));
-}
-int dectobcd(uint8_t num)
-{
-    return ((num / 10) << 4 | (num % 10));
-}
+// int bcdtodec(uint8_t num)
+// {
+//     return ((num >> 4) * 10 + (num & 0x0f));
+// }
+// int dectobcd(uint8_t num)
+// {
+//     return ((num / 10) << 4 | (num % 10));
+// }
 
 /* checksum CRC from sensor HTU21 */
 uint8_t checkCRC8(uint16_t data)
