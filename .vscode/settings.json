@@ -29,7 +29,9 @@
         "system_error": "c",
         "cjson_utils.h": "c",
         "event_groups.h": "c",
-        "dac.h": "c"
+        "dac.h": "c",
+        "chrono": "c",
+        "algorithm": "c"
     },
     "cmake.configureOnOpen": false
 }
