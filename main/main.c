@@ -59,8 +59,8 @@
 
 /* define pin input digital */
 #define GPIO_INPUT_PIN_SEL ((1ULL << GPIO_NUM_4) | (1ULL << GPIO_NUM_5) | (1ULL << GPIO_NUM_12) | (1ULL << GPIO_NUM_14) |  \
-                            (1ULL << GPIO_NUM_2) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_15) | (1ULL << GPIO_NUM_19) | \
-                            (1ULL << GPIO_NUM_25) | (1ULL << GPIO_NUM_26))
+                            (1ULL << GPIO_NUM_2) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_15) | (1ULL << GPIO_NUM_19) )
+                            // (1ULL << GPIO_NUM_25) | (1ULL << GPIO_NUM_26))
 
 /* define number sensor */
 #define NUM_SEN 20
@@ -811,7 +811,7 @@ void app_main(void)
     gpio_config(&input_conf);
 
     /* config RTC */
-    type_sync_time = 1;
+    type_sync_time = 0;
     uint8_t data_time[7];
     set_time_zone();
     if (type_sync_time == 0)
