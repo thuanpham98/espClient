@@ -1,5 +1,5 @@
-#ifndef __CONVERTTIME_H
-#define __CONVERTTIME_H
+#ifndef __SYNC_RTC_H
+#define __SYNC_RTC_H
 
 #ifdef __cplusplus
 extern "C" {
