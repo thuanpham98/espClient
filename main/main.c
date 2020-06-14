@@ -72,7 +72,7 @@ static const char *TAG_I2C = "i2c";
 #define HTU21D_CRC8_POLYNOMINAL      0x13100   //crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1
 
 uint8_t data_write[20];
-uint8_t data_read[20];
+uint8_t data_read[10];
 
 /**
  * @brief test code to read esp-i2c-slave
@@ -470,8 +470,8 @@ void app_main(void)
     // data_read[6]=bcdtodec(data_read[6]);
     // ESP_LOGI(TAG_I2C,"%d",data_read[6]+2000);
     // ESP_LOGI(TAG_I2C,"------------------------------");
-    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 18,0x40);
-    for(int i =0;i<18;i++)
+    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 10,0x40);
+    for(int i =0;i<10;i++)
     {
         ESP_LOGI(TAG_I2C,"%d",data_read[i]);
     }
