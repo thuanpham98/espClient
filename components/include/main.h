@@ -15,6 +15,9 @@ extern "C" {
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
 
+/* error library */
+#include "esp_err.h"
+
 typedef struct
 {
     char ID[13];
@@ -26,8 +29,6 @@ typedef struct
     uint16_t reg_pwm;
 
 }esp_parameter_t;
-
-
 
 #ifdef __cplusplus
 }

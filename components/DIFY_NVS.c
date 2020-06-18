@@ -2,7 +2,7 @@
 
 void open_repository(char *repository,nvs_handle_t *nvs_handler)
 {
-    esp_err_t err = nvs_flash_init();
+    esp_err_t err ;
     err = nvs_open(repository, NVS_READWRITE, nvs_handler);
     if (err != ESP_OK)
     {
@@ -12,7 +12,6 @@ void open_repository(char *repository,nvs_handle_t *nvs_handler)
     }
     ESP_LOGI(TAG_NVS, "NVS open OK");
 }
-
 void erase_all_nvs(void)
 {
     esp_err_t err = nvs_flash_init();
@@ -53,49 +52,156 @@ void erase_all_nvs(void)
     }
     ESP_LOGI(TAG_NVS, "NVS init OK!\n");
 }
-
-esp_err_t write_nvs(char *repository,nvs_handle_t *nvs_handler, char *key , void *value,nvs_type_t type)
+esp_err_t delete_key_value(nvs_handle_t *nvs_handler, const char *key)
+{
+    esp_err_t err=nvs_erase_key(*nvs_handler, key);
+    err= err| (nvs_commit(*nvs_handler));
+    if(err==ESP_OK)
+    {
+        ESP_LOGI(TAG_NVS,"delete key-value suces");
+        return ESP_OK;
+    }
+    else
+    {
+        ESP_LOGE(TAG_NVS,"delete fail");
+        return -1;
+    }
+}
+esp_err_t write_nvs(char *repository,nvs_handle_t *nvs_handle, char *key , void *value,nvs_type_t type)
 {
     /* open the partition in RW mode */
-    esp_err_t err = nvs_open(repository, NVS_READWRITE, nvs_handler);
+    esp_err_t err ;
+    nvs_handle_t nvs_handler;
+    nvs_handler = *nvs_handle;
+    open_repository(repository,nvs_handle);
+
+    switch ((uint8_t)type)
+    {
+    case NVS_TYPE_U8:
+        err = nvs_set_u8(nvs_handler,key,*((uint8_t *)value));
+        break;
+    case NVS_TYPE_I8:
+        err = nvs_set_i8(nvs_handler,key,*((int8_t *)value));
+        break;
+    case NVS_TYPE_U16:
+        err = nvs_set_u16(nvs_handler,key,*((uint16_t *)value));
+        break;
+    case NVS_TYPE_I16:
+        err =nvs_set_i16(nvs_handler,key,*((int16_t *)value));
+        break;
+    case NVS_TYPE_U32:
+        err =nvs_set_u32(nvs_handler,key,*((uint32_t *)value));
+        break;
+    case NVS_TYPE_I32:
+        err =nvs_set_i32(nvs_handler,key,*((int32_t *)value));
+        break;
+    case NVS_TYPE_U64:
+        err =nvs_set_u64(nvs_handler,key,*((uint64_t *)value));
+        break;
+    case NVS_TYPE_I64:
+        err =nvs_set_i64(nvs_handler,key,*((int64_t *)value));
+        break;
+    case NVS_TYPE_STR:
+        err = nvs_set_str(nvs_handler, key, (char *)value);
+        break;
+    default:
+        err=-1;
+        ESP_LOGE(TAG_NVS,"not found type of value");
+        break;
+    }
+    err= err | (nvs_commit(nvs_handler));
+
     if (err != ESP_OK)
     {
-
-        ESP_LOGE(TAG_NVS, "FATAL ERROR: Unable to open NVS\n");
-        while (1)
-            vTaskDelay(10 / portTICK_PERIOD_MS);
+        ESP_LOGE(TAG_NVS, "Error in Set NVS");
+        return -1;
     }
-    ESP_LOGI(TAG_NVS, "NVS open OK\n");
-
+    else
+    {
+        ESP_LOGE(TAG_NVS, "Set key-value OK");
+        return ESP_OK;
+    }
+}
+esp_err_t read_nvs(char *repository,nvs_handle_t *nvs_handle, char *key ,void *value ,nvs_type_t type)
+{
+    nvs_handle_t nvs_handler;
+    nvs_handler = *nvs_handle;
+    open_repository(repository,nvs_handle);
+    esp_err_t err ;
+    size_t dismen;
     switch (type)
     {
     case NVS_TYPE_U8:
-        err =nvs_set_u8(*nvs_handle,key,*((uint8_t *)value))
+        err = nvs_get_u8(nvs_handler, key, (uint8_t *)value);
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
         break;
     case NVS_TYPE_I8:
-        err =nvs_set_i8(*nvs_handle,key,*((int8_t *)value))
+        err = nvs_get_i8(nvs_handler, key, (int8_t *)value);
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
         break;
     case NVS_TYPE_U16:
-        err =nvs_set_u16(*nvs_handle,key,*((uint16_t *)value))
+        err = nvs_get_u16(nvs_handler, key, (uint16_t *)value);
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
         break;
     case NVS_TYPE_I16:
-        err =nvs_set_i16(*nvs_handle,key,*((int16_t *)value))
+        err = nvs_get_i16(nvs_handler, key, (int16_t *)value);
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
         break;
     case NVS_TYPE_U32:
-        err =nvs_set_u32(*nvs_handle,key,*((uint32_t *)value))
+        err = nvs_get_u32(nvs_handler, key, (uint32_t *)value);
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
         break;
     case NVS_TYPE_I32:
-        err =nvs_set_i32(*nvs_handle,key,*((int32_t *)value))
+        err = nvs_get_i32(nvs_handler, key, (int32_t *)value);
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
         break;
     case NVS_TYPE_U64:
-        err =nvs_set_u64(*nvs_handle,key,*((uint64_t *)value))
+        err = nvs_get_u64(nvs_handler, key, (uint64_t *)value);
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
         break;
     case NVS_TYPE_I64:
-        err =nvs_set_i64(*nvs_handle,key,*((int64_t *)value))
+        err = nvs_get_i64(nvs_handler, key, (int64_t *)value);
+        if (err == ESP_ERR_NVS_NOT_FOUND)
+        {
+            ESP_LOGE(TAG_NVS, "Key not found");
+        }
         break;
     case NVS_TYPE_STR:
-        err = nvs_set_str(*nvs_handle, key, (char *)value);
-        break;
+            err = nvs_get_str(nvs_handler, key, NULL, &dismen);
+            if (err != ESP_OK)
+            {
+                if (err == ESP_ERR_NVS_NOT_FOUND)
+                {
+                    ESP_LOGE(TAG_NVS, "Key not found");
+                }
+                break;
+            }
+            else
+            {
+                err = nvs_get_str(nvs_handler, key, (char *)value, &dismen);
+                break;   
+            }
     default:
         err=-1;
         break;
@@ -103,68 +209,13 @@ esp_err_t write_nvs(char *repository,nvs_handle_t *nvs_handler, char *key , void
 
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
+        ESP_LOGE(TAG_NVS, "Error in Get NVS");
+        value = NULL;
         return -1;
     }
     else
     {
-        ESP_LOGE(TAG_NVS, "Write key-value OK");
+        ESP_LOGE(TAG_NVS, "Get key-value OK");
         return ESP_OK;
     }
-    
-
-    // /* set sspass of wifi */
-    // err = nvs_set_str(my_handle, "PASS", (char *)my_esp.pass_wifi);
-    // if (err != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-    //     return -1;
-    // }
-
-    // /* set ID of esp */
-    // err = nvs_set_str(my_handle, "ID", (char *)my_esp.ID);
-    // if (err != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-    //     return;
-    // }
-
-    // /* set number of dev */
-    // err = nvs_set_u32(my_handle, "DEV", my_esp.device);
-    // if (err != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-    //     return;
-    // }
-
-    // /* set reg_digi */
-    // err = nvs_set_u16(my_handle, "REG_DIGI", my_esp.reg_digi);
-    // if (err != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-    //     return;
-    // }
-
-    // /* set reg_dac */
-    // err = nvs_set_u16(my_handle, "REG_DAC", my_esp.reg_dac);
-    // if (err != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-    //     return;
-    // }
-
-    // /* set reg_digi */
-    // err = nvs_set_u16(my_handle, "REG_PWM", my_esp.reg_pwm);
-    // if (err != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-    //     return;
-    // }
-
-    // err = nvs_commit(my_handle);
-    // if (err != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG_NVS, "Error in commit! (%04X)", err);
-    //     return;
-    // }
 }

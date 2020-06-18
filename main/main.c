@@ -5,8 +5,6 @@
  * help me make it perfect on github https://github.com/thuanpham98/espClient.git
  */
 
-
-
 /* library for wifi and event of system */
 #include "esp_wifi.h"
 #include "esp_wpa2.h"
@@ -223,8 +221,18 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         free(temp_dev);
         free(temp_id);
 
+        /* first time when config SSID and PASSWORD, it should be earse NVS to config again parameter for esp32 */
         erase_all_nvs();
-        write_nvs();
+        esp_err_t err;
+        err = 0 | write_nvs("storage", &my_handle, "USER", my_esp.user_wifi, NVS_TYPE_STR);
+        err = err | write_nvs("storage", &my_handle, "PASS", my_esp.pass_wifi, NVS_TYPE_STR);
+        err = err | write_nvs("storage", &my_handle, "ID", my_esp.ID, NVS_TYPE_STR);
+        err = err | write_nvs("storage", &my_handle, "DEV", &my_esp.device, NVS_TYPE_U32);
+        if (err != ESP_OK)
+        {
+            ESP_LOGE(TAG_WIFI, "error when write of Smart config, restart to start again");
+            esp_restart();
+        }
 
         ESP_ERROR_CHECK(esp_wifi_disconnect());
         ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
@@ -377,6 +385,7 @@ static void wifi_init_sta(void)
     vEventGroupDelete(s_wifi_event_group);
 }
 
+/* Setup for register */
 static void set_reg_digi(uint8_t num_pin, uint8_t level)
 {
     for (uint8_t i = 0; i < 16; i++)
@@ -392,18 +401,17 @@ static void set_reg_digi(uint8_t num_pin, uint8_t level)
             break;
         }
     }
-    write_nvs();
+    write_nvs("storage", &my_handle, "REG_DIGI", my_esp.reg_digi, NVS_TYPE_U16);
 }
-
 static void set_reg_dac(uint8_t num_dac, uint8_t level)
 {
     my_esp.reg_dac = (my_esp.reg_dac & (0xFF00 >> (num_dac * 8))) | ((0x0000 | level) << (num_dac * 8));
-    write_nvs();
+    write_nvs("storage", &my_handle, "REG_DAC", my_esp.reg_dac, NVS_TYPE_U16);
 }
 static void set_reg_pwm(uint8_t num_pwm, uint8_t level)
 {
     my_esp.reg_pwm = (my_esp.reg_pwm & (0xFF00 >> (num_pwm * 8))) | ((0x0000 | level) << (num_pwm * 8));
-    write_nvs();
+    write_nvs("storage", &my_handle, "REG_PWM", my_esp.reg_pwm, NVS_TYPE_U16);
 }
 
 /* get method */
@@ -530,174 +538,49 @@ void app_main(void)
 {
     /** initialize NVS flash */
     wifiMode = 1; /*!> default have data in NVS */
-    open_repository("storage",&my_handle);
+    esp_err_t err = nvs_flash_init();
+    open_repository("storage", &my_handle);
 
     /* GET data from NVS */
-    size_t string_size;
-    esp_err_t err;
     /* Get SSID of wifi */
-    err = nvs_get_str(my_handle, "USER", NULL, &string_size);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string size! (%04X)", err);
-        wifiMode = 0;
-        ESP_LOGE(TAG_NVS, "Error in  get user");
-    }
-    char *value = malloc(string_size);
-    err = nvs_get_str(my_handle, "USER", value, &string_size);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        wifiMode = 0;
-        ESP_LOGE(TAG_NVS, "Error in  get pass");
-    }
-    else
-    {
-        memcpy(my_esp.user_wifi, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", my_esp.user_wifi);
-    }
+    err = err | read_nvs("storage", &my_handle, "USER", my_esp.user_wifi, NVS_TYPE_STR);
 
     /* Get SSPASS of Wifi */
-    err = nvs_get_str(my_handle, "PASS", NULL, &string_size);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string size! (%04X)", err);
-        wifiMode = 0;
-    }
-    value = malloc(string_size);
-    err = nvs_get_str(my_handle, "PASS", value, &string_size);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        wifiMode = 0;
-    }
-    else
-    {
-        memcpy(my_esp.pass_wifi, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", my_esp.pass_wifi);
-    }
+    err = err |  read_nvs("storage", &my_handle, "PASS", my_esp.pass_wifi, NVS_TYPE_STR);
 
     /* Get ID of Esp */
-    err = nvs_get_str(my_handle, "ID", NULL, &string_size);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string size! (%04X)", err);
-        wifiMode = 0;
-    }
-    value = malloc(string_size);
-    err = nvs_get_str(my_handle, "ID", value, &string_size);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        wifiMode = 0;
-    }
-    else
-    {
-        memcpy(my_esp.ID, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", my_esp.ID);
-    }
-    free(value);
+    err = err |  read_nvs("storage", &my_handle, "ID", my_esp.ID, NVS_TYPE_STR);
 
     /* Get dev numer of Esp */
-    uint32_t value_dev;
-    err = nvs_get_u32(my_handle, "DEV", &value_dev);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        wifiMode = 0;
-    }
-    else
-    {
-        my_esp.device = value_dev;
-        ESP_LOGE(TAG_NVS, "%d", my_esp.device);
-    }
+    err = err |  read_nvs("storage", &my_handle, "DEV", &my_esp.device, NVS_TYPE_U32);
 
     /* Get state of esp32 Pin digit */
-    uint16_t value_digi;
-    uint8_t temp_status_digi = 0;
-    err = nvs_get_u16(my_handle, "REG_DIGI", &value_digi);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        temp_status_digi = 0;
-    }
-    else
-    {
-        temp_status_digi = 1;
-        my_esp.reg_digi = value_digi;
-        ESP_LOGE(TAG_NVS, "%d", my_esp.reg_digi);
-    }
+    read_nvs("storage", &my_handle, "REG_DIGI", &my_esp.reg_digi, NVS_TYPE_U16);
 
     /* Get value of esp32 DAC */
-    uint16_t value_dac;
-    uint8_t temp_status_dac = 0;
-    err = nvs_get_u16(my_handle, "REG_DAC", &value_dac);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        temp_status_dac = 0;
-    }
-    else
-    {
-        temp_status_dac = 1;
-        my_esp.reg_dac = value_dac;
-        ESP_LOGE(TAG_NVS, "%d", my_esp.reg_dac);
-    }
+    read_nvs("storage", &my_handle, "REG_DAC", &my_esp.reg_dac, NVS_TYPE_U16);
 
     /* Get value of esp32 PWM */
-    uint16_t value_pwm;
-    uint8_t temp_status_pwm = 0;
-    err = nvs_get_u16(my_handle, "REG_PWM", &value_pwm);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        temp_status_pwm = 0;
-    }
-    else
-    {
-        temp_status_pwm = 1;
-        my_esp.reg_pwm = value_pwm;
-        ESP_LOGE(TAG_NVS, "%d", my_esp.reg_pwm);
-    }
+    read_nvs("storage", &my_handle, "REG_PWM", &my_esp.reg_pwm, NVS_TYPE_U16);
 
-    /* choose mode connect wifi */
-    if (wifiMode == 1)
+    if(err!=ESP_OK)
     {
-        wifi_init_sta();
+        wifiMode =0 ;
     }
     else
+    {
+        wifiMode =1;
+    }
+    
+    if (wifiMode==0)
     {
         wifi_init_smart();
     }
-
+    else
+    {
+        wifi_init_sta();
+    }
+    
     /** Config for Perihap  */
 
     /* config GPIO output digital */
@@ -709,20 +592,20 @@ void app_main(void)
     output_conf.pull_up_en = 0;
     gpio_config(&output_conf);
 
-    if (temp_status_digi)
+    if (my_esp.reg_digi)
     {
         for (uint8_t i = 0; i < 16; i++)
         {
             gpio_set_level(temp_reg_digi[i], ((my_esp.reg_digi >> i) & 0x0001));
         }
         ESP_LOGE(TAG_WIFI, "rewrote digital ok ");
-        ESP_LOGE(TAG_WIFI, "%d", value_digi);
+        ESP_LOGE(TAG_WIFI, "%d", my_esp.reg_digi);
     }
 
     /* config DAC */
     dac_output_enable(DAC_CHANNEL_1); /*!> if io 25 */
     dac_output_enable(DAC_CHANNEL_2); /*!> io 26 */
-    if (temp_status_dac)
+    if (my_esp.reg_dac)
     {
         for (uint8_t i = 0; i < 2; i++)
         {
@@ -768,7 +651,7 @@ void app_main(void)
 
     ledc_fade_func_install(0); /*!> if we don't have this function, can't update duty */
 
-    if (temp_status_pwm)
+    if (my_esp.reg_pwm)
     {
         for (uint8_t i = 0; i < 2; i++)
         {
