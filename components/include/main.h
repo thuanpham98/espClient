@@ -5,9 +5,15 @@
 extern "C" {
 #endif
 
-#include <stdlib.h>
-#include <stdint.h>
+/* Basic library on C */
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+/* library for Freetos API */
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/event_groups.h"
 
 typedef struct
 {
