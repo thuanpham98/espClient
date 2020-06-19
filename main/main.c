@@ -1,64 +1,63 @@
-/** Coppy All Right: Phạm Minh Thuận (Vietnamese Person)
- * This is full code for controll on/off, controll PWM , controll DAC with http GET Method
- * Because only me build it, it is not the best perform
- * this is my thesis for graduate im summer 2020, and free open source
- * help me make it perfect on github https://github.com/thuanpham98/espClient.git
- */
-
-/* Basic library on C */
+#include <stdio.h>
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
-
-/* library for Freetos API */
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-
-/* library for wifi and event of system */
-#include "esp_system.h"
-#include "esp_wifi.h"
-#include "esp_event.h"
 #include "esp_log.h"
-#include "nvs_flash.h"
 
-#include "driver/uart.h"
+char  *TAG_TEST = "THUAN"; 
 
-static const char *TAG="test_uart";
+typedef struct
+{
+    char header[12] __attribute__((packed));
+    double num1 __attribute__((packed));
+    double data[4] __attribute__((packed)); 
+    uint32_t mycrc __attribute__((packed));
+    int8_t pos __attribute__((packed));
+}frame;
 
-typedef struct{
-    uint32_t HEAD __attribute__((packed)) __attribute__((aligned()));
-    float num1 __attribute__((packed)) __attribute__((aligned(4)));
-    float num2 __attribute__((packed)) __attribute__((aligned(4)));
-    uint8_t num3[10] __attribute__((packed)) __attribute__((aligned()));
-    char name[25] __attribute__((packed)) __attribute__((aligned()));
-} DATA_send;
 
 void app_main(void)
 {
-    char buffer[sizeof(DATA_send) + 1];
-    DATA_send test,test2;
-    
-    test.HEAD=134;
-    test.num1=23.54;
-    test.num2=34.23;
-    test.num3[0]=12;
-    test.name[0]='g';
+    frame test1,test2;
+    char *header="hello";
+    double data[4]={12.424,42.12,45.22,22.11};
 
+    memcpy(test1.header,header,sizeof(test1.header));
+    test1.num1=12.321;
+    memcpy(test1.data,data,sizeof(test1.data));
+    test1.mycrc=12351;
+    test1.pos=-5;
 
+    ESP_LOGE(TAG_TEST,"%s",test1.header);
+    ESP_LOGE(TAG_TEST,"%lf",test1.num1);
+    ESP_LOGE(TAG_TEST,"%d",test1.mycrc);
+    ESP_LOGE(TAG_TEST,"%lf",test1.data[0]);
+    ESP_LOGE(TAG_TEST,"%lf",test1.data[1]);
+    ESP_LOGE(TAG_TEST,"%lf",test1.data[2]);
+    ESP_LOGE(TAG_TEST,"%lf",test1.data[3]);
+    ESP_LOGE(TAG_TEST,"%d",test1.pos);
 
-    memcpy( buffer, &test, sizeof(DATA_send));
-    for (int  i = 0; i < sizeof(DATA_send) + 1; i++)
+    uint8_t data_send[sizeof(frame)+1];
+    memcpy(data_send,&test1,sizeof(frame));
+    ESP_LOGI(TAG_TEST,"%d",sizeof(frame));
+
+    for (int i = 0; i < sizeof(frame); i++)
     {
-        ESP_LOGE(TAG,"%d",buffer[i]);
+        ESP_LOGI(TAG_TEST,"%d",data_send[i]);
     }
 
-    char *buffer2 =(char *)malloc((sizeof(DATA_send) + 1)*sizeof(char));
+    ESP_LOGE(TAG_TEST,"------------------------");
 
-    buffer2=buffer;
+    memcpy(&test2,data_send,sizeof(frame));
 
-    memcpy( &test2, buffer2, sizeof(DATA_send));
-    ESP_LOGE(TAG,"%0.2f",test2.num1);
-
-
+    ESP_LOGE(TAG_TEST,"------------------------");
+    ESP_LOGE(TAG_TEST,"%s",test2.header);
+    ESP_LOGE(TAG_TEST,"%lf",test2.num1);
+    ESP_LOGE(TAG_TEST,"%d",test2.mycrc);
+    ESP_LOGE(TAG_TEST,"%lf",test2.data[0]);
+    ESP_LOGE(TAG_TEST,"%lf",test2.data[1]);
+    ESP_LOGE(TAG_TEST,"%lf",test2.data[2]);
+    ESP_LOGE(TAG_TEST,"%lf",test2.data[3]);
+    ESP_LOGE(TAG_TEST,"%d",test2.pos);
+    
 }
