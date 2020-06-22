@@ -8,47 +8,55 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "driver/can.h"
+#include "freertos/event_groups.h"
 
-static const char *TAG="QUEUE_TEST";
-
-QueueHandle_t my_queue;
-SemaphoreHandle_t my_sema;
-
-typedef struct
-{
-    char header[15];
-    uint32_t ID;
-    float val1;
-} frame ;
-
+static const char *TAG="evenBit_TEST";
+EventGroupHandle_t group_event;
+#define BIT_CONNECT BIT0
+#define BIT_TODO BIT2
+#define BIT_DISCONN BIT3
 
 void task1(void *pv)
 {
-    ESP_LOGI(TAG,"start task1");
-    frame data_send;
-    uint8_t buffer[sizeof(frame)+1];
-    memcpy(data_send.header,"thuandeptrai69",sizeof(data_send.header));
-    data_send.ID=1232154;
-    
-    data_send.val1=12.21;
-    memcpy(buffer,&data_send,sizeof(frame));
-    xQueueSendToBack(my_queue,(void *)buffer,100/portTICK_PERIOD_MS);
-    
-    data_send.val1 ++;
-    memcpy(buffer,&data_send,sizeof(frame));
-    xQueueSendToBack(my_queue,(void *)buffer,100/portTICK_PERIOD_MS);
-    
-    // data_send.val1 ++;
-    // memcpy(buffer,&data_send,sizeof(frame));
-    // xQueueSendToBack(my_queue,(void *)buffer,100/portTICK_PERIOD_MS);
+    group_event= xEventGroupCreate();
 
+    if( group_event == NULL )
+    {
+        ESP_LOGE(TAG,"The event group was not created because there was insufficient FreeRTOS heap available.");
+    }
+    else
+    {
+        ESP_LOGI(TAG,"The event group was created.");
+    }
+
+    EventBits_t wait_bit;
+    wait_bit= xEventGroupWaitBits(group_event,BIT_CONNECT|BIT_TODO,pdFAIL,pdTRUE,portMAX_DELAY);
+
+    if( ( wait_bit & ( BIT_CONNECT| BIT_TODO ) ) == ( BIT_CONNECT| BIT_TODO ) )
+    {
+        ESP_LOGI(TAG,"xEventGroupWaitBits() returned because both bits were set.");
+    }
+    else if( ( wait_bit & BIT_CONNECT) != 0 )
+    {
+        ESP_LOGI(TAG,"xEventGroupWaitBits() returned because just BIT_0 was set.");
+    }
+    else if( ( wait_bit & BIT_TODO ) != 0 )
+    {
+        ESP_LOGI(TAG,"xEventGroupWaitBits() returned because just BIT_4 was set. ");
+    }
+    else
+    {
+        ESP_LOGI(TAG,"xEventGroupWaitBits() returned because xTicksToWait ticks passedwithout either BIT_0 or BIT_4 becoming set.");
+    }
+    ESP_LOGI(TAG,"%d",wait_bit);
+    ESP_LOGI(TAG,"%d",BIT_CONNECT);
+
+    ESP_LOGI(TAG,"start task1");
     while (1)
     {
-        if(xSemaphoreTakeRecursive(my_sema,100/portTICK_PERIOD_MS))
-        {
-            ESP_LOGI(TAG,"send done nha");
-            xSemaphoreGiveRecursive(my_sema);
-        }
+        ESP_LOGI(TAG,"task1");
+        wait_bit=xEventGroupGetBits(group_event);
+        ESP_LOGI(TAG,"%d",wait_bit);
         vTaskDelay(1000/portTICK_PERIOD_MS);
         
     }
@@ -56,56 +64,35 @@ void task1(void *pv)
 }
 void todo(void *pv)
 {
-    uint8_t buffer[sizeof(frame)+1];
-    frame data_receive;
-    if(xQueueReceive(my_queue,(void *)buffer,portMAX_DELAY))
-    {
-        memcpy(&data_receive,buffer,sizeof(frame));
-        ESP_LOGI(TAG,"to do value : %f",data_receive.val1);
-    }
-    else
-    {
-        ESP_LOGE(TAG,"do not receive anything");
-    }
-    ESP_LOGI(TAG,"Done todo");
-    vTaskDelete(NULL);
-}
-void task2(void *pv)
-{
-    ESP_LOGI(TAG,"start task2");
-    uint8_t buffer[sizeof(frame)+1];
-    frame data_receive;
+    ESP_LOGI(TAG,"start task todo");
+    int count=0;
     while (1)
     {
-        if(my_queue !=0)
+        ESP_LOGI(TAG,"todo");
+        count++;
+        if(count==5)
         {
-            if(xQueueReceive(my_queue,(void *)buffer,portMAX_DELAY))
-            {
-                xSemaphoreGiveRecursive(my_sema);
-                memcpy(&data_receive,buffer,sizeof(frame));
-                ESP_LOGI(TAG,"value : %f",data_receive.val1);
-                if(xSemaphoreTakeRecursive(my_sema,portMAX_DELAY))
-                {
-                    xTaskCreate(todo,"todo",4096,NULL,4,NULL);
-                    xSemaphoreGiveRecursive(my_sema);
-                }   
-            }
+            xEventGroupSetBits(group_event,BIT_CONNECT);
+            
+            ESP_LOGI(TAG,"done set bit");
+        }
+        if(count==10)
+        {
+            xEventGroupSetBits(group_event,BIT_TODO);
+            xEventGroupClearBits(group_event,BIT_TODO|BIT_CONNECT);
         }
 
         vTaskDelay(1000/portTICK_PERIOD_MS);
+        
     }
+    vTaskDelete(NULL);
 }
 
 
 void app_main(void)
 {
-    my_sema=xSemaphoreCreateMutex();
-    my_queue=xQueueCreate(3,sizeof(frame)+1);
 
     xTaskCreate(task1,"task1",4096*2,NULL,3,NULL);
-    xTaskCreate(task2,"task2",4096*2,NULL,3,NULL);
-    
-    
-    // xTaskCreate(task3,"task3",4096*2,NULL,3,NULL);
-     
+    xTaskCreate(todo,"todo",4096*2,NULL,3,NULL);
+
 }
