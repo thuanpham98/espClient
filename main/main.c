@@ -35,7 +35,7 @@
 
 /* new library */
 #include "main.h"
-#include "DIFY_NVS.h"
+#include "DIFU_NVS.h"
 
 /* define gpio digital output*/
 #define GPIO_OUTPUT_PIN_SEL ((1ULL << GPIO_NUM_0) | (1ULL << GPIO_NUM_2) | (1ULL << GPIO_NUM_4) | (1ULL << GPIO_NUM_5) |     \

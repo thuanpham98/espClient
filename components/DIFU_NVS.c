@@ -1,4 +1,4 @@
-#include "include/DIFY_NVS.h"
+#include "include/DIFU_NVS.h"
 
 void open_repository(char *repository,nvs_handle_t *nvs_handler)
 {
