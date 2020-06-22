@@ -5,15 +5,8 @@
  * help me make it perfect on github https://github.com/thuanpham98/espClient.git
  */
 
-/* Basic library on C */
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-/* library for Freetos API */
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
+/* main.h */
+#include "main.h"
 
 /* library for wifi and event of system */
 #include "esp_wifi.h"
@@ -40,14 +33,7 @@
 #include <cJSON_Utils.h>
 #include "unity.h"
 
-/* Library NVS memory  */
-#include "esp_partition.h"
-#include "esp_err.h"
-#include "nvs_flash.h"
-#include "nvs.h"
-
 /* library for perihape */
-#include "driver/i2c.h"
 #include "driver/adc.h"
 #include "driver/gpio.h"
 
@@ -56,6 +42,10 @@
 
 /* notify protobuf */
 #include "notify.pb-c.h"
+
+/* DIFU_* library */
+#include "DIFU_I2C.h"
+#include "DIFU_NVS.h"
 
 /* define pin input digital */
 #define GPIO_INPUT_PIN_SEL ((1ULL << GPIO_NUM_4) | (1ULL << GPIO_NUM_5) | (1ULL << GPIO_NUM_12) | (1ULL << GPIO_NUM_14) |  \
@@ -74,32 +64,14 @@
 #define I2C_MASTER_SCL_IO_FAST_MODE 26
 #define I2C_MASTER_SDA_IO_FAST_MODE 25
 
-#define I2C_MASTER_FREQ_HZ_STANDARD_MODE 100000
-#define I2C_MASTER_FREQ_HZ_FAST_MODE 400000
-
-#define I2C_MASTER_TX_BUF_DISABLE 0
-#define I2C_MASTER_RX_BUF_DISABLE 0
-#define WRITE_BIT I2C_MASTER_WRITE
-#define READ_BIT I2C_MASTER_READ
-#define ACK_CHECK_EN 0x1
-#define ACK_CHECK_DIS 0x0
-#define ACK_VAL 0x0
-#define NACK_VAL 0x1
-
-#define I2C_MASTER_NUM_STANDARD_MODE I2C_NUM_0
-#define I2C_MASTER_NUM_FAST_MODE I2C_NUM_1
-
 #define DHT21_ADDR 0x40  /*!< slave address for DHT21 sensor */
 #define DS1307_ADDR 0x68 /*!< slave address for RTC DS1307 */
 
 #define HTU21D_CRC8_POLYNOMINAL 0x13100 /*!>crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1 */
 
 /* Parameter of esp32 */
-char ID[13];
-uint32_t device;
 uint8_t wifiMode = 0;
-uint8_t user_wifi[33];
-uint8_t pass_wifi[65];
+esp_parameter_t my_esp = {0};
 
 /* define bit in eventgroup, which determine event wifi */
 static const int CONNECTED_BIT = BIT0;
@@ -113,7 +85,7 @@ static EventGroupHandle_t s_wifi_event_group;
 static const char *TAG_HTTP = "HTTP";
 static const char *TAG_WIFI = "WIFI";
 static const char *TAG_I2C = "I2C";
-static const char *TAG_NVS = "NVS";
+// static const char *TAG_NVS = "NVS";
 
 /* variable temp to count times reconnect wifi */
 static int s_retry_num = 0;
@@ -133,21 +105,14 @@ uint8_t data_read[3];
 
 uint64_t numTime;
 
-char *header[2] = {"alram", "not alarm"};
-
 /* Alloc function here to easy see */
-uint8_t checkCRC8(uint16_t data);
-static esp_err_t i2c_master_standard_mode_init(void);
-static esp_err_t i2c_master_fast_mode_init(void);
-static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size, uint8_t address_slave);
-static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size, uint8_t address_slave);
-char *Print_JSON(char *id, double data[20], uint8_t length, char *datetime, uint64_t timestamp);
-static void erase_all_nvs(void);
-static void write_nvs(void);
+static uint8_t checkCRC8(uint16_t data);
+static char *Print_JSON(char *id,uint32_t device, double data[20], uint8_t length, char *datetime, uint64_t timestamp);
 static void wifi_init_smart(void);
 static void wifi_init_sta(void);
+static void initial_HTU21(void);
+static void readI2C_DS1307(uint8_t data_buffer[7]);
 void readDigital(void *pv);
-void readI2C_DS1307(uint8_t data_buffer[7]);
 void readADC_HTU21(void *pv);
 void postTask(void *pv);
 
@@ -246,16 +211,16 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         }
         for (int x = 0; x < index_id; x++)
         {
-            ID[x] = *(x + temp_id);
+            my_esp.ID[x] = *(x + temp_id);
         }
         char *subDev = (char *)malloc(index_dev * sizeof(char));
         for (int x = 0; x < index_dev; x++)
         {
             *(x + subDev) = *(x + temp_dev);
         }
-        device = atoi(subDev);
-        ESP_LOGI(TAG_WIFI, "device is : %d", device);
-        ESP_LOGI(TAG_WIFI, "ID is : %s", ID);
+        my_esp.device  = atoi(subDev);
+        ESP_LOGI(TAG_WIFI, "device is : %d", my_esp.device );
+        ESP_LOGI(TAG_WIFI, "ID is : %s", my_esp.ID);
 
         bzero(&wifi_config, sizeof(wifi_config_t));
         memcpy(wifi_config.sta.ssid, evt->ssid, sizeof(wifi_config.sta.ssid));
@@ -269,8 +234,8 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         memcpy(ssid, evt->ssid, sizeof(evt->ssid));
         memcpy(password, pass, sizeof(pass));
 
-        memcpy(user_wifi, evt->ssid, sizeof(evt->ssid));
-        memcpy(pass_wifi, pass, sizeof(pass));
+        memcpy(my_esp.user_wifi, evt->ssid, sizeof(evt->ssid));
+        memcpy(my_esp.pass_wifi, pass, sizeof(pass));
         ESP_LOGI(TAG_WIFI, "SSID:%s", ssid);
         ESP_LOGI(TAG_WIFI, "PASSWORD:%s", password);
 
@@ -278,8 +243,18 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         free(temp_dev);
         free(temp_id);
 
+        /* first time when config SSID and PASSWORD, it should be earse NVS to config again parameter for esp32 */
         erase_all_nvs();
-        write_nvs();
+        esp_err_t err;
+        err = 0 | write_nvs("storage", &my_handle, "USER", my_esp.user_wifi, NVS_TYPE_STR);
+        err = err | write_nvs("storage", &my_handle, "PASS", my_esp.pass_wifi, NVS_TYPE_STR);
+        err = err | write_nvs("storage", &my_handle, "ID", my_esp.ID, NVS_TYPE_STR);
+        err = err | write_nvs("storage", &my_handle, "DEV", &my_esp.device, NVS_TYPE_U32);
+        if (err != ESP_OK)
+        {
+            ESP_LOGE(TAG_WIFI, "error when write of Smart config, restart to start again");
+            esp_restart();
+        }
 
         ESP_ERROR_CHECK(esp_wifi_disconnect());
         ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
@@ -348,9 +323,6 @@ static void wifi_init_smart(void)
     ESP_ERROR_CHECK(esp_wifi_start());
 
     EventBits_t uxBits;
-    // ESP_ERROR_CHECK(esp_smartconfig_set_type(SC_TYPE_ESPTOUCH));
-    // smartconfig_start_config_t cfg = SMARTCONFIG_START_CONFIG_DEFAULT();
-    // ESP_ERROR_CHECK(esp_smartconfig_start(&cfg));
     while (1)
     {
         uxBits = xEventGroupWaitBits(s_wifi_event_group, CONNECTED_BIT | ESPTOUCH_DONE_BIT, true, false, portMAX_DELAY);
@@ -363,8 +335,6 @@ static void wifi_init_smart(void)
             ESP_LOGI(TAG_WIFI, "smartconfig over");
             esp_smartconfig_stop();
             ESP_LOGI(TAG_WIFI, "Eveything is ok");
-            // vTaskDelete(NULL);
-            // ESP_LOGI(TAG, "OK r nha");
             break;
         }
     }
@@ -388,15 +358,9 @@ static void wifi_init_sta(void)
 
     wifi_config_t wifi_config;
     bzero(&wifi_config, sizeof(wifi_config_t));
-    memcpy(wifi_config.sta.ssid, user_wifi, sizeof(wifi_config.sta.ssid));
-    memcpy(wifi_config.sta.password, pass_wifi, sizeof(wifi_config.sta.password));
+    memcpy(wifi_config.sta.ssid, my_esp.user_wifi, sizeof(wifi_config.sta.ssid));
+    memcpy(wifi_config.sta.password, my_esp.pass_wifi, sizeof(wifi_config.sta.password));
 
-    // wifi_config_t wifi_config = {
-    //     .sta = {
-    //         .ssid = "lau101",
-    //         .password = "9999999",
-    //     },
-    // };
     ESP_LOGE(TAG_WIFI, "%s", wifi_config.sta.ssid);
     ESP_LOGE(TAG_WIFI, "%s", wifi_config.sta.password);
 
@@ -444,7 +408,7 @@ static void wifi_init_sta(void)
 }
 
 /* make json to post */
-char *Print_JSON(char *id, double data[20], uint8_t length, char *datetime, uint64_t timestamp)
+static char *Print_JSON(char *id,uint32_t device, double data[20], uint8_t length, char *datetime, uint64_t timestamp)
 {
     cJSON *sudo = cJSON_CreateObject();
     cJSON *form = cJSON_CreateObject();
@@ -495,12 +459,7 @@ void readDigital(void *pv)
     esp_restart();
     vTaskDelete(NULL);
 }
-void readI2C_DS1307(uint8_t data_buffer[7])
-{
-    data_buffer[0] = 0x00;
-    i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, &data_buffer[0], 1, 0x68);
-    i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer, 7, 0x68);
-}
+
 /* read i2c */
 void readI2C_DHT21(void *pv)
 {
@@ -514,9 +473,9 @@ void readI2C_DHT21(void *pv)
     {
         /* temperature 14 bit */
         data_write[0] = 0xF3;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1, DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3, DHT21_ADDR);
+        master_write_i2c(I2C_MASTER_NUM_FAST_MODE, data_write, 1, DHT21_ADDR);
+        master_read_i2c(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
+        master_read_i2c(I2C_MASTER_NUM_FAST_MODE, data_read, 3, DHT21_ADDR);
 
         rawTemperature = data_read[0] << 8;
         rawTemperature |= data_read[1];
@@ -528,15 +487,15 @@ void readI2C_DHT21(void *pv)
             data[0] = Temperature;
         }
         data_write[0] = 0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
+        master_write_i2c(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
+        master_read_i2c(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
         //------------------------------------------------------------//
 
         /* humidity 12 bit */
         data_write[0] = 0xF5;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 1, DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 3, DHT21_ADDR);
+        master_write_i2c(I2C_MASTER_NUM_FAST_MODE, data_write, 1, DHT21_ADDR);
+        master_read_i2c(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
+        master_read_i2c(I2C_MASTER_NUM_FAST_MODE, data_read, 3, DHT21_ADDR);
         rawHumidity = data_read[0] << 8;
         rawHumidity |= data_read[1];
         checksum = checkCRC8(rawHumidity);
@@ -548,8 +507,8 @@ void readI2C_DHT21(void *pv)
         }
 
         data_write[0] = 0xFE;
-        i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
-        i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
+        master_write_i2c(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
+        master_read_i2c(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
 
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
@@ -603,7 +562,7 @@ void postTask(void *pv)
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 
         /* USER code end here */
-        post_data = Print_JSON(ID, data, num_sensor, str_time, get_timestamp());
+        post_data = Print_JSON(my_esp.ID,my_esp.device, data, num_sensor, str_time, get_timestamp());
         ESP_LOGI(TAG_I2C, "%s", post_data);
         esp_http_client_set_post_field(client, post_data, strlen(post_data));
         esp_err_t err = esp_http_client_perform(client);
@@ -641,144 +600,62 @@ void app_main(void)
     esp_log_level_set("wifi", ESP_LOG_NONE);
 
     /** initialize NVS flash */
-    esp_err_t err = nvs_flash_init();
     wifiMode = 1; /*!> default have data in NVS */
-
-    /** Open NVS and Check data  */
-    err = nvs_open("storage", NVS_READWRITE, &my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "FATAL ERROR: can not open NVS");
-        while (1)
-            vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-    ESP_LOGI(TAG_NVS, "NVS open OK");
+    esp_err_t err = nvs_flash_init();
+    open_repository("storage", &my_handle);
 
     /* GET data from NVS */
-    size_t string_size;
-
     /* Get SSID of wifi */
-    err = nvs_get_str(my_handle, "USER", NULL, &string_size);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string size! (%04X)", err);
-        wifiMode = 0;
-        ESP_LOGE(TAG_NVS, "Error in  get user");
-    }
-    char *value = malloc(string_size);
-    err = nvs_get_str(my_handle, "USER", value, &string_size);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        wifiMode = 0;
-        ESP_LOGE(TAG_NVS, "Error in  get pass");
-    }
-    else
-    {
-        memcpy(user_wifi, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", user_wifi);
-    }
+    err = err | read_nvs("storage", &my_handle, "USER", my_esp.user_wifi, NVS_TYPE_STR);
 
     /* Get SSPASS of Wifi */
-    err = nvs_get_str(my_handle, "PASS", NULL, &string_size);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string size! (%04X)", err);
-        wifiMode = 0;
-    }
-    value = malloc(string_size);
-    err = nvs_get_str(my_handle, "PASS", value, &string_size);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        wifiMode = 0;
-    }
-    else
-    {
-        memcpy(pass_wifi, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", pass_wifi);
-    }
+    err = err |  read_nvs("storage", &my_handle, "PASS", my_esp.pass_wifi, NVS_TYPE_STR);
 
     /* Get ID of Esp */
-    err = nvs_get_str(my_handle, "ID", NULL, &string_size);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string size! (%04X)", err);
-        wifiMode = 0;
-    }
-    value = malloc(string_size);
-    err = nvs_get_str(my_handle, "ID", value, &string_size);
-    if (err != ESP_OK)
-    {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        wifiMode = 0;
-    }
-    else
-    {
-        memcpy(ID, value, string_size);
-        ESP_LOGE(TAG_NVS, "%s", ID);
-    }
-    free(value);
+    err = err |  read_nvs("storage", &my_handle, "ID", my_esp.ID, NVS_TYPE_STR);
 
-    /* Get index of Esp */
-    uint32_t value_dev;
-    err = nvs_get_u32(my_handle, "DEV", &value_dev);
-    if (err != ESP_OK)
+    /* Get dev numer of Esp */
+    err = err |  read_nvs("storage", &my_handle, "DEV", &my_esp.device, NVS_TYPE_U32);
+
+    if(err!=ESP_OK)
     {
-        if (err == ESP_ERR_NVS_NOT_FOUND)
-        {
-            ESP_LOGE(TAG_NVS, "Key not found");
-        }
-        ESP_LOGE(TAG_NVS, "Error in nvs_get_str to get string! (%04X)", err);
-        wifiMode = 0;
+        wifiMode =0 ;
     }
     else
     {
-        device = value_dev;
-        ESP_LOGE(TAG_NVS, "%d", device);
+        wifiMode =1;
     }
-    // wifiMode =0;
-    /* choose mode connect wifi */
-    if (wifiMode == 1)
-    {
-        wifi_init_sta();
-    }
-    else
+    
+    if (wifiMode==0)
     {
         wifi_init_smart();
     }
+    else
+    {
+        wifi_init_sta();
+    }
 
     /* init i2C */
-    ESP_ERROR_CHECK(i2c_master_standard_mode_init());
-    ESP_ERROR_CHECK(i2c_master_fast_mode_init());
+    i2c_config_t conf_s;
+    conf_s.mode = I2C_MODE_MASTER;
+    conf_s.sda_io_num = I2C_MASTER_SDA_IO_STANDARD_MODE;
+    conf_s.sda_pullup_en = GPIO_PULLUP_ENABLE;
+    conf_s.scl_io_num = I2C_MASTER_SCL_IO_STANDARD_MODE;
+    conf_s.scl_pullup_en = GPIO_PULLUP_ENABLE;
+    conf_s.master.clk_speed = I2C_MASTER_FREQ_HZ_STANDARD_MODE;
 
-    data_write[0] = 0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    i2c_config_t conf_f;
+    conf_f.mode = I2C_MODE_MASTER;
+    conf_f.sda_io_num = I2C_MASTER_SDA_IO_FAST_MODE;
+    conf_f.sda_pullup_en = GPIO_PULLUP_ENABLE;
+    conf_f.scl_io_num = I2C_MASTER_SCL_IO_FAST_MODE;
+    conf_f.scl_pullup_en = GPIO_PULLUP_ENABLE;
+    conf_f.master.clk_speed = I2C_MASTER_FREQ_HZ_FAST_MODE;
 
-    data_write[0] = 0xE7; /*!> resolution */
-    data_write[1] = 0x02;
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, data_write, 2, DHT21_ADDR);
+    ESP_ERROR_CHECK(init_i2c(&conf_s,I2C_MASTER_NUM_STANDARD_MODE));
+    ESP_ERROR_CHECK(init_i2c(&conf_f,I2C_MASTER_NUM_FAST_MODE));
 
-    i2c_master_read_slave(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
-    ESP_LOGI(TAG_I2C, "%x", data_read[0]);
-    vTaskDelay(50 / portTICK_PERIOD_MS);
-
-    data_write[0] = 0xFE; /*!> reset*/
-    i2c_master_write_slave(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
-    vTaskDelay(5 / portTICK_PERIOD_MS);
+    initial_HTU21();/*!> init for HTU21 */
 
     /* config parameter for ADC */
     adc1_config_width(ADC_WIDTH_BIT_12);
@@ -815,107 +692,40 @@ void app_main(void)
     }
 
     /* start Freertos */
-    // xTaskCreate(&readI2C_DS1307, "readI2C_DS1307", 4096 * 2, NULL, 4, NULL);
     xTaskCreate(&readI2C_DHT21, "readI2C_DHT21", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readADC, "readADC", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readDigital, "readDigital", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&postTask, "postTask", 4096 * 4, NULL, 4, NULL);
 }
-/* Erase NVS memory */
-static void erase_all_nvs(void)
+
+static void initial_HTU21(void)
 {
-    esp_err_t err = nvs_flash_init();
+    data_write[0] = 0xFE; /*!> reset*/
+    master_write_i2c(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
 
-    if (err == ESP_ERR_NVS_NO_FREE_PAGES)
-    {
+    data_write[0] = 0xE7; /*!> resolution */
+    data_write[1] = 0x02;
+    master_write_i2c(I2C_MASTER_NUM_FAST_MODE, data_write, 2, DHT21_ADDR);
 
-        ESP_LOGE(TAG_NVS, "Got NO_FREE_PAGES error, trying to erase the partition...\n");
+    master_read_i2c(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
+    ESP_LOGI(TAG_I2C, "%x", data_read[0]);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
 
-        // find the NVS partition
-        const esp_partition_t *nvs_partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_NVS, NULL);
-        if (!nvs_partition)
-        {
-
-            ESP_LOGE(TAG_NVS, "FATAL ERROR: No NVS partition found\n");
-            while (1)
-                vTaskDelay(10 / portTICK_PERIOD_MS);
-        }
-
-        // erase the partition
-        err = (esp_partition_erase_range(nvs_partition, 0, nvs_partition->size));
-        if (err != ESP_OK)
-        {
-            ESP_LOGE(TAG_NVS, "FATAL ERROR: Unable to erase the partition\n");
-            while (1)
-                vTaskDelay(10 / portTICK_PERIOD_MS);
-        }
-        ESP_LOGI(TAG_NVS, "Partition erased!\n");
-
-        // now try to initialize it again
-        err = nvs_flash_init();
-        if (err != ESP_OK)
-        {
-
-            ESP_LOGE(TAG_NVS, "FATAL ERROR: Unable to initialize NVS\n");
-            while (1)
-                vTaskDelay(10 / portTICK_PERIOD_MS);
-        }
-    }
-    ESP_LOGI(TAG_NVS, "NVS init OK!\n");
+    data_write[0] = 0xFE; /*!> reset*/
+    master_write_i2c(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
+    vTaskDelay(5 / portTICK_PERIOD_MS);
 }
 
-/* Write parameter of esp to NVS */
-static void write_nvs(void)
+static void readI2C_DS1307(uint8_t data_buffer[7])
 {
-    /* open the partition in RW mode */
-    esp_err_t err = nvs_open("storage", NVS_READWRITE, &my_handle);
-    if (err != ESP_OK)
-    {
-
-        ESP_LOGE(TAG_NVS, "FATAL ERROR: Unable to open NVS\n");
-        while (1)
-            vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-    ESP_LOGI(TAG_NVS, "NVS open OK\n");
-
-    err = nvs_set_str(my_handle, "USER", (char *)user_wifi);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-        return;
-    }
-
-    err = nvs_set_str(my_handle, "PASS", (char *)pass_wifi);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-        return;
-    }
-
-    err = nvs_set_str(my_handle, "ID", (char *)ID);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-        return;
-    }
-
-    err = nvs_set_u32(my_handle, "DEV", device);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in nvs_set_str! (%04X)", err);
-        return;
-    }
-
-    err = nvs_commit(my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG_NVS, "Error in commit! (%04X)", err);
-        return;
-    }
+    data_buffer[0] = 0x00;
+    master_write_i2c(I2C_MASTER_NUM_STANDARD_MODE, &data_buffer[0], 1,DS1307_ADDR);
+    master_read_i2c(I2C_MASTER_NUM_STANDARD_MODE, data_buffer, 7, DS1307_ADDR);
 }
 
 /* checksum CRC from sensor HTU21 */
-uint8_t checkCRC8(uint16_t data)
+static uint8_t checkCRC8(uint16_t data)
 {
     for (uint8_t bit = 0; bit < 16; bit++)
     {
@@ -925,66 +735,4 @@ uint8_t checkCRC8(uint16_t data)
             data <<= 1;
     }
     return data >>= 8;
-}
-
-/* I2C master Initial */
-static esp_err_t i2c_master_standard_mode_init(void)
-{
-    int i2c_master_port = I2C_MASTER_NUM_STANDARD_MODE;
-    i2c_config_t conf;
-    conf.mode = I2C_MODE_MASTER;
-    conf.sda_io_num = I2C_MASTER_SDA_IO_STANDARD_MODE;
-    conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.scl_io_num = I2C_MASTER_SCL_IO_STANDARD_MODE;
-    conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.master.clk_speed = I2C_MASTER_FREQ_HZ_STANDARD_MODE;
-    i2c_param_config(i2c_master_port, &conf);
-    return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-}
-static esp_err_t i2c_master_fast_mode_init(void)
-{
-    int i2c_master_port = I2C_MASTER_NUM_FAST_MODE;
-    i2c_config_t conf;
-    conf.mode = I2C_MODE_MASTER;
-    conf.sda_io_num = I2C_MASTER_SDA_IO_FAST_MODE;
-    conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.scl_io_num = I2C_MASTER_SCL_IO_FAST_MODE;
-    conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.master.clk_speed = I2C_MASTER_FREQ_HZ_FAST_MODE;
-    i2c_param_config(i2c_master_port, &conf);
-    return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
-}
-
-/* I2C master read data from slave */
-static esp_err_t i2c_master_read_slave(i2c_port_t i2c_num, uint8_t *data_rd, size_t size, uint8_t address_slave)
-{
-    if (size == 0)
-    {
-        return ESP_OK;
-    }
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (address_slave << 1) | READ_BIT, ACK_CHECK_EN);
-    if (size > 1)
-    {
-        i2c_master_read(cmd, data_rd, size - 1, ACK_VAL);
-    }
-    i2c_master_read_byte(cmd, data_rd + size - 1, NACK_VAL);
-    i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, 1000 / portTICK_RATE_MS);
-    i2c_cmd_link_delete(cmd);
-    return ret;
-}
-
-/* I2C master write data to slave */
-static esp_err_t i2c_master_write_slave(i2c_port_t i2c_num, uint8_t *data_wr, size_t size, uint8_t address_slave)
-{
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (address_slave << 1) | WRITE_BIT, ACK_CHECK_EN);
-    i2c_master_write(cmd, data_wr, size, ACK_CHECK_EN);
-    i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, 1000 / portTICK_RATE_MS);
-    i2c_cmd_link_delete(cmd);
-    return ret;
 }
