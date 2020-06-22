@@ -130,14 +130,7 @@ uint8_t type_sync_time;
 /* buffer read/write for i2c */
 uint8_t data_write[2];
 uint8_t data_read[3];
-char seccond[2],
-    minute[2],
-    hour[2],
-    day[10],
-    date[2],
-    month[2],
-    year[4],
-    stringTime[30];
+
 uint64_t numTime;
 
 char *header[2] = {"alram", "not alarm"};
@@ -156,8 +149,6 @@ static void wifi_init_sta(void);
 void readDigital(void *pv);
 void readI2C_DS1307(uint8_t data_buffer[7]);
 void readADC_HTU21(void *pv);
-int bcdtodec(uint8_t num);
-int dectobcd(uint8_t num);
 void postTask(void *pv);
 
 /* handling to event wifi */
@@ -510,7 +501,6 @@ void readI2C_DS1307(uint8_t data_buffer[7])
     i2c_master_write_slave(I2C_MASTER_NUM_STANDARD_MODE, &data_buffer[0], 1, 0x68);
     i2c_master_read_slave(I2C_MASTER_NUM_STANDARD_MODE, data_buffer, 7, 0x68);
 }
-
 /* read i2c */
 void readI2C_DHT21(void *pv)
 {
@@ -923,16 +913,6 @@ static void write_nvs(void)
         return;
     }
 }
-
-/* using convert number in DS1307 */
-// int bcdtodec(uint8_t num)
-// {
-//     return ((num >> 4) * 10 + (num & 0x0f));
-// }
-// int dectobcd(uint8_t num)
-// {
-//     return ((num / 10) << 4 | (num % 10));
-// }
 
 /* checksum CRC from sensor HTU21 */
 uint8_t checkCRC8(uint16_t data)
