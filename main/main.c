@@ -1,63 +1,79 @@
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_system.h"
 #include "esp_log.h"
+#include "driver/uart.h"
+#include "string.h"
+#include "driver/gpio.h"
 
-char  *TAG_TEST = "THUAN"; 
+char  *TAG_TEST = "USART"; 
+static const int RX_BUF_SIZE = 1024;
 
-typedef struct
+#define TXD_PIN (GPIO_NUM_21)
+#define RXD_PIN (GPIO_NUM_22)
+
+SemaphoreHandle_t my_sema;
+
+void tx_task(void *pv)
 {
-    char header[12] __attribute__((packed));
-    double num1 __attribute__((packed));
-    double data[4] __attribute__((packed)); 
-    uint32_t mycrc __attribute__((packed));
-    int8_t pos __attribute__((packed));
-}frame;
+    char data[50] ="hellothuan\r\n";
+    char *send=data;
+    while(1)
+    {
+        if(xSemaphoreTakeRecursive(my_sema,500/portTICK_PERIOD_MS))
+        {
+            uart_write_bytes(UART_NUM_2, send, sizeof(data));
+            xSemaphoreGiveRecursive(my_sema);
+        }
+        
+        vTaskDelay(1000/portTICK_PERIOD_MS);
+    }
+}
 
+void rx_task(void *pv)
+{
+
+    uint8_t data[RX_BUF_SIZE+1];
+    uint8_t *receive=data;
+    while (1) 
+    {
+        if(xSemaphoreTakeRecursive(my_sema,100/portTICK_PERIOD_MS))
+        {
+            memset(data,0,RX_BUF_SIZE+1);
+            const int rxBytes = uart_read_bytes(UART_NUM_2, data, RX_BUF_SIZE, 200/portTICK_PERIOD_MS);
+            data[rxBytes]=NULL;
+            if (rxBytes > 0) 
+            {
+                
+                ESP_LOGI(TAG_TEST, "Read %d bytes: '%s'", rxBytes, (char *)receive);
+            }
+
+            xSemaphoreGiveRecursive(my_sema);
+        }
+
+    }
+    free(data);
+}
 
 void app_main(void)
 {
-    frame test1,test2;
-    char *header="hello";
-    double data[4]={12.424,42.12,45.22,22.11};
+    my_sema=xSemaphoreCreateRecursiveMutex();
 
-    memcpy(test1.header,header,sizeof(test1.header));
-    test1.num1=12.321;
-    memcpy(test1.data,data,sizeof(test1.data));
-    test1.mycrc=12351;
-    test1.pos=-5;
+    xSemaphoreGiveRecursive(my_sema);
 
-    ESP_LOGE(TAG_TEST,"%s",test1.header);
-    ESP_LOGE(TAG_TEST,"%lf",test1.num1);
-    ESP_LOGE(TAG_TEST,"%d",test1.mycrc);
-    ESP_LOGE(TAG_TEST,"%lf",test1.data[0]);
-    ESP_LOGE(TAG_TEST,"%lf",test1.data[1]);
-    ESP_LOGE(TAG_TEST,"%lf",test1.data[2]);
-    ESP_LOGE(TAG_TEST,"%lf",test1.data[3]);
-    ESP_LOGE(TAG_TEST,"%d",test1.pos);
-
-    uint8_t data_send[sizeof(frame)+1];
-    memcpy(data_send,&test1,sizeof(frame));
-    ESP_LOGI(TAG_TEST,"%d",sizeof(frame));
-
-    for (int i = 0; i < sizeof(frame); i++)
-    {
-        ESP_LOGI(TAG_TEST,"%d",data_send[i]);
-    }
-
-    ESP_LOGE(TAG_TEST,"------------------------");
-
-    memcpy(&test2,data_send,sizeof(frame));
-
-    ESP_LOGE(TAG_TEST,"------------------------");
-    ESP_LOGE(TAG_TEST,"%s",test2.header);
-    ESP_LOGE(TAG_TEST,"%lf",test2.num1);
-    ESP_LOGE(TAG_TEST,"%d",test2.mycrc);
-    ESP_LOGE(TAG_TEST,"%lf",test2.data[0]);
-    ESP_LOGE(TAG_TEST,"%lf",test2.data[1]);
-    ESP_LOGE(TAG_TEST,"%lf",test2.data[2]);
-    ESP_LOGE(TAG_TEST,"%lf",test2.data[3]);
-    ESP_LOGE(TAG_TEST,"%d",test2.pos);
+    const uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_APB,
+    };
+    // We won't use a buffer for sending data.
+    uart_driver_install(UART_NUM_2, RX_BUF_SIZE * 2, RX_BUF_SIZE * 2, 0, NULL, 0);
+    uart_param_config(UART_NUM_2, &uart_config);
+    uart_set_pin(UART_NUM_2, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
     
+    xTaskCreate(rx_task, "uart_rx_task", 1024*2, NULL, 2, NULL);
+    xTaskCreate(tx_task, "uart_tx_task", 1024*2, NULL, 2, NULL);
 }
