@@ -40,15 +40,17 @@ void slave(void *pv)
     can_message_t message;
     while (1)
     {
-        can_clear_receive_queue();
-        if(can_receive(&message,portMAX_DELAY)==ESP_OK)
+        
+        if(can_receive(&message,10000/portTICK_PERIOD_MS)==ESP_OK)
         {
-            ESP_LOGI(TAG,"%s",message.data);
+            ESP_LOGI(TAG,"%d",message.data[0]);
+            can_clear_receive_queue();
         }
         else
         {
-            ESP_LOGE(TAG,"waiting message");
+            ESP_LOGE(TAG,"%x",can_receive(&message,100/portTICK_PERIOD_MS));
         }
+        vTaskDelay(200/portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
 }
@@ -56,7 +58,7 @@ void slave(void *pv)
 void app_main(void)
 {
     //Initialize configuration structures using macro initializers
-    can_general_config_t g_config = CAN_GENERAL_CONFIG_DEFAULT(GPIO_NUM_21, GPIO_NUM_22, CAN_MODE_NORMAL);
+    can_general_config_t g_config = CAN_GENERAL_CONFIG_DEFAULT(GPIO_NUM_5, GPIO_NUM_4, CAN_MODE_NORMAL);
     can_timing_config_t t_config = CAN_TIMING_CONFIG_500KBITS();
     can_filter_config_t f_config = CAN_FILTER_CONFIG_ACCEPT_ALL();
 
