@@ -408,7 +408,7 @@ static void wifi_init_sta(void)
 }
 
 /* make json to post */
-static char *Print_JSON(char *id,uint32_t device, double data[20], uint8_t length, char *datetime, uint64_t timestamp)
+static char *Print_JSON(char *id,uint32_t device, double data_form[20], uint8_t length, char *datetime, uint64_t timestamp)
 {
     cJSON *sudo = cJSON_CreateObject();
     cJSON *form = cJSON_CreateObject();
@@ -427,7 +427,7 @@ static char *Print_JSON(char *id,uint32_t device, double data[20], uint8_t lengt
         strcpy(strTemp, "sensor_");
         itoa((i + 1), strindex, 10);
         strcat(strTemp, strindex);
-        cJSON_AddNumberToObject(form, strTemp, data[0]);
+        cJSON_AddNumberToObject(form, strTemp, data_form[i]);
     }
 
     free(strindex);
@@ -531,7 +531,7 @@ void readADC(void *pv)
         data[7] = (double)adc1_get_raw(ADC1_CHANNEL_5) / 4096 * 100;
         data[8] = (double)adc1_get_raw(ADC1_CHANNEL_6) / 4096 * 100;
         data[9] = (double)adc1_get_raw(ADC1_CHANNEL_7) / 4096 * 100;
-
+        // ESP_LOGE(TAG_HTTP,"%lf",data[2]);
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 
