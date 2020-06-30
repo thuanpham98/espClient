@@ -43,7 +43,8 @@ void slave(void *pv)
         
         if(can_receive(&message,10000/portTICK_PERIOD_MS)==ESP_OK)
         {
-            ESP_LOGI(TAG,"%d",message.data[0]);
+            ESP_LOGI(TAG,"%d",message.data[7]);
+            ESP_LOGI(TAG,"%x",message.identifier);
             can_clear_receive_queue();
         }
         else
