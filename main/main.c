@@ -92,7 +92,6 @@ static void set_reg_dac(uint8_t num_dac, uint8_t level);
 static void set_reg_pwm(uint8_t num_pwm, uint8_t level);
 Sensor *protoc(char *message);
 void getTask(void *pv);
-// static void smartconfig_example_task(void *parm);
 
 /* handling to event wifi */
 static void event_handler(void *arg, esp_event_base_t event_base,
