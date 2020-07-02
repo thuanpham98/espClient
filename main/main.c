@@ -148,268 +148,6 @@ uint8_t checkCRC8(uint16_t data)
     return data >>= 8;
 }
 
-/* define bit in eventgroup, which determine event wifi connected/disconnected */
-#define WIFI_CONNECTED_BIT BIT0
-#define WIFI_FAIL_BIT BIT1
-
-/* make a event groupt to manage event in wifi station mode */
-static EventGroupHandle_t s_wifi_event_group;
-
-/* TAG to log into screen */
-static const char *TAG_HTTP = "HTTP";
-static const char *TAG_WIFI = "WIFI";
-
-/* variable temp to count times reconnect wifi */
-static int s_retry_num = 0;
-
-/* variable temp to receive data from server */
-char temp[ESP_MAX_HTTP_RECV_BUFFER];
-
-/* Alloc function here to easy see */
-char* Print_JSON(char* id,double data[10]);
-void wifi_init_sta(void);
-void postTask(void *pv);
-
-/* handling to event wifi */
-static void event_handler(void *arg, esp_event_base_t event_base,
-                          int32_t event_id, void *event_data)
-{
-    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
-    {
-        esp_wifi_connect();
-    }
-    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
-    {
-        if (s_retry_num < ESP_MAXIMUM_RETRY)
-        {
-            esp_wifi_connect();
-            s_retry_num++;
-            ESP_LOGI(TAG_WIFI, "retry to connect to the AP");
-        }
-        else
-        {
-            xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
-        }
-        ESP_LOGI(TAG_WIFI, "connect to the AP fail");
-    }
-    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
-    {
-        ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
-        ESP_LOGI(TAG_WIFI, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
-        s_retry_num = 0;
-        xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-    }
-}
-
-/* handling http event */
-esp_err_t _http_event_handle(esp_http_client_event_t *evt)
-{
-    switch (evt->event_id)
-    {
-    case HTTP_EVENT_ERROR:
-
-        break;
-    case HTTP_EVENT_ON_CONNECTED:
-
-        break;
-    case HTTP_EVENT_HEADER_SENT:
-
-        break;
-    case HTTP_EVENT_ON_HEADER:
-
-        break;
-    case HTTP_EVENT_ON_DATA:
-
-        if (!esp_http_client_is_chunked_response(evt->client))
-        {
-            for (int i = 0; i < evt->data_len; i++)
-            {
-                temp[i] = *(((char *)evt->data) + i);
-            }
-        }
-        break;
-    case HTTP_EVENT_ON_FINISH:
-
-        break;
-    case HTTP_EVENT_DISCONNECTED:
-
-        break;
-    }
-    return ESP_OK;
-}
-
-/* init wifi function */
-void wifi_init_sta(void)
-{
-    s_wifi_event_group = xEventGroupCreate();
-
-    ESP_ERROR_CHECK(esp_netif_init());
-
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    esp_netif_create_default_wifi_sta();
-
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
-    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
-    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler, NULL));
-
-    wifi_config_t wifi_config = {
-        .sta = {
-            .ssid = ESP_WIFI_SSID,
-            .password = ESP_WIFI_PASS},
-    };
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
-    ESP_ERROR_CHECK(esp_wifi_start());
-
-    ESP_LOGI(TAG_WIFI, "wifi_init_sta finished.");
-
-    EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-                                           WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-                                           pdFALSE,
-                                           pdFALSE,
-                                           portMAX_DELAY);
-
-    if (bits & WIFI_CONNECTED_BIT)
-    {
-        ESP_LOGI(TAG_WIFI, "connected to ap SSID:%s password:%s",
-                 ESP_WIFI_SSID, ESP_WIFI_PASS);
-    }
-    else if (bits & WIFI_FAIL_BIT)
-    {
-        ESP_LOGI(TAG_WIFI, "Failed to connect to SSID:%s, password:%s",
-                 ESP_WIFI_SSID, ESP_WIFI_PASS);
-    }
-    else
-    {
-        ESP_LOGE(TAG_WIFI, "UNEXPECTED EVENT");
-    }
-
-    ESP_ERROR_CHECK(esp_event_handler_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler));
-    ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler));
-    vEventGroupDelete(s_wifi_event_group);
-}
-
-/////------------make json to post------------------///
-char* Print_JSON(char* id,double data[10])
-{
-    cJSON* sudo =cJSON_CreateObject();
-    cJSON* form=cJSON_CreateObject();
-    cJSON_AddItemToObject(sudo, "ID",cJSON_CreateString(id));
-    cJSON_AddItemToObject(sudo, "form",form);
-
-    cJSON_AddNumberToObject(form,"sensor_1",data[0]);
-    cJSON_AddNumberToObject(form,"sensor_2",data[1]);
-    cJSON_AddNumberToObject(form,"sensor_3",data[2]);
-    cJSON_AddNumberToObject(form,"sensor_4",data[3]);
-
-    cJSON_AddNumberToObject(form,"sensor_5",data[4]);
-    cJSON_AddNumberToObject(form,"sensor_6",data[5]);
-    cJSON_AddNumberToObject(form,"sensor_7",data[6]);
-
-    cJSON_AddNumberToObject(form,"sensor_8",data[7]);
-    cJSON_AddNumberToObject(form,"sensor_9",data[8]);
-    cJSON_AddNumberToObject(form,"sensor_10",data[9]);
-    char *a=cJSON_Print(sudo);
-    cJSON_Delete(sudo);//if don't free, heap memory will be overload
-    return a;
-}
-//-------Post method----------//
-// void postTask (void *pv)
-// {
-//     ESP_LOGI(TAG_HTTP," Init http Post");
-    
-//     double data[10];
-//     esp_http_client_config_t config = {
-//         .url=URL_SERVER,
-//         .event_handler = _http_event_handle,
-//     };
-//     esp_http_client_handle_t client = esp_http_client_init(&config);
-//     esp_http_client_set_method(client, HTTP_METHOD_POST);
-//     esp_http_client_set_header(client, "Content-Type", "application/json");
-
-//     /* varialbe for i2c */
-//     uint8_t checksum=0;
-//     uint16_t rawHumidity=0;
-//     uint16_t rawTemperature=0;
-//     double Humidity=0.0;
-//     double Temperature=0.0;
-
-//     while(1)
-//     {
-//         char* post_data = (char *) malloc(512);
-//         /* USER code begin here */
-
-//         /* temperature 14 bit */
-//         data_write[0]=0xF3;
-//         i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
-//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
-
-//         rawTemperature=data_read[0] <<8;
-//         rawTemperature|=data_read[1];
-//         checksum=checkCRC8(rawTemperature);
-
-//         if(checksum==data_read[2])
-//         {
-//             Temperature=(0.002681 * (double)rawTemperature - 46.85); 
-//             data[0]=Temperature;
-//         }
-//         //------------------------------------------------------------//
-
-//         /* humidity 12 bit */
-//         data_write[0]=0xF5;
-//         i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1);
-//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 3);
-
-//         rawHumidity=data_read[0] <<8;
-//         rawHumidity|=data_read[1];
-//         checksum=checkCRC8(rawHumidity);
-//         if(checksum==data_read[2])
-//         {
-//             rawHumidity &=0xFFFD;
-//             Humidity = (0.001907 * (double)rawHumidity - 6);
-//             data[1]= Humidity;
-//         }
-
-//         data_write[0]=0xFE;
-//         i2c_master_write_slave(I2C_MASTER_NUM, &data_write[0], 1);
-//         i2c_master_read_slave(I2C_MASTER_NUM, data_read, 1);
-
-//         /* USER code end here */
-
-//         post_data = Print_JSON(ESP_ID,data);
-//         esp_http_client_set_post_field(client,post_data,strlen(post_data));
-
-//         esp_err_t err = esp_http_client_perform(client);
-//         if (err == ESP_OK) {
-//             ESP_LOGI(TAG_HTTP, "HTTP GET Status = %d, content_length = %d",
-//                     esp_http_client_get_status_code(client),
-//                     esp_http_client_get_content_length(client));
-
-
-//             data[2]++;data[3]++;data[4]++;data[5]++;data[6]++;data[7]++;data[8]++;data[9]++;
-//             free(post_data);
-
-//             ESP_LOGI(TAG_HTTP,"free heap size is :%d",esp_get_free_heap_size() );
-//             ESP_LOGI(TAG_HTTP," post success");
-//         } 
-//         else 
-//         {
-//             ESP_LOGE(TAG_HTTP, "HTTP GET request failed: %s", esp_err_to_name(err));
-//             esp_restart();
-//             break;
-//         }
-
-//         vTaskDelay(100/portTICK_PERIOD_MS);
-//     }
-//     esp_http_client_close(client);
-//     esp_http_client_cleanup(client);
-//     esp_restart();
-//     vTaskDelete(NULL);
-// }
 
 int bcdtodec(uint8_t num)
 {
@@ -424,62 +162,33 @@ int dectobcd(uint8_t num)
 void app_main(void)
 {
     
-
+    uint16_t mylux=0;
+    float lux=0.0;
     // /* init i2C */
     ESP_ERROR_CHECK(i2c_master_init());
 
-    data_write[0]=0x07;
-    data_write[1]=0x10;
-    i2c_master_write_slave(I2C_MASTER_NUM, data_write, 2,0x68);
+    data_write[0]=0x01;
+    i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1,0x23);
 
-    data_write[0]=0x00;
-    data_write[1]=dectobcd(0);
-    data_write[2]=dectobcd(55);
-    data_write[3]=dectobcd(13);
-    data_write[4]=dectobcd(4);
-    data_write[5]=dectobcd(2);
-    data_write[6]=dectobcd(7);
-    data_write[7]=dectobcd(20);
-    i2c_master_write_slave(I2C_MASTER_NUM, data_write, 8,0x68);
+    data_write[0]=0x10;
+    i2c_master_write_slave(I2C_MASTER_NUM, data_write,1,0x23);
 
+    vTaskDelay(150/portTICK_PERIOD_MS);
     while (1)
     {
+    
+    i2c_master_read_slave(I2C_MASTER_NUM, data_read,2,0x23);
 
-    data_write[0]=0x00;
-    i2c_master_write_slave(I2C_MASTER_NUM, data_write, 1,0x68);
-    i2c_master_read_slave(I2C_MASTER_NUM, data_read, 7,0x68);
+    mylux=0;
+    mylux=((mylux | data_read[0])<<8) |data_read[1];
 
-    data_read[0]=bcdtodec(data_read[0] & 0x7f);
-    ESP_LOGI(TAG_I2C,"%d",data_read[0]);
+    lux=(float)mylux/1.2;
+    
 
-    data_read[1]=bcdtodec(data_read[1]);
-    ESP_LOGI(TAG_I2C,"%d",data_read[1]);
+    ESP_LOGI(TAG_I2C,"%d",mylux);
 
-    data_read[2]=bcdtodec(data_read[2] & 0x3f);
-    ESP_LOGI(TAG_I2C,"%d",data_read[2]);
-
-    data_read[3]=bcdtodec(data_read[3]);
-    ESP_LOGI(TAG_I2C,"%d",data_read[3]);
-
-    data_read[4]=bcdtodec(data_read[4]);
-    ESP_LOGI(TAG_I2C,"%d",data_read[4]);
- 
-    data_read[5]=bcdtodec(data_read[5]);
-    ESP_LOGI(TAG_I2C,"%d",data_read[5]);
-
-    data_read[6]=bcdtodec(data_read[6]);
-    ESP_LOGI(TAG_I2C,"%d",data_read[6]+2000);
-    // ESP_LOGI(TAG_I2C,"------------------------------");
-    // i2c_master_read_slave(I2C_MASTER_NUM, data_read, 10,0x40);
-    // for(int i =0;i<10;i++)
-    // {
-    //     ESP_LOGI(TAG_I2C,"%d",data_read[i]);
-    // }
-
-    // ESP_LOGI(TAG_I2C,"---------------------");
-    vTaskDelay(1000/portTICK_PERIOD_MS);
+    ESP_LOGI(TAG_I2C,"ok r nha");
+    vTaskDelay(200/portTICK_PERIOD_MS);
     }
 
-    /* start Freertos */ 
-    //xTaskCreate(&postTask,"postTask",4096*4,NULL,3,NULL);
 }
