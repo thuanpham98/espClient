@@ -434,11 +434,11 @@ void app_main(void)
 
     data_write[0]=0x00;
     data_write[1]=dectobcd(0);
-    data_write[2]=dectobcd(9);
-    data_write[3]=dectobcd(14);
-    data_write[4]=dectobcd(2);
-    data_write[5]=dectobcd(30);
-    data_write[6]=dectobcd(6);
+    data_write[2]=dectobcd(33);
+    data_write[3]=dectobcd(11);
+    data_write[4]=dectobcd(4);
+    data_write[5]=dectobcd(2);
+    data_write[6]=dectobcd(7);
     data_write[7]=dectobcd(20);
     i2c_master_write_slave(I2C_MASTER_NUM, data_write, 8,0x68);
 
