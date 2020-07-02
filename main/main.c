@@ -434,8 +434,8 @@ void app_main(void)
 
     data_write[0]=0x00;
     data_write[1]=dectobcd(0);
-    data_write[2]=dectobcd(33);
-    data_write[3]=dectobcd(11);
+    data_write[2]=dectobcd(55);
+    data_write[3]=dectobcd(13);
     data_write[4]=dectobcd(4);
     data_write[5]=dectobcd(2);
     data_write[6]=dectobcd(7);
