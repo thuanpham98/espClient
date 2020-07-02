@@ -66,6 +66,7 @@
 
 #define DHT21_ADDR 0x40  /*!< slave address for DHT21 sensor */
 #define DS1307_ADDR 0x68 /*!< slave address for RTC DS1307 */
+#define BH1750_ADDR 0x23 /*!< slave address for BH 1750 */
 
 #define HTU21D_CRC8_POLYNOMINAL 0x13100 /*!>crc8 polynomial for 16bit value, CRC8 -> x^8 + x^5 + x^4 + 1 */
 
@@ -111,9 +112,11 @@ static char *Print_JSON(char *id,uint32_t device, double data[20], uint8_t lengt
 static void wifi_init_smart(void);
 static void wifi_init_sta(void);
 static void initial_HTU21(void);
+static void initial_BH1750(void);
 static void readI2C_DS1307(uint8_t data_buffer[7]);
 // void readDigital(void *pv);
 void readADC_HTU21(void *pv);
+void readI2C_BH1750(void *pv);
 void postTask(void *pv);
 
 /* handling to event wifi */
@@ -459,7 +462,20 @@ static char *Print_JSON(char *id,uint32_t device, double data_form[20], uint8_t 
 //     esp_restart();
 //     vTaskDelete(NULL);
 // }
-
+/* read i2c - for data[4]-luxary*/ 
+void readI2C_BH1750(void *pv)
+{
+    uint16_t lux_raw;
+    while (1)
+    {
+        lux_raw=0;
+        master_read_i2c(I2C_MASTER_NUM_STANDARD_MODE, data_read, 2, BH1750_ADDR);
+        lux_raw=((lux_raw | data_read[0])<<8) |data_read[1];
+        vTaskDelay(200);
+        data[4]=(double)lux_raw/1.2;
+    }
+    vTaskDelete(NULL);
+}
 /* read i2c - for data[0]-temperate and data[1]-humity */ 
 void readI2C_DHT21(void *pv)
 {
@@ -656,7 +672,7 @@ void app_main(void)
     ESP_ERROR_CHECK(init_i2c(&conf_f,I2C_MASTER_NUM_FAST_MODE));
 
     initial_HTU21();/*!> init for HTU21 */
-
+    initial_BH1750();
     
     /* config parameter for ADC */
     adc1_config_width(ADC_WIDTH_BIT_12);
@@ -694,6 +710,7 @@ void app_main(void)
 
     /* start Freertos */
     xTaskCreate(&readI2C_DHT21, "readI2C_DHT21", 4096 * 2, NULL, 3, NULL);
+    xTaskCreate(&readI2C_BH1750,"readI2C_BH1750",4096,NULL,3,NULL);
     xTaskCreate(&readADC, "readADC", 4096 * 2, NULL, 3, NULL);
     // xTaskCreate(&readDigital, "readDigital", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&postTask, "postTask", 4096 * 4, NULL, 4, NULL);
@@ -717,6 +734,20 @@ static void initial_HTU21(void)
     master_write_i2c(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
     vTaskDelay(5 / portTICK_PERIOD_MS);
 }
+static void initial_BH1750(void)
+{
+    /* power on  */
+    data_write[0]=0x01;
+    master_write_i2c(I2C_MASTER_NUM_STANDARD_MODE, data_write, 1,BH1750_ADDR);
+
+    /* Hight solution continuosly mode */
+    data_write[0]=0x10;
+    master_write_i2c(I2C_MASTER_NUM_STANDARD_MODE, data_write,1,BH1750_ADDR);
+
+    /* wait for read */
+    vTaskDelay(150/portTICK_PERIOD_MS);
+}
+
 
 static void readI2C_DS1307(uint8_t data_buffer[7])
 {
