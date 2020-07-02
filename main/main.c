@@ -53,7 +53,7 @@
                             // (1ULL << GPIO_NUM_25) | (1ULL << GPIO_NUM_26))
 
 /* define number sensor */
-#define NUM_SEN 20
+#define NUM_SEN 5
 
 /* URL to storage Data */
 #define URL_SERVER "https://iot-server-365.herokuapp.com/storage"
@@ -61,8 +61,8 @@
 /* define for I2C */
 #define I2C_MASTER_SCL_IO_STANDARD_MODE 22
 #define I2C_MASTER_SDA_IO_STANDARD_MODE 21
-#define I2C_MASTER_SCL_IO_FAST_MODE 26
-#define I2C_MASTER_SDA_IO_FAST_MODE 25
+#define I2C_MASTER_SCL_IO_FAST_MODE 23
+#define I2C_MASTER_SDA_IO_FAST_MODE 19
 
 #define DHT21_ADDR 0x40  /*!< slave address for DHT21 sensor */
 #define DS1307_ADDR 0x68 /*!< slave address for RTC DS1307 */
@@ -112,7 +112,7 @@ static void wifi_init_smart(void);
 static void wifi_init_sta(void);
 static void initial_HTU21(void);
 static void readI2C_DS1307(uint8_t data_buffer[7]);
-void readDigital(void *pv);
+// void readDigital(void *pv);
 void readADC_HTU21(void *pv);
 void postTask(void *pv);
 
@@ -440,27 +440,27 @@ static char *Print_JSON(char *id,uint32_t device, double data_form[20], uint8_t 
 }
 
 /* read Digital */
-void readDigital(void *pv)
-{
-    while (1)
-    {
-        data[10] = gpio_get_level(4);
-        data[11] = gpio_get_level(5);
-        data[12] = gpio_get_level(12);
-        data[13] = gpio_get_level(14);
-        data[14] = gpio_get_level(15);
-        data[15] = gpio_get_level(19);
-        data[16] = gpio_get_level(2);
-        data[17] = gpio_get_level(23);
-        //data[18] = gpio_get_level(25);
-        vTaskDelay(50 / portTICK_PERIOD_MS);
-    }
+// void readDigital(void *pv)
+// {
+//     while (1)
+//     {
+//         data[10] = gpio_get_level(4);
+//         data[11] = gpio_get_level(5);
+//         data[12] = gpio_get_level(12);
+//         data[13] = gpio_get_level(14);
+//         data[14] = gpio_get_level(15);
+//         data[15] = gpio_get_level(19);
+//         data[16] = gpio_get_level(2);
+//         data[17] = gpio_get_level(23);
+//         //data[18] = gpio_get_level(25);
+//         vTaskDelay(50 / portTICK_PERIOD_MS);
+//     }
 
-    esp_restart();
-    vTaskDelete(NULL);
-}
+//     esp_restart();
+//     vTaskDelete(NULL);
+// }
 
-/* read i2c */
+/* read i2c - for data[0]-temperate and data[1]-humity */ 
 void readI2C_DHT21(void *pv)
 {
     /* varialbe for i2c */
@@ -510,7 +510,7 @@ void readI2C_DHT21(void *pv)
         master_write_i2c(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
         master_read_i2c(I2C_MASTER_NUM_FAST_MODE, data_read, 1, DHT21_ADDR);
 
-        vTaskDelay(50 / portTICK_PERIOD_MS);
+        vTaskDelay(200 / portTICK_PERIOD_MS);
     }
     esp_restart();
     vTaskDelete(NULL);
@@ -524,13 +524,13 @@ void readADC(void *pv)
     {
         /* read data from analog */
         data[2] = (double)adc1_get_raw(ADC1_CHANNEL_0) / 4096 * 100;
-        data[3] = (double)adc1_get_raw(ADC1_CHANNEL_1) / 4096 * 100;
-        data[4] = (double)adc1_get_raw(ADC1_CHANNEL_2) / 4096 * 100;
-        data[5] = (double)adc1_get_raw(ADC1_CHANNEL_3) / 4096 * 100;
-        data[6] = (double)adc1_get_raw(ADC1_CHANNEL_4) / 4096 * 100;
-        data[7] = (double)adc1_get_raw(ADC1_CHANNEL_5) / 4096 * 100;
-        data[8] = (double)adc1_get_raw(ADC1_CHANNEL_6) / 4096 * 100;
-        data[9] = (double)adc1_get_raw(ADC1_CHANNEL_7) / 4096 * 100;
+        // data[3] = (double)adc1_get_raw(ADC1_CHANNEL_1) / 4096 * 100;
+        // data[4] = (double)adc1_get_raw(ADC1_CHANNEL_2) / 4096 * 100;
+        data[3] = (double)adc1_get_raw(ADC1_CHANNEL_3) / 4096 * 100;
+        // data[6] = (double)adc1_get_raw(ADC1_CHANNEL_4) / 4096 * 100;
+        // data[7] = (double)adc1_get_raw(ADC1_CHANNEL_5) / 4096 * 100;
+        // data[8] = (double)adc1_get_raw(ADC1_CHANNEL_6) / 4096 * 100;
+        // data[9] = (double)adc1_get_raw(ADC1_CHANNEL_7) / 4096 * 100;
         // ESP_LOGE(TAG_HTTP,"%lf",data[2]);
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
@@ -657,16 +657,17 @@ void app_main(void)
 
     initial_HTU21();/*!> init for HTU21 */
 
+    
     /* config parameter for ADC */
     adc1_config_width(ADC_WIDTH_BIT_12);
     adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_1, ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_2, ADC_ATTEN_DB_11);
+    // adc1_config_channel_atten(ADC1_CHANNEL_1, ADC_ATTEN_DB_11);
+    // adc1_config_channel_atten(ADC1_CHANNEL_2, ADC_ATTEN_DB_11);
     adc1_config_channel_atten(ADC1_CHANNEL_3, ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_4, ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11);
-    adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_11);
+    // adc1_config_channel_atten(ADC1_CHANNEL_4, ADC_ATTEN_DB_11);
+    // adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_11);
+    // adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11);
+    // adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_11);
 
     /* config digital input */
     gpio_config_t input_conf;
@@ -694,7 +695,7 @@ void app_main(void)
     /* start Freertos */
     xTaskCreate(&readI2C_DHT21, "readI2C_DHT21", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&readADC, "readADC", 4096 * 2, NULL, 3, NULL);
-    xTaskCreate(&readDigital, "readDigital", 4096 * 2, NULL, 3, NULL);
+    // xTaskCreate(&readDigital, "readDigital", 4096 * 2, NULL, 3, NULL);
     xTaskCreate(&postTask, "postTask", 4096 * 4, NULL, 4, NULL);
 }
 
