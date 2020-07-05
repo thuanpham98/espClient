@@ -400,17 +400,17 @@ static void set_reg_digi(uint8_t num_pin, uint8_t level)
             break;
         }
     }
-    write_nvs("storage", &my_handle, "REG_DIGI", my_esp.reg_digi, NVS_TYPE_U16);
+    write_nvs("storage", &my_handle, "REG_DIGI", &my_esp.reg_digi, NVS_TYPE_U16);
 }
 static void set_reg_dac(uint8_t num_dac, uint8_t level)
 {
     my_esp.reg_dac = (my_esp.reg_dac & (0xFF00 >> (num_dac * 8))) | ((0x0000 | level) << (num_dac * 8));
-    write_nvs("storage", &my_handle, "REG_DAC", my_esp.reg_dac, NVS_TYPE_U16);
+    write_nvs("storage", &my_handle, "REG_DAC", &my_esp.reg_dac, NVS_TYPE_U16);
 }
 static void set_reg_pwm(uint8_t num_pwm, uint8_t level)
 {
     my_esp.reg_pwm = (my_esp.reg_pwm & (0xFF00 >> (num_pwm * 8))) | ((0x0000 | level) << (num_pwm * 8));
-    write_nvs("storage", &my_handle, "REG_PWM", my_esp.reg_pwm, NVS_TYPE_U16);
+    write_nvs("storage", &my_handle, "REG_PWM", &my_esp.reg_pwm, NVS_TYPE_U16);
 }
 
 /* get method */
@@ -542,13 +542,13 @@ void app_main(void)
 
     /* GET data from NVS */
     /* Get SSID of wifi */
-    err = err | read_nvs("storage", &my_handle, "USER", my_esp.user_wifi, NVS_TYPE_STR);
+    err = err | read_nvs("storage", &my_handle, "USER", &my_esp.user_wifi, NVS_TYPE_STR);
 
     /* Get SSPASS of Wifi */
-    err = err |  read_nvs("storage", &my_handle, "PASS", my_esp.pass_wifi, NVS_TYPE_STR);
+    err = err |  read_nvs("storage", &my_handle, "PASS", &my_esp.pass_wifi, NVS_TYPE_STR);
 
     /* Get ID of Esp */
-    err = err |  read_nvs("storage", &my_handle, "ID", my_esp.ID, NVS_TYPE_STR);
+    err = err |  read_nvs("storage", &my_handle, "ID", &my_esp.ID, NVS_TYPE_STR);
 
     /* Get dev numer of Esp */
     err = err |  read_nvs("storage", &my_handle, "DEV", &my_esp.device, NVS_TYPE_U32);
