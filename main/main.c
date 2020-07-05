@@ -568,6 +568,7 @@ void postTask(void *pv)
         esp_err_t err = esp_http_client_perform(client);
         free(post_data);
         free(str_time);
+
         if (err == ESP_OK)
         {
             ESP_LOGI(TAG_HTTP, "HTTP POST Status = %d, content_length = %d",
@@ -585,7 +586,7 @@ void postTask(void *pv)
             break;
         }
 
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     esp_http_client_close(client);
     esp_http_client_cleanup(client);
