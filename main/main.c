@@ -50,7 +50,6 @@
 /* define pin input digital */
 #define GPIO_INPUT_PIN_SEL ((1ULL << GPIO_NUM_4) | (1ULL << GPIO_NUM_5) | (1ULL << GPIO_NUM_12) | (1ULL << GPIO_NUM_14) |  \
                             (1ULL << GPIO_NUM_2) | (1ULL << GPIO_NUM_23) | (1ULL << GPIO_NUM_15) | (1ULL << GPIO_NUM_19) )
-                            // (1ULL << GPIO_NUM_25) | (1ULL << GPIO_NUM_26))
 
 /* define number sensor */
 #define NUM_SEN 5
@@ -114,7 +113,6 @@ static void wifi_init_sta(void);
 static void initial_HTU21(void);
 static void initial_BH1750(void);
 static void readI2C_DS1307(uint8_t data_buffer[7]);
-// void readDigital(void *pv);
 void readADC_HTU21(void *pv);
 void readI2C_BH1750(void *pv);
 void postTask(void *pv);
@@ -442,26 +440,6 @@ static char *Print_JSON(char *id,uint32_t device, double data_form[20], uint8_t 
     return a;
 }
 
-/* read Digital */
-// void readDigital(void *pv)
-// {
-//     while (1)
-//     {
-//         data[10] = gpio_get_level(4);
-//         data[11] = gpio_get_level(5);
-//         data[12] = gpio_get_level(12);
-//         data[13] = gpio_get_level(14);
-//         data[14] = gpio_get_level(15);
-//         data[15] = gpio_get_level(19);
-//         data[16] = gpio_get_level(2);
-//         data[17] = gpio_get_level(23);
-//         //data[18] = gpio_get_level(25);
-//         vTaskDelay(50 / portTICK_PERIOD_MS);
-//     }
-
-//     esp_restart();
-//     vTaskDelete(NULL);
-// }
 /* read i2c - for data[4]-luxary*/ 
 void readI2C_BH1750(void *pv)
 {
@@ -476,6 +454,7 @@ void readI2C_BH1750(void *pv)
     }
     vTaskDelete(NULL);
 }
+
 /* read i2c - for data[0]-temperate and data[1]-humity */ 
 void readI2C_DHT21(void *pv)
 {
@@ -677,13 +656,7 @@ void app_main(void)
     /* config parameter for ADC */
     adc1_config_width(ADC_WIDTH_BIT_12);
     adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_11);
-    // adc1_config_channel_atten(ADC1_CHANNEL_1, ADC_ATTEN_DB_11);
-    // adc1_config_channel_atten(ADC1_CHANNEL_2, ADC_ATTEN_DB_11);
     adc1_config_channel_atten(ADC1_CHANNEL_3, ADC_ATTEN_DB_11);
-    // adc1_config_channel_atten(ADC1_CHANNEL_4, ADC_ATTEN_DB_11);
-    // adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_11);
-    // adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11);
-    // adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_11);
 
     /* config digital input */
     gpio_config_t input_conf;
@@ -716,6 +689,7 @@ void app_main(void)
     xTaskCreate(&postTask, "postTask", 4096 * 4, NULL, 4, NULL);
 }
 
+/* init sensor temperature and humidity */
 static void initial_HTU21(void)
 {
     data_write[0] = 0xFE; /*!> reset*/
@@ -734,6 +708,8 @@ static void initial_HTU21(void)
     master_write_i2c(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
     vTaskDelay(5 / portTICK_PERIOD_MS);
 }
+
+/* init for sensor lux BH1750 */
 static void initial_BH1750(void)
 {
     /* power on  */
@@ -748,7 +724,7 @@ static void initial_BH1750(void)
     vTaskDelay(150/portTICK_PERIOD_MS);
 }
 
-
+/* read time from DS1307 */
 static void readI2C_DS1307(uint8_t data_buffer[7])
 {
     data_buffer[0] = 0x00;
