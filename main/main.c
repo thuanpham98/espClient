@@ -480,6 +480,7 @@ void readI2C_DHT21(void *pv)
         {
             Temperature = (0.002681 * (double)rawTemperature - 46.85);
             data[0] = Temperature;
+            ESP_LOGI(TAG_I2C,"%lf",data[0]);
         }
         data_write[0] = 0xFE;
         master_write_i2c(I2C_MASTER_NUM_FAST_MODE, &data_write[0], 1, DHT21_ADDR);
